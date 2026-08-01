@@ -3,11 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampusConnet | Login</title>
+    <title>CampusConnect | Login</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Inter',sans-serif;
+        }
+
+        body{
+            background:#0F1117;
+            color:#F5F7FA;
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+
+        .login-box{
+
+            width:420px;
+            background:#161B22;
+
+            border:1px solid #2A2F3A;
+            border-radius:18px;
+
+            padding:45px;
+
+            box-shadow:
+            0 15px 40px rgba(0,0,0,.35);
+
+        }
+
+        h1{
+
+            font-size:30px;
+            margin-bottom:8px;
+
+        }
+
+        p{
+
+            color:#A7B0C0;
+            margin-bottom:35px;
+
+        }
+
+        label{
+
+            display:block;
+            margin-bottom:8px;
+            font-size:14px;
+            color:#D0D7DE;
+
+        }
+
+        input{
+
+            width:100%;
+            background:#0F1117;
+
+            border:1px solid #30363D;
+            color:white;
+
+            padding:14px;
+            border-radius:12px;
+
+            outline:none;
+            transition:.25s;
+
+            margin-bottom:18px;
+
+            font-size:15px;
+
+        }
+
+        input:focus{
+
+            border-color:#3B82F6;
+            box-shadow:0 0 0 3px rgba(59,130,246,.18);
+
+        }
+
+        .options{
+
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+
+            margin-bottom:25px;
+
+            font-size:14px;
+
+        }
+
+        .options a{
+
+            color:#4F8CFF;
+            text-decoration:none;
+
+        }
+
+        .options a:hover{
+
+            text-decoration:underline;
+
+        }
+
+        button{
+
+            width:100%;
+            border:none;
+
+            background:#3B82F6;
+            color:white;
+
+            padding:14px;
+
+            border-radius:12px;
+
+            cursor:pointer;
+
+            font-size:16px;
+            font-weight:600;
+
+            transition:.25s;
+
+        }
+
+        button:hover{
+
+            background:#2563EB;
+
+        }
+
+        .divider{
+
+            text-align:center;
+            margin:28px 0;
+            color:#7D8590;
+            position:relative;
+
+        }
+
+        .divider::before,
+        .divider::after{
+
+            content:'';
+            position:absolute;
+
+            width:38%;
+            height:1px;
+
+            background:#30363D;
+
+            top:50%;
+
+        }
+
+        .divider::before{
+
+            left:0;
+
+        }
+
+        .divider::after{
+
+            right:0;
+
+        }
+
+        .google{
+
+            width:100%;
+
+            padding:13px;
+
+            border-radius:12px;
+
+            border:1px solid #30363D;
+
+            background:transparent;
+
+            color:white;
+
+            font-weight:600;
+
+            cursor:pointer;
+
+            transition:.25s;
+
+        }
+
+        .google:hover{
+
+            background:#1C2128;
+
+        }
+
+        .bottom{
+
+            margin-top:30px;
+            text-align:center;
+
+            color:#A7B0C0;
+
+        }
+
+        .bottom a{
+
+            color:#4F8CFF;
+            text-decoration:none;
+            font-weight:600;
+
+        }
+
+        .bottom a:hover{
+
+            text-decoration:underline;
+
+        }
+
+        .logo{
+
+            width:65px;
+            height:65px;
+
+            border-radius:16px;
+
+            background:#3B82F6;
+
+            display:flex;
+            justify-content:center;
+            align-items:center;
+
+            font-size:28px;
+
+            margin-bottom:20px;
+
+        }
+
+    </style>
+
 </head>
 <body>
-    <center>
-        <h1>Welcome to CampusConnet</h1>
-    </center>
+
+<div class="login-box">
+
+    <div class="logo">
+        🎓
+    </div>
+
+    <h1>Welcome Back</h1>
+
+    <p>Login to CampusConnect and stay connected with your university.</p>
+
+    <label>Email</label>
+
+    <input
+        type="email"
+        placeholder="Enter your university email"
+    >
+
+    <label>Password</label>
+
+    <input
+        type="password"
+        placeholder="Enter your password"
+    >
+
+    <div class="options">
+
+        <label>
+            <input type="checkbox" style="width:auto;margin-right:6px;">
+            Remember me
+        </label>
+
+        <a href="#">Forgot Password?</a>
+
+    </div>
+
+    <button>
+        Login
+    </button>
+
+    <div class="divider">
+        OR
+    </div>
+
+    <button class="google">
+        Continue with Google
+    </button>
+
+    <div class="bottom">
+
+        Don't have an account?
+
+        <a href="#">
+            Register
+        </a>
+
+    </div>
+
+</div>
+
 </body>
 </html>
