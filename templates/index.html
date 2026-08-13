@@ -1,316 +1,962 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampusConnect | Login</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UniMatch · Login</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
     <style>
-
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:'Inter',sans-serif;
+        /* ── Reset & Base ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        body{
-            background:#0F1117;
-            color:#F5F7FA;
-            height:100vh;
-            display:flex;
-            justify-content:center;
-            align-items:center;
+        body {
+            background: #0F1117;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
         }
 
-        .login-box{
-
-            width:420px;
-            background:#161B22;
-
-            border:1px solid #2A2F3A;
-            border-radius:18px;
-
-            padding:45px;
-
-            box-shadow:
-            0 15px 40px rgba(0,0,0,.35);
-
+        /* ── Main Wrapper (two columns) ── */
+        .wrapper {
+            width: 1300px;
+            max-width: 100%;
+            min-height: 680px;
+            display: flex;
+            border-radius: 40px;
+            background: #0F1117;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 40px 120px rgba(0, 0, 0, .7);
+            border: 1px solid rgba(255, 255, 255, .03);
         }
 
-        h1{
-
-            font-size:30px;
-            margin-bottom:8px;
-
+        /* ── Left Column (Login) ── */
+        .left-col {
+            flex: 0 0 46%;
+            padding: 48px 44px 40px 44px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            background: rgba(15, 17, 23, .65);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-right: 1px solid rgba(255, 255, 255, .03);
         }
 
-        p{
-
-            color:#A7B0C0;
-            margin-bottom:35px;
-
+        /* ── Right Column (Vectors) ── */
+        .right-col {
+            flex: 1;
+            position: relative;
+            background: #0F1117;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 500px;
         }
 
-        label{
-
-            display:block;
-            margin-bottom:8px;
-            font-size:14px;
-            color:#D0D7DE;
-
+        /* ── Vector Canvas ── */
+        .vector-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0F1117;
         }
 
-        input{
-
-            width:100%;
-            background:#0F1117;
-
-            border:1px solid #30363D;
-            color:white;
-
-            padding:14px;
-            border-radius:12px;
-
-            outline:none;
-            transition:.25s;
-
-            margin-bottom:18px;
-
-            font-size:15px;
-
+        /* ── blend containers ── */
+        .blend-layer {
+            position: absolute;
+            inset: 0;
+            mix-blend-mode: screen;
+            pointer-events: none;
         }
 
-        input:focus{
-
-            border-color:#3B82F6;
-            box-shadow:0 0 0 3px rgba(59,130,246,.18);
-
+        .blend-layer-soft {
+            mix-blend-mode: soft-light;
         }
 
-        .options{
-
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-
-            margin-bottom:25px;
-
-            font-size:14px;
-
+        .blend-layer-overlay {
+            mix-blend-mode: overlay;
         }
 
-        .options a{
-
-            color:#4F8CFF;
-            text-decoration:none;
-
+        .blend-layer-lighten {
+            mix-blend-mode: lighten;
         }
 
-        .options a:hover{
-
-            text-decoration:underline;
-
+        /* ── Vector Shapes ── */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: .7;
+            will-change: transform;
         }
 
-        button{
-
-            width:100%;
-            border:none;
-
-            background:#3B82F6;
-            color:white;
-
-            padding:14px;
-
-            border-radius:12px;
-
-            cursor:pointer;
-
-            font-size:16px;
-            font-weight:600;
-
-            transition:.25s;
-
+        .blob-1 {
+            width: 480px;
+            height: 480px;
+            top: -10%;
+            right: -8%;
+            background: radial-gradient(circle at 30% 30%, #8B5CF6, #3B82F6 60%, transparent 80%);
+            animation: floatBlob 12s ease-in-out infinite alternate;
         }
 
-        button:hover{
-
-            background:#2563EB;
-
+        .blob-2 {
+            width: 380px;
+            height: 380px;
+            bottom: -6%;
+            left: -6%;
+            background: radial-gradient(circle at 70% 60%, #EC4899, #F472B6 40%, transparent 75%);
+            animation: floatBlob 14s ease-in-out infinite alternate-reverse;
+            mix-blend-mode: screen;
         }
 
-        .divider{
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            top: 30%;
+            right: 15%;
+            background: radial-gradient(circle at 50% 50%, #FBBF24, #F59E0B 50%, transparent 75%);
+            animation: floatBlob 10s ease-in-out infinite alternate;
+            mix-blend-mode: overlay;
+            opacity: .5;
+        }
 
-            text-align:center;
-            margin:28px 0;
-            color:#7D8590;
-            position:relative;
+        .blob-4 {
+            width: 220px;
+            height: 220px;
+            bottom: 20%;
+            right: 10%;
+            background: radial-gradient(circle at 40% 40%, #34D399, #10B981 50%, transparent 75%);
+            animation: floatBlob 16s ease-in-out infinite alternate-reverse;
+            mix-blend-mode: lighten;
+            opacity: .5;
+        }
 
+        /* ── Geometric accents ── */
+        .geo-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, .04);
+            pointer-events: none;
+            animation: spinSlow 40s linear infinite;
+        }
+
+        .geo-ring-1 {
+            width: 520px;
+            height: 520px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-color: rgba(59, 130, 246, .08);
+        }
+
+        .geo-ring-2 {
+            width: 360px;
+            height: 360px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-color: rgba(139, 92, 246, .08);
+            animation-duration: 30s;
+            animation-direction: reverse;
+        }
+
+        .geo-ring-3 {
+            width: 200px;
+            height: 200px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-color: rgba(236, 72, 153, .06);
+            animation-duration: 25s;
+        }
+
+        /* ── Grid lines ── */
+        .grid-lines {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: .04;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* ── small floating dots ── */
+        .dot-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .04);
+            pointer-events: none;
+            animation: floatDot 8s ease-in-out infinite alternate;
+        }
+
+        .dot-particle:nth-child(1) {
+            width: 6px;
+            height: 6px;
+            top: 18%;
+            left: 22%;
+            animation-duration: 9s;
+        }
+        .dot-particle:nth-child(2) {
+            width: 10px;
+            height: 10px;
+            top: 68%;
+            left: 70%;
+            animation-duration: 11s;
+            animation-delay: 1s;
+        }
+        .dot-particle:nth-child(3) {
+            width: 4px;
+            height: 4px;
+            top: 45%;
+            left: 15%;
+            animation-duration: 7s;
+            animation-delay: 2s;
+        }
+        .dot-particle:nth-child(4) {
+            width: 8px;
+            height: 8px;
+            top: 80%;
+            left: 40%;
+            animation-duration: 13s;
+            animation-delay: .5s;
+        }
+        .dot-particle:nth-child(5) {
+            width: 5px;
+            height: 5px;
+            top: 12%;
+            left: 75%;
+            animation-duration: 10s;
+            animation-delay: 1.5s;
+        }
+
+        /* ── Animations ── */
+        @keyframes floatBlob {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(20px, -30px) scale(1.05);
+            }
+            66% {
+                transform: translate(-10px, 20px) scale(.95);
+            }
+            100% {
+                transform: translate(15px, -10px) scale(1.02);
+            }
+        }
+
+        @keyframes spinSlow {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        @keyframes floatDot {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(20px, -30px);
+            }
+        }
+
+        /* ── Brand ── */
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .brand-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, .25);
+            flex-shrink: 0;
+        }
+
+        .brand-text {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -.3px;
+            background: linear-gradient(to right, #F5F7FA, #A7B0C0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-text span {
+            font-weight: 300;
+            -webkit-text-fill-color: #4F8CFF;
+            background: none;
+        }
+
+        /* ── Headline ── */
+        .headline {
+            margin-bottom: 6px;
+        }
+
+        .headline h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #F5F7FA;
+            letter-spacing: -.4px;
+        }
+
+        .headline p {
+            color: #8B95A9;
+            font-size: 15px;
+            margin-top: 6px;
+            font-weight: 400;
+        }
+
+        .headline p em {
+            font-style: normal;
+            color: #4F8CFF;
+            font-weight: 500;
+        }
+
+        /* ── Form ── */
+        form {
+            margin-top: 28px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #C9D1D9;
+            margin-bottom: 6px;
+            letter-spacing: .2px;
+        }
+
+        .input-group label .req {
+            color: #F87171;
+            margin-left: 2px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(15, 17, 23, .6);
+            border: 1px solid #262C36;
+            border-radius: 14px;
+            color: #F5F7FA;
+            font-size: 15px;
+            font-weight: 400;
+            outline: none;
+            transition: border .2s, box-shadow .2s, background .2s;
+        }
+
+        .input-wrap input::placeholder {
+            color: #4B5563;
+            font-weight: 300;
+            font-size: 14px;
+        }
+
+        .input-wrap input:focus {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, .12);
+            background: rgba(15, 17, 23, .8);
+        }
+
+        .input-wrap .toggle-vis {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #4B5563;
+            cursor: pointer;
+            font-size: 18px;
+            transition: color .2s;
+        }
+
+        .input-wrap .toggle-vis:hover {
+            color: #C9D1D9;
+        }
+
+        /* ── Row actions ── */
+        .row-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 6px 0 26px;
+            font-size: 14px;
+        }
+
+        .row-actions .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #B0B9CC;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .row-actions .remember input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: rgba(15, 17, 23, .6);
+            border: 1.5px solid #30363D;
+            border-radius: 5px;
+            display: grid;
+            place-content: center;
+            transition: background .2s, border .2s;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .row-actions .remember input[type="checkbox"]:checked {
+            background: #3B82F6;
+            border-color: #3B82F6;
+        }
+
+        .row-actions .remember input[type="checkbox"]:checked::before {
+            content: "✓";
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .row-actions .remember input[type="checkbox"]:focus-visible {
+            outline: 2px solid #3B82F6;
+            outline-offset: 2px;
+        }
+
+        .row-actions .forgot {
+            color: #4F8CFF;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13px;
+            transition: color .2s;
+        }
+
+        .row-actions .forgot:hover {
+            color: #7AA9FF;
+            text-decoration: underline;
+        }
+
+        /* ── Login button ── */
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #3B82F6, #6366F1);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform .15s, box-shadow .2s;
+            box-shadow: 0 6px 24px rgba(59, 130, 246, .25);
+            letter-spacing: .2px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px rgba(59, 130, 246, .35);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, .2);
+        }
+
+        /* ── Divider ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 28px 0;
+            color: #4B5563;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: .3px;
         }
 
         .divider::before,
-        .divider::after{
-
-            content:'';
-            position:absolute;
-
-            width:38%;
-            height:1px;
-
-            background:#30363D;
-
-            top:50%;
-
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #30363D, transparent);
         }
 
-        .divider::before{
-
-            left:0;
-
+        /* ── Social row ── */
+        .social-row {
+            display: flex;
+            gap: 12px;
         }
 
-        .divider::after{
-
-            right:0;
-
+        .social-row button {
+            flex: 1;
+            padding: 13px 10px;
+            border-radius: 14px;
+            border: 1px solid #262C36;
+            background: rgba(15, 17, 23, .4);
+            color: #D0D7DE;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background .2s, border .2s, transform .15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .google{
-
-            width:100%;
-
-            padding:13px;
-
-            border-radius:12px;
-
-            border:1px solid #30363D;
-
-            background:transparent;
-
-            color:white;
-
-            font-weight:600;
-
-            cursor:pointer;
-
-            transition:.25s;
-
+        .social-row button:hover {
+            background: rgba(28, 33, 40, .8);
+            border-color: #3B82F6;
+            transform: translateY(-1px);
         }
 
-        .google:hover{
-
-            background:#1C2128;
-
+        .social-row button .icon {
+            font-size: 20px;
+            line-height: 1;
         }
 
-        .bottom{
-
-            margin-top:30px;
-            text-align:center;
-
-            color:#A7B0C0;
-
+        /* ── Signup CTA ── */
+        .signup-cta {
+            margin-top: 30px;
+            text-align: center;
+            color: #8B95A9;
+            font-size: 15px;
         }
 
-        .bottom a{
-
-            color:#4F8CFF;
-            text-decoration:none;
-            font-weight:600;
-
+        .signup-cta a {
+            color: #4F8CFF;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color .2s;
         }
 
-        .bottom a:hover{
-
-            text-decoration:underline;
-
+        .signup-cta a:hover {
+            color: #7AA9FF;
+            text-decoration: underline;
         }
 
-        .logo{
-
-            width:65px;
-            height:65px;
-
-            border-radius:16px;
-
-            background:#3B82F6;
-
-            display:flex;
-            justify-content:center;
-            align-items:center;
-
-            font-size:28px;
-
-            margin-bottom:20px;
-
+        /* ── Vibe tag ── */
+        .vibe-tag {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin-top: 22px;
+            font-size: 12px;
+            font-weight: 400;
+            color: #4B5563;
+            letter-spacing: .2px;
         }
 
+        .vibe-tag span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .vibe-tag .dot {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #3B82F6;
+            opacity: .5;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1000px) {
+            .wrapper {
+                flex-direction: column;
+                min-height: auto;
+                border-radius: 28px;
+            }
+
+            .left-col {
+                flex: 1;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, .03);
+                padding: 36px 30px 32px;
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+            }
+
+            .right-col {
+                min-height: 300px;
+                flex: 0 0 300px;
+            }
+
+            .blob-1 {
+                width: 300px;
+                height: 300px;
+                top: -15%;
+                right: -5%;
+            }
+            .blob-2 {
+                width: 250px;
+                height: 250px;
+                bottom: -10%;
+                left: -5%;
+            }
+            .blob-3 {
+                width: 200px;
+                height: 200px;
+                top: 20%;
+                right: 10%;
+            }
+            .blob-4 {
+                width: 160px;
+                height: 160px;
+                bottom: 15%;
+                right: 5%;
+            }
+            .geo-ring-1 {
+                width: 380px;
+                height: 380px;
+            }
+            .geo-ring-2 {
+                width: 260px;
+                height: 260px;
+            }
+            .geo-ring-3 {
+                width: 150px;
+                height: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .left-col {
+                padding: 28px 20px 26px;
+            }
+            .headline h1 {
+                font-size: 24px;
+            }
+            .social-row {
+                flex-direction: column;
+            }
+            .social-row button {
+                padding: 12px;
+            }
+            .brand-text {
+                font-size: 19px;
+            }
+            .row-actions {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .right-col {
+                min-height: 200px;
+                flex: 0 0 200px;
+            }
+            .blob-1 {
+                width: 200px;
+                height: 200px;
+            }
+            .blob-2 {
+                width: 160px;
+                height: 160px;
+            }
+            .blob-3 {
+                width: 140px;
+                height: 140px;
+            }
+            .blob-4 {
+                width: 100px;
+                height: 100px;
+            }
+            .geo-ring-1 {
+                width: 260px;
+                height: 260px;
+            }
+            .geo-ring-2 {
+                width: 180px;
+                height: 180px;
+            }
+            .geo-ring-3 {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        /* ── Entrance animation ── */
+        .wrapper {
+            animation: containerFade .8s ease both;
+        }
+
+        @keyframes containerFade {
+            0% {
+                opacity: 0;
+                transform: scale(.96) translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .left-col {
+            animation: slideLeft .7s ease .15s both;
+        }
+
+        @keyframes slideLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .right-col {
+            animation: slideRight .7s ease .15s both;
+        }
+
+        @keyframes slideRight {
+            0% {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
     </style>
-
 </head>
 <body>
 
-<div class="login-box">
+    <div class="wrapper">
 
-    <div class="logo">
-        🎓
+        <!-- ─── LEFT COLUMN ─── -->
+        <div class="left-col">
+
+            <!-- Brand -->
+            <div class="brand">
+                <div class="brand-icon">❤️</div>
+                <div class="brand-text">Uni<span>Match</span></div>
+            </div>
+
+            <!-- Headline -->
+            <div class="headline">
+                <h1>Welcome back</h1>
+                <p>Find your <em>vibe</em> &amp; rank up on campus.</p>
+            </div>
+
+            <!-- Form -->
+            <form autocomplete="off" novalidate>
+                <div class="input-group">
+                    <label>Email <span class="req">*</span></label>
+                    <div class="input-wrap">
+                        <input type="email" placeholder="your@university.edu" required />
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Password <span class="req">*</span></label>
+                    <div class="input-wrap">
+                        <input type="password" id="password" placeholder="••••••••" required />
+                        <button type="button" class="toggle-vis" id="togglePass" aria-label="Toggle password visibility">
+                            👁️
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row-actions">
+                    <label class="remember">
+                        <input type="checkbox" checked />
+                        Keep me signed in
+                    </label>
+                    <a href="#" class="forgot">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn-login">Log in →</button>
+            </form>
+
+            <!-- Divider -->
+            <div class="divider">or continue with</div>
+
+            <!-- Social -->
+            <div class="social-row">
+                <button><span class="icon">🔵</span> Google</button>
+                <button><span class="icon">⚫</span> Apple</button>
+                <button><span class="icon">📘</span> Facebook</button>
+            </div>
+
+            <!-- Signup -->
+            <div class="signup-cta">
+                New to UniMatch? <a href="#">Create account</a>
+            </div>
+
+            <!-- Vibe tag -->
+            <div class="vibe-tag">
+                <span><span class="dot"></span> 12k+ students</span>
+                <span><span class="dot"></span> ranked daily</span>
+                <span><span class="dot"></span> verified .edu</span>
+            </div>
+        </div>
+
+        <!-- ─── RIGHT COLUMN ─── -->
+        <div class="right-col">
+
+            <div class="vector-canvas">
+
+                <!-- Grid -->
+                <div class="grid-lines"></div>
+
+                <!-- Blend layers (each with different blend mode) -->
+                <div class="blend-layer">
+                    <div class="blob blob-1"></div>
+                </div>
+
+                <div class="blend-layer blend-layer-soft">
+                    <div class="blob blob-2"></div>
+                </div>
+
+                <div class="blend-layer blend-layer-overlay">
+                    <div class="blob blob-3"></div>
+                </div>
+
+                <div class="blend-layer blend-layer-lighten">
+                    <div class="blob blob-4"></div>
+                </div>
+
+                <!-- Geometric rings -->
+                <div class="geo-ring geo-ring-1"></div>
+                <div class="geo-ring geo-ring-2"></div>
+                <div class="geo-ring geo-ring-3"></div>
+
+                <!-- Floating dots -->
+                <div class="dot-particle"></div>
+                <div class="dot-particle"></div>
+                <div class="dot-particle"></div>
+                <div class="dot-particle"></div>
+                <div class="dot-particle"></div>
+
+                <!-- Subtle center glow -->
+                <div style="
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        width: 600px;
+                        height: 600px;
+                        transform: translate(-50%, -50%);
+                        background: radial-gradient(circle at center, rgba(59,130,246,.05) 0%, transparent 70%);
+                        pointer-events: none;
+                        border-radius: 50%;
+                        mix-blend-mode: screen;
+                    "></div>
+
+                <!-- Accent line -->
+                <div style="
+                        position: absolute;
+                        bottom: 15%;
+                        right: 10%;
+                        width: 80px;
+                        height: 2px;
+                        background: linear-gradient(90deg, transparent, rgba(59,130,246,.15));
+                        border-radius: 2px;
+                        transform: rotate(-20deg);
+                        pointer-events: none;
+                    "></div>
+                <div style="
+                        position: absolute;
+                        top: 25%;
+                        left: 12%;
+                        width: 120px;
+                        height: 1.5px;
+                        background: linear-gradient(90deg, rgba(139,92,246,.12), transparent);
+                        border-radius: 2px;
+                        transform: rotate(15deg);
+                        pointer-events: none;
+                    "></div>
+
+                <!-- subtle brand mark on vector side -->
+                <div style="
+                        position: absolute;
+                        bottom: 32px;
+                        right: 40px;
+                        font-size: 12px;
+                        font-weight: 300;
+                        color: rgba(255,255,255,.04);
+                        letter-spacing: 4px;
+                        text-transform: uppercase;
+                        pointer-events: none;
+                        user-select: none;
+                    ">
+                    ✦ connect · rank · vibe
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
-    <h1>Welcome Back</h1>
+    <script>
+        // ── toggle password visibility ──
+        const toggleBtn = document.getElementById('togglePass');
+        const passInput = document.getElementById('password');
 
-    <p>Login to CampusConnect and stay connected with your university.</p>
+        toggleBtn.addEventListener('click', () => {
+            const isPass = passInput.getAttribute('type') === 'password';
+            passInput.setAttribute('type', isPass ? 'text' : 'password');
+            toggleBtn.textContent = isPass ? '🙈' : '👁️';
+        });
 
-    <label>Email</label>
-
-    <input
-        type="email"
-        placeholder="Enter your university email"
-    >
-
-    <label>Password</label>
-
-    <input
-        type="password"
-        placeholder="Enter your password"
-    >
-
-    <div class="options">
-
-        <label>
-            <input type="checkbox" style="width:auto;margin-right:6px;">
-            Remember me
-        </label>
-
-        <a href="#">Forgot Password?</a>
-
-    </div>
-
-    <button>
-        Login
-    </button>
-
-    <div class="divider">
-        OR
-    </div>
-
-    <button class="google">
-        Continue with Google
-    </button>
-
-    <div class="bottom">
-
-        Don't have an account?
-
-        <a href="#">
-            Register
-        </a>
-
-    </div>
-
-</div>
+        // ── (demo) prevent actual submit ──
+        document.querySelector('form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = document.querySelector('.btn-login');
+            const orig = btn.textContent;
+            btn.textContent = '✓ Welcome back!';
+            btn.style.background = 'linear-gradient(135deg, #22C55E, #16A34A)';
+            setTimeout(() => {
+                btn.textContent = orig;
+                btn.style.background = '';
+            }, 1800);
+        });
+    </script>
 
 </body>
 </html>

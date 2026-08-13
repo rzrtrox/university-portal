@@ -1,0 +1,368 @@
+<!-- components/sidebar.html -->
+{% load static %}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<style>
+  /* ── Sidebar ── */
+  .sidebar {
+
+    flex: 0 0 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    position: sticky;
+    top: 30px;
+  }
+
+  /* ── Card base ── */
+  .card {
+    background-color: rgba(22, 27, 34, 0.5);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(42, 47, 58, 0.55);
+    border-radius: 20px;
+    padding: 0;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+  }
+
+  .card:hover {
+    border-color: rgba(59, 130, 246, 0.12);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+  }
+
+ 
+
+  /* ── Card header ── */
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    padding: 0 2px;
+  }
+
+  .card-header h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #f5f7fa;
+    letter-spacing: -0.2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* ── Profile Card ── */
+  .profile-cover {
+    height: 72px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    position: relative;
+  }
+
+  .profile-avatar {
+    position: relative;
+    width: 88px;
+    height: 88px;
+    margin: -44px auto 0;
+    border-radius: 50%;
+    border: 3px solid #0f1117;
+    background: #1a1d24;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .profile-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .profile-avatar .status-dot {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 16px;
+    height: 16px;
+    background: #22c55e;
+    border-radius: 50%;
+    border: 3px solid #0f1117;
+  }
+
+  .profile-name {
+    text-align: center;
+    margin-top: 12px;
+    padding: 0 12px 16px;
+  }
+  .subtitle{
+    font-size: 14px;
+    color: #8b95a9;
+    margin-top: 2px;
+  }
+
+  .profile-name h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #f5f7fa;
+    letter-spacing: -0.3px;
+  }
+
+  .profile-name .title {
+    font-size: 14px;
+    color: #8b95a9;
+    margin-top: 2px;
+  }
+
+  .profile-name .rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    background: rgba(251, 191, 36, 0.12);
+    padding: 4px 14px;
+    border-radius: 40px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fbbf24;
+  }
+
+  /* ── Navigation Menu ── */
+  .nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #b0b9cc;
+    font-weight: 500;
+    font-size: 15px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+
+  .nav-item:hover {
+    background: rgba(59, 130, 246, 0.06);
+    border-color: rgba(59, 130, 246, 0.12);
+    color: #f5f7fa;
+  }
+
+  .nav-item.active {
+    background: rgba(59, 130, 246, 0.08);
+    color: #f5f7fa;
+    border-color: rgba(59, 130, 246, 0.15);
+  }
+
+  .nav-item .icon {
+    font-size: 20px;
+    width: 28px;
+    text-align: center;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  .nav-item:hover .icon,
+  .nav-item.active .icon {
+    opacity: 1;
+  }
+
+  .nav-item .text {
+    flex: 1;
+  }
+
+  .nav-item .badge {
+    background: #3b82f6;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 40px;
+  }
+
+  .nav-divider {
+    height: 1px;
+    background: rgba(42, 47, 58, 0.3);
+    margin: 8px 14px;
+  }
+
+  /* ── Daily Check-in ── */
+  .checkin-card {
+    text-align: center;
+    padding: 20px 22px 22px;
+  }
+
+  .checkin-card .icon {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .checkin-card h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #f5f7fa;
+    margin: 0 0 4px;
+  }
+
+  .checkin-card p {
+    font-size: 14px;
+    color: #8b95a9;
+    margin: 0 0 16px;
+  }
+
+  .checkin-btn {
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 40px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: "Inter", sans-serif;
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25);
+  }
+
+  .checkin-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.35);
+  }
+
+  .checkin-btn:active {
+    transform: translateY(0);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 1100px) {
+    .sidebar {
+      flex: 0 0 320px;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .sidebar {
+      flex: 1;
+      position: static;
+      width: 100%;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    .sidebar .card {
+      flex: 1 1 calc(50% - 14px);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .sidebar .card {
+      flex: 1 1 100%;
+    }
+    .card-inner {
+      padding: 18px 16px 16px;
+    }
+    .nav-item {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+    .profile-name h3 {
+      font-size: 18px;
+    }
+  }
+</style>
+
+<!-- ─── SIDEBAR ─── -->
+<aside class="sidebar">
+
+
+
+  <!-- ─── NAVIGATION MENU ─── -->
+  <div class="card">
+    <div class="card-inner" style="padding-bottom: 8px;">
+      <div class="nav-menu">
+        <div style="display: flex;align-items: center;gap: 10px;margin-bottom: 20px;">
+          <img style="width: 50px;height: 50px;border-radius: 50px;" src="https://images.unsplash.com/photo-1781572725438-ac8c41476752?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="">
+          <div>
+            <p>Prince Paswan</p>
+            <p class="subtitle">Semester 3 • BCA AI</p>
+          </div>
+        </div>
+        
+        <a href="{% url 'home' %}" class="nav-item active">
+          <span class="icon">🏠</span>
+          <span class="text">Home</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="icon">👥</span>
+          <span class="text">Discover People</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="icon">📝</span>
+          <span class="text">Posts</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="icon">📄</span>
+          <span class="text">Personal Posts</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="icon">🏆</span>
+          <span class="text">Leaderboard</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="icon">📅</span>
+          <span class="text">Events</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="icon">🎓</span>
+          <span class="text">Clubs</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="icon">💬</span>
+          <span class="text">Messages</span>
+          <span class="badge">3</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="icon">🔔</span>
+          <span class="text">Notifications</span>
+          <span class="badge">5</span>
+        </a>
+
+        <div class="nav-divider"></div>
+
+        <a href="#" class="nav-item">
+          <span class="icon">👤</span>
+          <span class="text">My Profile</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="icon">⚙️</span>
+          <span class="text">Settings</span>
+        </a>
+        <a href="#" class="nav-item" style="color: #ef4444;">
+          <span class="icon">🚪</span>
+          <span class="text">Logout</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── DAILY CHECK-IN ─── -->
+  <div class="card">
+    <div class="checkin-card">
+      <span class="icon">📆</span>
+      <h4>Daily Check-in</h4>
+      <p>Check in daily and earn bonus score!</p>
+      <button class="checkin-btn">✅ Check In</button>
+    </div>
+  </div>
+
+</aside>

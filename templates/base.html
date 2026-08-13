@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head %}{% endblock %}
+</head>
+<body style="background-color: #0F1117; color: white;font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+
+    {% include 'components/navbar.html' %}
+
+    {% block content %}{% endblock %}
+
+</body>
+</html>

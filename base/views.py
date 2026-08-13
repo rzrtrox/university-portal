@@ -5,4 +5,8 @@ def index(request):
 
 
 def home(request):
-    return render(request, "home.html")
+    return render(request, "home/index.html")
+
+
+def profile(request):
+    return render(request, "profile/index.html")

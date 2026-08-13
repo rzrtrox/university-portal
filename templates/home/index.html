@@ -1,0 +1,708 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<style>
+  /* ── Feed specific styles ── */
+  .feed-container {
+    width: 100%;
+    min-height: 100vh;
+    background: #0f1117;
+  }
+
+  .feed-grid {
+    max-width: 1450px;
+    margin: 0 auto;
+    padding: 25px;
+    display: grid;
+    grid-template-columns: 260px 1fr 300px;
+    gap: 25px;
+    align-items: start;
+  }
+
+  /* ── Create Post ── */
+  .create-post {
+    background: rgba(22, 27, 34, 0.5);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(42, 47, 58, 0.55);
+    border-radius: 20px;
+    padding: 20px 20px 16px;
+    transition:
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .create-post:hover {
+    border-color: rgba(59, 130, 246, 0.12);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .create-post .top-row {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .create-post .avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid #3b82f6;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: #1a1d24;
+  }
+
+  .create-post .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .create-post .input-wrap {
+    flex: 1;
+    background: rgba(15, 17, 23, 0.6);
+    border: 1px solid #2a2f3a;
+    border-radius: 40px;
+    padding: 0 18px;
+    transition:
+      border 0.2s,
+      box-shadow 0.2s;
+  }
+
+  .create-post .input-wrap:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+  }
+
+  .create-post .input-wrap input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #f5f7fa;
+    font-size: 15px;
+    padding: 12px 0;
+    font-family: "Inter", sans-serif;
+  }
+
+  .create-post .input-wrap input::placeholder {
+    color: #4b5563;
+    font-weight: 400;
+  }
+
+  .create-post .actions-row {
+    display: flex;
+    gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(42, 47, 58, 0.3);
+    flex-wrap: wrap;
+  }
+
+  .create-post .actions-row button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    color: #8b95a9;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: "Inter", sans-serif;
+  }
+
+  .create-post .actions-row button:hover {
+    background: rgba(59, 130, 246, 0.06);
+    color: #f5f7fa;
+  }
+
+  .create-post .actions-row button .icon {
+    font-size: 18px;
+  }
+
+  /* ── Post Card ── */
+  .post-card {
+    background: rgba(22, 27, 34, 0.7);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(42, 47, 58, 0.55);
+    border-radius: 20px;
+    padding: 20px 20px 14px;
+    transition:
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .post-card:hover {
+    border-color: rgba(59, 130, 246, 0.1);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
+  }
+
+  .post-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .post-header .avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid #2a2f3a;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: #1a1d24;
+    transition: border-color 0.2s;
+  }
+
+  .post-header .avatar:hover {
+    border-color: #3b82f6;
+  }
+
+  .post-header .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .post-header .info {
+    flex: 1;
+  }
+
+  .post-header .info .name {
+    font-weight: 600;
+    color: #f5f7fa;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .post-header .info .name .badge {
+    background: #3b82f6;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 40px;
+    color: #fff;
+    letter-spacing: 0.3px;
+  }
+
+  .post-header .info .timestamp {
+    font-size: 13px;
+    color: #6b7a8f;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .post-header .info .timestamp .dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #4b5563;
+  }
+
+  .post-header .more-btn {
+    background: transparent;
+    border: none;
+    color: #6b7a8f;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+
+  .post-header .more-btn:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: #f5f7fa;
+  }
+
+  .post-content {
+    margin-bottom: 16px;
+  }
+
+  .post-content p {
+    color: #d0d7de;
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0 0 14px 0;
+    word-break: break-word;
+  }
+
+  .post-content .post-image {
+    border-radius: 16px;
+    overflow: hidden;
+    background: #0f1117;
+    border: 1px solid #2a2f3a;
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .post-content .post-image:hover {
+    border-color: #3b82f6;
+  }
+
+  .post-content .post-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    max-height: 480px;
+  }
+
+  .post-stats {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0 12px;
+    border-bottom: 1px solid rgba(42, 47, 58, 0.3);
+    font-size: 14px;
+    color: #6b7a8f;
+  }
+
+  .post-stats .left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .post-stats .left .heart-icon {
+    color: #ef4444;
+  }
+
+  .post-stats .right {
+    display: flex;
+    gap: 16px;
+  }
+
+  .post-stats .right span {
+    cursor: default;
+  }
+
+  .post-actions {
+    display: flex;
+    gap: 8px;
+    padding-top: 12px;
+  }
+
+  .post-actions button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    color: #8b95a9;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 10px 0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: "Inter", sans-serif;
+  }
+
+  .post-actions button:hover {
+    background: rgba(59, 130, 246, 0.06);
+    color: #f5f7fa;
+  }
+
+  .post-actions button.liked {
+    color: #3b82f6;
+  }
+
+  .post-actions button .icon {
+    font-size: 20px;
+  }
+  /* ── Stories Container ── */
+  .stories-container {
+    background: rgba(22, 27, 34, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(42, 47, 58, 0.4);
+    border-radius: 20px;
+    padding: 16px 18px;
+    transition: border-color 0.3s ease;
+  }
+
+  .stories-container:hover {
+    border-color: rgba(139, 92, 246, 0.15);
+  }
+
+  .stories-scroll {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    padding: 4px 2px 8px 2px;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+
+  .stories-scroll::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
+  .story-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .story-item:hover {
+    transform: scale(1.04);
+  }
+
+  .story-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    padding: 3px;
+    background: #2a2f3a;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .story-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    background: #0f1117;
+  }
+
+  /* Gradient ring for unseen stories */
+  .story-avatar.has-story {
+    background: linear-gradient(135deg, #8b5cf6, #3b82f6, #ec4899);
+    padding: 3px;
+    border: none;
+  }
+
+  .story-avatar.has-story img {
+    border: 2px solid #0f1117;
+  }
+
+  /* Your Story with "+" button */
+  .story-avatar.your-story {
+    background: #2a2f3a;
+    border: 2px dashed #4b5563;
+    padding: 0;
+    position: relative;
+  }
+
+  .story-avatar.your-story img {
+    border: none;
+  }
+
+  .add-story {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 22px;
+    height: 22px;
+    background: #3b82f6;
+    border-radius: 50%;
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: center;
+    border: 2px solid #0f1117;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  }
+
+  .story-name {
+    font-size: 12px;
+    color: #b0b9cc;
+    font-weight: 500;
+    text-align: center;
+    max-width: 64px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── Responsive tweaks ── */
+  @media (max-width: 600px) {
+    .stories-container {
+      padding: 12px 12px;
+      border-radius: 16px;
+    }
+    .story-avatar {
+      width: 50px;
+      height: 50px;
+    }
+    .story-avatar img {
+      width: 50px;
+      height: 50px;
+    }
+    .story-name {
+      font-size: 11px;
+      max-width: 54px;
+    }
+    .add-story {
+      width: 20px;
+      height: 20px;
+      font-size: 16px;
+      line-height: 20px;
+    }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 1100px) {
+    .feed-grid {
+      grid-template-columns: 240px 1fr 260px;
+      gap: 20px;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .feed-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+      padding: 16px;
+    }
+    /* Hide sidebars on mobile? They'll be handled by their own responsive styles */
+  }
+
+  @media (max-width: 480px) {
+    .create-post .actions-row button {
+      font-size: 13px;
+      padding: 4px 10px;
+    }
+    .create-post .actions-row button .icon {
+      font-size: 16px;
+    }
+    .post-header .info .name {
+      font-size: 15px;
+    }
+    .post-content p {
+      font-size: 14px;
+    }
+    .post-actions button {
+      font-size: 14px;
+    }
+  }
+</style>
+
+<div class="feed-container">
+  <div class="feed-grid">
+    <!-- Left Sidebar -->
+    {% include 'components/sidebar.html' %}
+    <!-- ─── STORIES ─── -->
+   <div>
+     <div class="stories-container">
+      <div class="stories-scroll">
+        <!-- Your Story -->
+        <div class="story-item">
+          <div class="story-avatar your-story">
+            <img
+              src="https://placehold.co/60/3B82F6/FFFFFF?text=P"
+              alt="Your story"
+            />
+            <div class="add-story">+</div>
+          </div>
+          <span class="story-name">Your Story</span>
+        </div>
+
+        <!-- Friend 1 -->
+        <div class="story-item">
+          <div class="story-avatar has-story">
+            <img
+              src="https://placehold.co/60/8B5CF6/FFFFFF?text=R"
+              alt="Rahul"
+            />
+          </div>
+          <span class="story-name">Rahul</span>
+        </div>
+
+        <!-- Friend 2 -->
+        <div class="story-item">
+          <div class="story-avatar has-story">
+            <img
+              src="https://placehold.co/60/8B5CF6/FFFFFF?text=P"
+              alt="Priya"
+            />
+          </div>
+          <span class="story-name">Priya</span>
+        </div>
+
+        <!-- Friend 3 -->
+        <div class="story-item">
+          <div class="story-avatar has-story">
+            <img
+              src="https://placehold.co/60/8B5CF6/FFFFFF?text=A"
+              alt="Aman"
+            />
+          </div>
+          <span class="story-name">Aman</span>
+        </div>
+
+        <!-- Friend 4 -->
+        <div class="story-item">
+          <div class="story-avatar has-story">
+            <img
+              src="https://placehold.co/60/8B5CF6/FFFFFF?text=N"
+              alt="Neha"
+            />
+          </div>
+          <span class="story-name">Neha</span>
+        </div>
+
+        <!-- Friend 5 -->
+        <div class="story-item">
+          <div class="story-avatar">
+            <img
+              src="https://placehold.co/60/1A1D24/8B95A9?text=S"
+              alt="Sarthak"
+            />
+          </div>
+          <span class="story-name">Sarthak</span>
+        </div>
+
+        <!-- More friends (scrollable) -->
+        <div class="story-item">
+          <div class="story-avatar">
+            <img
+              src="https://placehold.co/60/1A1D24/8B95A9?text=AK"
+              alt="Ankit"
+            />
+          </div>
+          <span class="story-name">Ankit</span>
+        </div>
+        <div class="story-item">
+          <div class="story-avatar has-story">
+            <img
+              src="https://placehold.co/60/8B5CF6/FFFFFF?text=SM"
+              alt="Sneha"
+            />
+          </div>
+          <span class="story-name">Sneha</span>
+        </div>
+      </div>
+    </div>
+<br>
+    <!-- ─── FEED ─── -->
+    <main style="display: flex; flex-direction: column; gap: 24px">
+      <!-- Create Post -->
+      <div class="create-post">
+        <div class="top-row">
+          <div class="avatar">
+            <!-- Replace with actual user avatar -->
+            <img
+              src="https://placehold.co/44/3B82F6/FFFFFF?text=P"
+              alt="Your avatar"
+            />
+          </div>
+          <div class="input-wrap">
+            <input type="text" placeholder="What's on your mind, Prince?" />
+          </div>
+        </div>
+        <div class="actions-row">
+          <button><span class="icon">📸</span> Photo</button>
+          <button><span class="icon">🎥</span> Video</button>
+          <button><span class="icon">📍</span> Check-in</button>
+          <button
+            style="
+              margin-left: auto;
+              background: #3b82f6;
+              color: #fff;
+              padding: 6px 20px;
+              border-radius: 40px;
+              font-weight: 600;
+            "
+          >
+            Post
+          </button>
+        </div>
+      </div>
+
+      <!-- ─── DEMO POST ─── -->
+      <div class="post-card">
+        <!-- Post Header -->
+        <div class="post-header">
+          <div class="avatar">
+            <img
+              src="https://placehold.co/44/8B5CF6/FFFFFF?text=JD"
+              alt="John Doe"
+            />
+          </div>
+          <div class="info">
+            <div class="name">
+              John Doe
+              <span class="badge">🎓 Alumni</span>
+            </div>
+            <div class="timestamp">
+              <span>2 hours ago</span>
+              <span class="dot"></span>
+              <span>📍 Campus Center</span>
+            </div>
+          </div>
+          <button class="more-btn" aria-label="More options">⋯</button>
+        </div>
+
+        <!-- Post Content -->
+        <div class="post-content">
+          <p>
+            Just finished an incredible hackathon weekend! 🚀 Built a real-time
+            campus event finder with my team — we're calling it
+            <strong>EventHub</strong>. Huge shoutout to the AI Club for
+            organizing such a smooth event. Can't wait for the next one!
+            <br /><br />
+            #Hackathon #AI #CampusLife #EventHub
+          </p>
+          <div class="post-image">
+            <img
+              src="https://placehold.co/800x450/1A1D24/3B82F6?text=Hackathon+2026+%E2%80%A2+Team+Photo"
+              alt="Hackathon team"
+            />
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="post-stats">
+          <div class="left">
+            <span class="heart-icon">❤️</span>
+            <span>124</span>
+            <span style="margin-left: 8px">💬 18</span>
+          </div>
+          <div class="right">
+            <span>🔁 12</span>
+            <span>📌 5</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="post-actions">
+          <button class="liked"><span class="icon">❤️</span> Like</button>
+          <button><span class="icon">💬</span> Comment</button>
+          <button><span class="icon">🔁</span> Share</button>
+        </div>
+      </div>
+
+      <!-- Additional posts can be added here -->
+    </main>
+   </div>
+
+    <!-- Right Sidebar -->
+    {% include 'components/right_sidebar.html' %}
+  </div>
+</div>
+
+{% endblock %}
