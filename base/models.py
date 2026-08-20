@@ -29,10 +29,6 @@ class Profile(models.Model):
         choices=RELATIONSHIP,
         default="private"
     )
-    date_of_birth = models.DateField(
-        blank=True,
-        null=True
-    )
     created_at = models.DateTimeField(
         auto_now_add=True
     )

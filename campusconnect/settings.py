@@ -25,9 +25,17 @@ SECRET_KEY = "django-insecure-h=6-#%9v%wfms((1syfc99n1gwp*^^eoq*r$pvd&lco=q$r5ut
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    ".app.github.dev",
+]
 
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://localhost:8000",
+    "http://localhost:8000",
+    "https://cuddly-xylophone-w696vvq579vf54jg-8000.app.github.dev",
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -35,7 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    "django.contrib.messages",
+    "django.contrib.messages", 
     "django.contrib.staticfiles",
     "base.apps.BaseConfig"
 ]

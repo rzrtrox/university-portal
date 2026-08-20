@@ -1,12 +1,15 @@
-from django.shortcuts import render
-
+from django.shortcuts import render,get_object_or_404
+from .models import Profile
 def index(request):
     return render(request, "index.html")
 
 
 def home(request):
-    return render(request, "home/index.html")
+    print("Username",request.user.username)
+    username = request.user.username
+    return render(request, "home/index.html",{"username":username})
 
 
-def profile(request):
-    return render(request, "profile/index.html")
+def profile(request,username):
+    profile_obj = Profile.objects.get(username__username=username)
+    return render(request, "profile/index.html",{"profile":profile_obj})
