@@ -16,6 +16,7 @@ class Profile(models.Model):
         ("private", "Prefer not to say"),
     ]
     username = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    profile_pic = models.ImageField(upload_to="profile_pic/",blank=True, null=True)
     bio = models.TextField(blank=True)
     birth_date = models.DateField(null=True, blank=True)
     program = models.CharField(max_length=100, blank=True)

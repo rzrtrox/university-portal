@@ -7,4 +7,3 @@ urlpatterns = [
     path("profile/<str:username>/",views.profile, name="profile")
 
 ]
- 
