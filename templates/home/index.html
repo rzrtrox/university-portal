@@ -1,708 +1,968 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
-
-<style>
-  /* ── Feed specific styles ── */
-  .feed-container {
-    width: 100%;
-    min-height: 100vh;
-    background: #0f1117;
-  }
-
-  .feed-grid {
-    max-width: 1450px;
-    margin: 0 auto;
-    padding: 25px;
-    display: grid;
-    grid-template-columns: 260px 1fr 300px;
-    gap: 25px;
-    align-items: start;
-  }
-
-  /* ── Create Post ── */
-  .create-post {
-    background: rgba(22, 27, 34, 0.5);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(42, 47, 58, 0.55);
-    border-radius: 20px;
-    padding: 20px 20px 16px;
-    transition:
-      border-color 0.3s ease,
-      box-shadow 0.3s ease;
-  }
-
-  .create-post:hover {
-    border-color: rgba(59, 130, 246, 0.12);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
-  }
-
-  .create-post .top-row {
-    display: flex;
-    gap: 14px;
-    align-items: center;
-    margin-bottom: 14px;
-  }
-
-  .create-post .avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 2px solid #3b82f6;
-    flex-shrink: 0;
-    overflow: hidden;
-    background: #1a1d24;
-  }
-
-  .create-post .avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .create-post .input-wrap {
-    flex: 1;
-    background: rgba(15, 17, 23, 0.6);
-    border: 1px solid #2a2f3a;
-    border-radius: 40px;
-    padding: 0 18px;
-    transition:
-      border 0.2s,
-      box-shadow 0.2s;
-  }
-
-  .create-post .input-wrap:focus-within {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
-  }
-
-  .create-post .input-wrap input {
-    width: 100%;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: #f5f7fa;
-    font-size: 15px;
-    padding: 12px 0;
-    font-family: "Inter", sans-serif;
-  }
-
-  .create-post .input-wrap input::placeholder {
-    color: #4b5563;
-    font-weight: 400;
-  }
-
-  .create-post .actions-row {
-    display: flex;
-    gap: 12px;
-    padding-top: 14px;
-    border-top: 1px solid rgba(42, 47, 58, 0.3);
-    flex-wrap: wrap;
-  }
-
-  .create-post .actions-row button {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: transparent;
-    border: none;
-    color: #8b95a9;
-    font-size: 14px;
-    font-weight: 500;
-    padding: 6px 14px;
-    border-radius: 40px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-family: "Inter", sans-serif;
-  }
-
-  .create-post .actions-row button:hover {
-    background: rgba(59, 130, 246, 0.06);
-    color: #f5f7fa;
-  }
-
-  .create-post .actions-row button .icon {
-    font-size: 18px;
-  }
-
-  /* ── Post Card ── */
-  .post-card {
-    background: rgba(22, 27, 34, 0.7);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(42, 47, 58, 0.55);
-    border-radius: 20px;
-    padding: 20px 20px 14px;
-    transition:
-      border-color 0.3s ease,
-      box-shadow 0.3s ease;
-  }
-
-  .post-card:hover {
-    border-color: rgba(59, 130, 246, 0.1);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
-  }
-
-  .post-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 14px;
-  }
-
-  .post-header .avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 2px solid #2a2f3a;
-    flex-shrink: 0;
-    overflow: hidden;
-    background: #1a1d24;
-    transition: border-color 0.2s;
-  }
-
-  .post-header .avatar:hover {
-    border-color: #3b82f6;
-  }
-
-  .post-header .avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .post-header .info {
-    flex: 1;
-  }
-
-  .post-header .info .name {
-    font-weight: 600;
-    color: #f5f7fa;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .post-header .info .name .badge {
-    background: #3b82f6;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 10px;
-    border-radius: 40px;
-    color: #fff;
-    letter-spacing: 0.3px;
-  }
-
-  .post-header .info .timestamp {
-    font-size: 13px;
-    color: #6b7a8f;
-    margin-top: 2px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .post-header .info .timestamp .dot {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: #4b5563;
-  }
-
-  .post-header .more-btn {
-    background: transparent;
-    border: none;
-    color: #6b7a8f;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 8px;
-    transition: all 0.2s;
-  }
-
-  .post-header .more-btn:hover {
-    background: rgba(255, 255, 255, 0.04);
-    color: #f5f7fa;
-  }
-
-  .post-content {
-    margin-bottom: 16px;
-  }
-
-  .post-content p {
-    color: #d0d7de;
-    font-size: 15px;
-    line-height: 1.6;
-    margin: 0 0 14px 0;
-    word-break: break-word;
-  }
-
-  .post-content .post-image {
-    border-radius: 16px;
-    overflow: hidden;
-    background: #0f1117;
-    border: 1px solid #2a2f3a;
-    margin-bottom: 4px;
-    cursor: pointer;
-    transition: border-color 0.2s;
-  }
-
-  .post-content .post-image:hover {
-    border-color: #3b82f6;
-  }
-
-  .post-content .post-image img {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: cover;
-    max-height: 480px;
-  }
-
-  .post-stats {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0 12px;
-    border-bottom: 1px solid rgba(42, 47, 58, 0.3);
-    font-size: 14px;
-    color: #6b7a8f;
-  }
-
-  .post-stats .left {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .post-stats .left .heart-icon {
-    color: #ef4444;
-  }
-
-  .post-stats .right {
-    display: flex;
-    gap: 16px;
-  }
-
-  .post-stats .right span {
-    cursor: default;
-  }
-
-  .post-actions {
-    display: flex;
-    gap: 8px;
-    padding-top: 12px;
-  }
-
-  .post-actions button {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: transparent;
-    border: none;
-    color: #8b95a9;
-    font-size: 15px;
-    font-weight: 500;
-    padding: 10px 0;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-family: "Inter", sans-serif;
-  }
-
-  .post-actions button:hover {
-    background: rgba(59, 130, 246, 0.06);
-    color: #f5f7fa;
-  }
-
-  .post-actions button.liked {
-    color: #3b82f6;
-  }
-
-  .post-actions button .icon {
-    font-size: 20px;
-  }
-  /* ── Stories Container ── */
-  .stories-container {
-    background: rgba(22, 27, 34, 0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(42, 47, 58, 0.4);
-    border-radius: 20px;
-    padding: 16px 18px;
-    transition: border-color 0.3s ease;
-  }
-
-  .stories-container:hover {
-    border-color: rgba(139, 92, 246, 0.15);
-  }
-
-  .stories-scroll {
-    display: flex;
-    gap: 18px;
-    overflow-x: auto;
-    padding: 4px 2px 8px 2px;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
-  }
-
-  .stories-scroll::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
-  }
-
-  .story-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-  }
-
-  .story-item:hover {
-    transform: scale(1.04);
-  }
-
-  .story-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    padding: 3px;
-    background: #2a2f3a;
-    position: relative;
-    flex-shrink: 0;
-  }
-
-  .story-avatar img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-    background: #0f1117;
-  }
-
-  /* Gradient ring for unseen stories */
-  .story-avatar.has-story {
-    background: linear-gradient(135deg, #8b5cf6, #3b82f6, #ec4899);
-    padding: 3px;
-    border: none;
-  }
-
-  .story-avatar.has-story img {
-    border: 2px solid #0f1117;
-  }
-
-  /* Your Story with "+" button */
-  .story-avatar.your-story {
-    background: #2a2f3a;
-    border: 2px dashed #4b5563;
-    padding: 0;
-    position: relative;
-  }
-
-  .story-avatar.your-story img {
-    border: none;
-  }
-
-  .add-story {
-    position: absolute;
-    bottom: -2px;
-    right: -2px;
-    width: 22px;
-    height: 22px;
-    background: #3b82f6;
-    border-radius: 50%;
-    color: #fff;
-    font-weight: 700;
-    font-size: 18px;
-    line-height: 22px;
-    text-align: center;
-    border: 2px solid #0f1117;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-  }
-
-  .story-name {
-    font-size: 12px;
-    color: #b0b9cc;
-    font-weight: 500;
-    text-align: center;
-    max-width: 64px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* ── Responsive tweaks ── */
-  @media (max-width: 600px) {
-    .stories-container {
-      padding: 12px 12px;
-      border-radius: 16px;
+  <style>
+    /* Color Tokens based on screenshot */
+    :root {
+      --bg-body: #090a0f;
+      --bg-header: #0f1017;
+      --bg-card: #13141f;
+      --bg-card-hover: #1a1b28;
+      --bg-input: #181924;
+      --border-color: #1f202e;
+      --accent-purple: #7c3aed;
+      --accent-purple-light: #a855f7;
+      --accent-purple-dark: #271d47;
+      --accent-red: #ef4444;
+      --text-main: #ffffff;
+      --text-muted: #7e8194;
+      --text-sub: #9ea1b5;
+      --gold: #f59e0b;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
     }
-    .story-avatar {
-      width: 50px;
-      height: 50px;
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
-    .story-avatar img {
-      width: 50px;
-      height: 50px;
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 3.5rem; /* Mobile bar offset */
     }
-    .story-name {
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 60px;
+      background-color: var(--bg-header);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .brand-crown {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z'/%3E%3C/svg%3E") center/contain no-repeat;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z'/%3E%3C/svg%3E") center/contain no-repeat;
+    }
+
+    .search-container {
+      flex: 1;
+      max-width: 440px;
+      margin: 0 2rem;
+      position: relative;
+    }
+
+    .search-container input {
+      width: 100%;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 0.55rem 1rem 0.55rem 2.4rem;
+      color: #fff;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .search-container input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .icon-btn {
+      position: relative;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-btn.active {
+      color: var(--accent-purple-light);
+    }
+
+    .badge-count {
+      position: absolute;
+      top: -5px;
+      right: -7px;
+      background-color: var(--accent-red);
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 1px 5px;
+    }
+
+    .user-avatar-header {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    /* MAIN APP LAYOUT GRID */
+    .app-layout {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr) 290px;
+      gap: 1.25rem;
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem;
+    }
+
+    /* CARD STYLING */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    /* LEFT SIDEBAR */
+    .profile-card {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 0.75rem;
+    }
+
+    .profile-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .profile-info h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .profile-info p {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .rating-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background-color: rgba(245, 158, 11, 0.12);
+      color: var(--gold);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 10px;
+      margin-top: 3px;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.6rem 0.8rem;
+      color: var(--text-sub);
+      text-decoration: none;
+      font-size: 0.85rem;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .nav-link:hover {
+      background-color: var(--bg-card-hover);
+      color: #fff;
+    }
+
+    .nav-item.active .nav-link {
+      background-color: var(--accent-purple-dark);
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .nav-badge-purple {
+      margin-left: auto;
+      background-color: var(--accent-purple);
+      color: white;
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+
+    .nav-badge-red {
+      margin-left: auto;
+      background-color: var(--accent-red);
+      color: white;
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+
+    /* DAILY CHECKIN BOX */
+    .daily-card {
+      background: linear-gradient(180deg, #18152b 0%, var(--bg-card) 100%);
+      border: 1px solid rgba(124, 58, 237, 0.25);
+      position: relative;
+    }
+
+    .daily-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .daily-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .daily-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-bottom: 0.8rem;
+      line-height: 1.3;
+    }
+
+    .flame-icon {
+      font-size: 1.8rem;
+    }
+
+    .btn-checkin {
+      width: 100%;
+      background-color: var(--accent-purple);
+      color: white;
+      border: none;
+      padding: 0.55rem;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    /* MIDDLE FEED AREA */
+    .stories-bar {
+      display: flex;
+      gap: 0.9rem;
+      overflow-x: auto;
+      padding-bottom: 0.25rem;
+      scrollbar-width: none;
+    }
+
+    .stories-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .story-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .story-ring {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      padding: 2px;
+      background: linear-gradient(45deg, #a855f7, #ec4899);
+      position: relative;
+    }
+
+    .story-ring.add-story {
+      background: var(--border-color);
+    }
+
+    .story-plus {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: var(--accent-purple);
+      color: white;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 11px;
-      max-width: 54px;
+      border: 2px solid var(--bg-card);
     }
-    .add-story {
-      width: 20px;
-      height: 20px;
-      font-size: 16px;
-      line-height: 20px;
-    }
-  }
 
-  /* ── Responsive ── */
-  @media (max-width: 1100px) {
-    .feed-grid {
-      grid-template-columns: 240px 1fr 260px;
-      gap: 20px;
+    .story-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--bg-card);
     }
-  }
 
-  @media (max-width: 860px) {
-    .feed-grid {
-      grid-template-columns: 1fr;
-      gap: 24px;
-      padding: 16px;
+    .story-name {
+      font-size: 0.72rem;
+      color: var(--text-sub);
     }
-    /* Hide sidebars on mobile? They'll be handled by their own responsive styles */
-  }
 
-  @media (max-width: 480px) {
-    .create-post .actions-row button {
-      font-size: 13px;
-      padding: 4px 10px;
+    /* CREATE POST CARD */
+    .create-post-top {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.8rem;
     }
-    .create-post .actions-row button .icon {
-      font-size: 16px;
-    }
-    .post-header .info .name {
-      font-size: 15px;
-    }
-    .post-content p {
-      font-size: 14px;
-    }
-    .post-actions button {
-      font-size: 14px;
-    }
-  }
-</style>
 
-<div class="feed-container">
-  <div class="feed-grid">
+    .input-placeholder {
+      flex: 1;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 0.55rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+
+    .create-actions {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--border-color);
+      padding-top: 0.75rem;
+    }
+
+    .create-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--text-sub);
+      cursor: pointer;
+    }
+
+    .icon-photo { color: #22c55e; }
+    .icon-video { color: #a855f7; }
+    .icon-event { color: #f97316; }
+    .icon-poll  { color: #3b82f6; }
+
+    /* FEED POST CARD */
+    .post-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-author {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .post-author-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .post-author-info h5 {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .post-author-info p {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .post-more {
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .post-text {
+      font-size: 0.85rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
+    }
+
+    .post-media-container {
+      width: 100%;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin-bottom: 0.75rem;
+      max-height: 380px;
+    }
+
+    .post-media-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .post-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding-top: 0.25rem;
+    }
+
+    .post-stats {
+      display: flex;
+      gap: 1.25rem;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      cursor: pointer;
+    }
+
+    .stat-item.liked {
+      color: #ef4444;
+    }
+
+    /* RIGHT SIDEBAR */
+    .section-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .section-title-row h5 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .view-all-link {
+      font-size: 0.72rem;
+      color: var(--accent-purple-light);
+      text-decoration: none;
+    }
+
+    .widget-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .widget-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .widget-left {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .crown-icon {
+      font-size: 0.85rem;
+    }
+
+    .widget-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .widget-info h6 {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .widget-info p {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .widget-score {
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: var(--gold);
+    }
+
+    /* LEADERBOARD ITEM RANK BOXES */
+    .rank-box {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .rank-1 { background-color: #f59e0b; color: #000; }
+    .rank-2 { background-color: #94a3b8; color: #000; }
+    .rank-3 { background-color: #d97706; color: #fff; }
+    .rank-num { font-size: 0.75rem; color: var(--text-muted); width: 18px; text-align: center; }
+
+    /* EVENT WIDGET ITEM */
+    .event-card-item {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .event-thumb {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+    }
+
+    .event-meta h6 {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .event-meta p {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* MOBILE NAVIGATION BOTTOM BAR */
+    .mobile-bottom-bar {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 52px;
+      background-color: var(--bg-header);
+      border-top: 1px solid var(--border-color);
+      z-index: 100;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .mobile-tab {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.7rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .mobile-tab.active {
+      color: var(--accent-purple-light);
+    }
+
+    /* RESPONSIVE BREAKPOINTS */
+
+    /* Laptop Layout Adjustment */
+    @media (max-width: 1100px) {
+      .app-layout {
+        grid-template-columns: 220px minmax(0, 1fr);
+      }
+      .sidebar-right {
+        display: none;
+      }
+    }
+
+    /* Mobile Responsive Single Column Layout */
+    @media (max-width: 768px) {
+      body {
+        padding-bottom: 52px;
+      }
+
+      .app-layout {
+        grid-template-columns: 1fr;
+        padding: 0.75rem;
+      }
+
+      .sidebar-left {
+        display: none;
+      }
+
+      .search-container {
+        display: none;
+      }
+
+      header {
+        padding: 0 1rem;
+      }
+
+      .mobile-bottom-bar {
+        display: flex;
+      }
+    }
+  </style>
+
+  <!-- App Layout Grid -->
+  <div class="app-layout">
+
     <!-- Left Sidebar -->
-    {% include 'components/sidebar.html' %}
-    <!-- ─── STORIES ─── -->
-   <div>
-     <div class="stories-container">
-      <div class="stories-scroll">
-        <!-- Your Story -->
+    <aside class="sidebar-left">
+      <div class="card">
+        <div class="profile-card">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" class="profile-avatar" alt="Atharv Tigadi" />
+          <div class="profile-info">
+            <h4>Atharv Tigadi</h4>
+            <p>Semester 1 • BCA AI</p>
+            <div class="rating-badge">⭐ 9.6</div>
+          </div>
+        </div>
+
+        <ul class="nav-list">
+          <li class="nav-item active">
+            <a href="#" class="nav-link"><span>🏠</span> Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link"><span>👥</span> Discover People</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link"><span>📜</span> Posts</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link"><span>📝</span> Personal Posts</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link"><span>🏆</span> Leaderboard</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link"><span>📅</span> Events</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link"><span>👨‍👩‍👧‍👦</span> Clubs</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link"><span>💬</span> Messages <span class="nav-badge-purple">12</span></a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link"><span>🔔</span> Notifications <span class="nav-badge-red">3</span></a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link"><span>👤</span> My Profile</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link"><span>⚙️</span> Settings</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link"><span>🚪</span> Logout</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Daily Check-in Card -->
+      <div class="card daily-card">
+        <div class="daily-content">
+          <div>
+            <div class="daily-title">Daily Check-in</div>
+            <div class="daily-sub">Check in daily and earn bonus score!</div>
+          </div>
+          <div class="flame-icon">🔥</div>
+        </div>
+        <button class="btn-checkin">Check In</button>
+      </div>
+    </aside>
+
+    <!-- Center Main Feed -->
+    <main class="feed-main">
+
+      <!-- Horizontal Stories Bar -->
+      <div class="card stories-bar">
         <div class="story-item">
-          <div class="story-avatar your-story">
-            <img
-              src="https://placehold.co/60/3B82F6/FFFFFF?text=P"
-              alt="Your story"
-            />
-            <div class="add-story">+</div>
+          <div class="story-ring add-story">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" class="story-img" alt="Your Story" />
+            <div class="story-plus">+</div>
           </div>
           <span class="story-name">Your Story</span>
         </div>
 
-        <!-- Friend 1 -->
         <div class="story-item">
-          <div class="story-avatar has-story">
-            <img
-              src="https://placehold.co/60/8B5CF6/FFFFFF?text=R"
-              alt="Rahul"
-            />
+          <div class="story-ring">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" class="story-img" alt="Riya" />
           </div>
-          <span class="story-name">Rahul</span>
+          <span class="story-name">Riya</span>
         </div>
 
-        <!-- Friend 2 -->
         <div class="story-item">
-          <div class="story-avatar has-story">
-            <img
-              src="https://placehold.co/60/8B5CF6/FFFFFF?text=P"
-              alt="Priya"
-            />
-          </div>
-          <span class="story-name">Priya</span>
-        </div>
-
-        <!-- Friend 3 -->
-        <div class="story-item">
-          <div class="story-avatar has-story">
-            <img
-              src="https://placehold.co/60/8B5CF6/FFFFFF?text=A"
-              alt="Aman"
-            />
+          <div class="story-ring">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" class="story-img" alt="Aman" />
           </div>
           <span class="story-name">Aman</span>
         </div>
 
-        <!-- Friend 4 -->
         <div class="story-item">
-          <div class="story-avatar has-story">
-            <img
-              src="https://placehold.co/60/8B5CF6/FFFFFF?text=N"
-              alt="Neha"
-            />
+          <div class="story-ring">
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80" class="story-img" alt="Neha" />
           </div>
           <span class="story-name">Neha</span>
         </div>
 
-        <!-- Friend 5 -->
         <div class="story-item">
-          <div class="story-avatar">
-            <img
-              src="https://placehold.co/60/1A1D24/8B95A9?text=S"
-              alt="Sarthak"
-            />
+          <div class="story-ring">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80" class="story-img" alt="Rahul" />
+          </div>
+          <span class="story-name">Rahul</span>
+        </div>
+
+        <div class="story-item">
+          <div class="story-ring">
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&auto=format&fit=crop&q=80" class="story-img" alt="Diya" />
+          </div>
+          <span class="story-name">Diya</span>
+        </div>
+
+        <div class="story-item">
+          <div class="story-ring">
+            <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&auto=format&fit=crop&q=80" class="story-img" alt="Sarthak" />
           </div>
           <span class="story-name">Sarthak</span>
         </div>
 
-        <!-- More friends (scrollable) -->
         <div class="story-item">
-          <div class="story-avatar">
-            <img
-              src="https://placehold.co/60/1A1D24/8B95A9?text=AK"
-              alt="Ankit"
-            />
+          <div class="story-ring add-story" style="display:flex; align-items:center; justify-content:center; color:var(--text-muted);">
+            •••
           </div>
-          <span class="story-name">Ankit</span>
-        </div>
-        <div class="story-item">
-          <div class="story-avatar has-story">
-            <img
-              src="https://placehold.co/60/8B5CF6/FFFFFF?text=SM"
-              alt="Sneha"
-            />
-          </div>
-          <span class="story-name">Sneha</span>
-        </div>
-      </div>
-    </div>
-<br>
-    <!-- ─── FEED ─── -->
-    <main style="display: flex; flex-direction: column; gap: 24px">
-      <!-- Create Post -->
-      <div class="create-post">
-        <div class="top-row">
-          <div class="avatar">
-            <!-- Replace with actual user avatar -->
-            <img
-              src="https://placehold.co/44/3B82F6/FFFFFF?text=P"
-              alt="Your avatar"
-            />
-          </div>
-          <div class="input-wrap">
-            <input type="text" placeholder="What's on your mind, Prince?" />
-          </div>
-        </div>
-        <div class="actions-row">
-          <button><span class="icon">📸</span> Photo</button>
-          <button><span class="icon">🎥</span> Video</button>
-          <button><span class="icon">📍</span> Check-in</button>
-          <button
-            style="
-              margin-left: auto;
-              background: #3b82f6;
-              color: #fff;
-              padding: 6px 20px;
-              border-radius: 40px;
-              font-weight: 600;
-            "
-          >
-            Post
-          </button>
+          <span class="story-name">More</span>
         </div>
       </div>
 
-      <!-- ─── DEMO POST ─── -->
-      <div class="post-card">
-        <!-- Post Header -->
+      <!-- Create Post Box -->
+      <div class="card create-post-box">
+        <div class="create-post-top">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" style="width:34px; height:34px; border-radius:50%; object-fit:cover;" alt="Avatar" />
+          <div class="input-placeholder">What's happening today?</div>
+        </div>
+
+        <div class="create-actions">
+          <div class="create-btn"><span class="icon-photo">🖼️</span> Photo</div>
+          <div class="create-btn"><span class="icon-video">🎥</span> Video</div>
+          <div class="create-btn"><span class="icon-event">📅</span> Event</div>
+          <div class="create-btn"><span class="icon-poll">📊</span> Poll</div>
+        </div>
+      </div>
+
+      <!-- Feed Post 1 (Aman Raj) -->
+      <div class="card">
         <div class="post-header">
-          <div class="avatar">
-            <img
-              src="https://placehold.co/44/8B5CF6/FFFFFF?text=JD"
-              alt="John Doe"
-            />
-          </div>
-          <div class="info">
-            <div class="name">
-              John Doe
-              <span class="badge">🎓 Alumni</span>
-            </div>
-            <div class="timestamp">
-              <span>2 hours ago</span>
-              <span class="dot"></span>
-              <span>📍 Campus Center</span>
+          <div class="post-author">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" class="post-author-avatar" alt="Aman Raj" />
+            <div class="post-author-info">
+              <h5>Aman Raj</h5>
+              <p>Semester 5 • B.Tech CSE &nbsp;&bull;&nbsp; 2h ago</p>
             </div>
           </div>
-          <button class="more-btn" aria-label="More options">⋯</button>
+          <div class="post-more">•••</div>
         </div>
 
-        <!-- Post Content -->
-        <div class="post-content">
-          <p>
-            Just finished an incredible hackathon weekend! 🚀 Built a real-time
-            campus event finder with my team — we're calling it
-            <strong>EventHub</strong>. Huge shoutout to the AI Club for
-            organizing such a smooth event. Can't wait for the next one!
-            <br /><br />
-            #Hackathon #AI #CampusLife #EventHub
-          </p>
-          <div class="post-image">
-            <img
-              src="https://placehold.co/800x450/1A1D24/3B82F6?text=Hackathon+2026+%E2%80%A2+Team+Photo"
-              alt="Hackathon team"
-            />
-          </div>
+        <div class="post-text">Sunset from the hostel terrace hits different! 🔥❤️</div>
+
+        <div class="post-media-container">
+          <img src="https://images.unsplash.com/photo-1616036740257-9449ea1f6605?w=1000&auto=format&fit=crop&q=80" alt="Hostel Terrace Sunset" />
         </div>
 
-        <!-- Stats -->
-        <div class="post-stats">
-          <div class="left">
-            <span class="heart-icon">❤️</span>
-            <span>124</span>
-            <span style="margin-left: 8px">💬 18</span>
+        <div class="post-footer">
+          <div class="post-stats">
+            <div class="stat-item liked">❤️ 124</div>
+            <div class="stat-item">💬 32</div>
           </div>
-          <div class="right">
-            <span>🔁 12</span>
-            <span>📌 5</span>
-          </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="post-actions">
-          <button class="liked"><span class="icon">❤️</span> Like</button>
-          <button><span class="icon">💬</span> Comment</button>
-          <button><span class="icon">🔁</span> Share</button>
+          <div class="stat-item">↪️ Share</div>
         </div>
       </div>
 
-      <!-- Additional posts can be added here -->
-    </main>
-   </div>
+      <!-- Feed Post 2 (Neha Singh) -->
+      <div class="card">
+        <div class="post-header">
+          <div class="post-author">
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80" class="post-author-avatar" alt="Neha Singh" />
+            <div class="post-author-info">
+              <h5>Neha Singh</h5>
+              <p>Semester 3 • BCA AI &nbsp;&bull;&nbsp; 5h ago</p>
+            </div>
+          </div>
+          <div class="post-more">•••</div>
+        </div>
 
-    <!-- Right Sidebar -->
-    {% include 'components/right_sidebar.html' %}
+        <div class="post-text">Coding at midnight > ❤️</div>
+      </div>
+
+    </main>
+
+    <!-- Right Sidebar Widgets -->
+    <aside class="sidebar-right">
+
+      <!-- Top This Week -->
+      <div class="card">
+        <div class="section-title-row">
+          <h5>🔥 Top This Week</h5>
+          <a href="#" class="view-all-link">View All</a>
+        </div>
+
+        <div class="widget-list">
+          <div class="widget-item">
+            <div class="widget-left">
+              <span class="crown-icon">👑</span>
+              <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80" class="widget-avatar" alt="Arjun Mehta" />
+              <div class="widget-info">
+                <h6>University Crush (M)</h6>
+                <p>Arjun Mehta</p>
+              </div>
+            </div>
+            <div class="widget-score">⭐ 9.2</div>
+          </div>
+
+          <div class="widget-item">
+            <div class="widget-left">
+              <span class="crown-icon">👑</span>
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" class="widget-avatar" alt="Riya Sharma" />
+              <div class="widget-info">
+                <h6>University Crush (F)</h6>
+                <p>Riya Sharma</p>
+              </div>
+            </div>
+            <div class="widget-score">⭐ 9.1</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard Widget -->
+      <div class="card">
+        <div class="section-title-row">
+          <h5>Leaderboard</h5>
+          <a href="#" class="view-all-link">View All</a>
+        </div>
+
+        <div class="widget-list">
+          <div class="widget-item">
+            <div class="widget-left">
+              <div class="rank-box rank-1">1</div>
+              <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80" class="widget-avatar" alt="Arjun Mehta" />
+              <div class="widget-info"><h6>Arjun Mehta</h6></div>
+            </div>
+            <div class="widget-score">9.2</div>
+          </div>
+
+          <div class="widget-item">
+            <div class="widget-left">
+              <div class="rank-box rank-2">2</div>
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" class="widget-avatar" alt="Riya Sharma" />
+              <div class="widget-info"><h6>Riya Sharma</h6></div>
+            </div>
+            <div class="widget-score">9.1</div>
+          </div>
+
+          <div class="widget-item">
+            <div class="widget-left">
+              <div class="rank-box rank-3">3</div>
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" class="widget-avatar" alt="Aman Raj" />
+              <div class="widget-info"><h6>Aman Raj</h6></div>
+            </div>
+            <div class="widget-score">8.9</div>
+          </div>
+
+          <div class="widget-item">
+            <div class="widget-left">
+              <span class="rank-num">4</span>
+              <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80" class="widget-avatar" alt="Neha Singh" />
+              <div class="widget-info"><h6>Neha Singh</h6></div>
+            </div>
+            <div class="widget-score">8.8</div>
+          </div>
+
+          <div class="widget-item">
+            <div class="widget-left">
+              <span class="rank-num">5</span>
+              <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&auto=format&fit=crop&q=80" class="widget-avatar" alt="Sarthak Verma" />
+              <div class="widget-info"><h6>Sarthak Verma</h6></div>
+            </div>
+            <div class="widget-score">8.6</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming Events Widget -->
+      <div class="card">
+        <div class="section-title-row">
+          <h5>Upcoming Events</h5>
+          <a href="#" class="view-all-link">View All</a>
+        </div>
+
+        <div class="widget-list">
+          <div class="event-card-item">
+            <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=150&auto=format&fit=crop&q=80" class="event-thumb" alt="HackNIT 2025" />
+            <div class="event-meta">
+              <h6>HackNIT 2025</h6>
+              <p>22 May, 10:00 AM</p>
+            </div>
+          </div>
+
+          <div class="event-card-item">
+            <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=150&auto=format&fit=crop&q=80" class="event-thumb" alt="DJ Night" />
+            <div class="event-meta">
+              <h6>DJ Night</h6>
+              <p>26 May, 7:00 PM</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
   </div>
-</div>
+
 
 {% endblock %}
