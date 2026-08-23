@@ -657,9 +657,11 @@
     <aside class="sidebar-left">
       <div class="card">
         <div class="profile-card">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" class="profile-avatar" alt="Atharv Tigadi" />
+          <a href='profile/{{profile_obj.username}}'>
+          <img src="{{profile_obj.profile_pic.url}}" class="profile-avatar" alt="Atharv Tigadi" />
+        </a>
           <div class="profile-info">
-            <h4>Atharv Tigadi</h4>
+            <h4>{{username}}</h4>
             <p>Semester 1 • BCA AI</p>
             <div class="rating-badge">⭐ 9.6</div>
           </div>
@@ -670,7 +672,7 @@
             <a href="#" class="nav-link"><span>🏠</span> Home</a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link"><span>👥</span> Discover People</a>
+            <a href="/discover/" class="nav-link"><span>👥</span> Discover People</a>
           </li>
           <li class="nav-item">
             <a href="#" class="nav-link"><span>📜</span> Posts</a>

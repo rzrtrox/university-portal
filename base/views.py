@@ -11,7 +11,8 @@ def index(request):
 def home(request):
     print("Username",request.user.username)
     username = request.user.username
-    return render(request, "home/index.html",{"username":username})
+    profile_obj = Profile.objects.get(username__username=request.user)
+    return render(request, "home/index.html",{"username":username,'profile_obj':profile_obj})
 
 
 def profile(request,username):
@@ -47,3 +48,7 @@ def update_profile(request, username):
         "profile",
         username=profile_obj.username.username
     )
+
+
+def discover_people(request):
+    return render(request, "discover/index.html")

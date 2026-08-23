@@ -1,0 +1,427 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+    <style>
+        /* Premium Dark Theme Variables */
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: #15171e;
+            --card-hover: #1c1f2a;
+            --border-color: #232733;
+            --text-main: #f0f2f5;
+            --text-sub: #8b92a5;
+            --status-online: #00e676;
+        }
+
+        
+        /* Color Themes for Cards */
+        .color-pink { --accent: #ff1e56; --accent-alpha: rgba(255, 30, 86, 0.15); }
+        .color-blue { --accent: #3b82f6; --accent-alpha: rgba(59, 130, 246, 0.15); }
+        .color-green { --accent: #10b981; --accent-alpha: rgba(16, 185, 129, 0.15); }
+        .color-purple { --accent: #a855f7; --accent-alpha: rgba(168, 85, 247, 0.15); }
+        .color-orange { --accent: #f97316; --accent-alpha: rgba(249, 115, 22, 0.15); }
+        .color-cyan { --accent: #06b6d4; --accent-alpha: rgba(6, 182, 212, 0.15); }
+
+        /* High-Density Masonry Grid */
+        .masonry-wrapper {
+            max-width: 1100px;
+            margin-left:70px;
+            margin-top: 20px;
+            width: 100%;
+            column-count: 4;
+            column-gap: 16px;
+        }
+
+        /* Compact Profile Card */
+        .profile-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px 12px 14px;
+            margin-bottom: 16px;
+            break-inside: avoid;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Colored Top Line */
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--accent);
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        /* Colorful Hover Effect */
+        .profile-card:hover {
+            transform: translateY(-4px);
+            background-color: var(--card-hover);
+            border-color: var(--accent);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 25px var(--accent-alpha);
+        }
+
+        .profile-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Avatar Container */
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .avatar-container img {
+            width: 84px; 
+            height: 84px; 
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+            transition: border-color 0.3s;
+            background-color: #2a2d3a;
+        }
+
+        .profile-card:hover .avatar-container img {
+            border-color: var(--accent);
+        }
+
+        /* Status badge */
+        .status-badge {
+            width: 14px; 
+            height: 14px;
+            background-color: var(--status-online);
+            border: 3px solid var(--card-bg);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            transition: border-color 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .profile-card:hover .status-badge {
+            border-color: var(--card-hover);
+        }
+
+        /* Typography */
+        .name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin: 0 0 2px 0;
+            letter-spacing: -0.01em;
+            color: var(--text-main);
+        }
+
+        .handle {
+            font-size: 0.78rem;
+            color: var(--text-sub);
+            margin: 0 0 8px 0;
+        }
+
+        /* Uniform Bio Height Fix */
+        .bio {
+            font-size: 0.8rem;
+            color: #9ba3b5;
+            line-height: 1.35;
+            margin: 0 0 12px 0;
+            min-height: 36px; /* Forces exactly 2 lines of space */
+            display: flex;
+            align-items: center; /* Vertically centers short 1-line text */
+            justify-content: center;
+        }
+
+        /* Color-Themed Category Tag */
+        .tag {
+            display: inline-block;
+            background: var(--accent-alpha);
+            color: var(--accent);
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Interactive Follow Button */
+        .follow-btn {
+            width: 100%;
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 8px 0;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .profile-card:hover .follow-btn {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: #ffffff;
+        }
+
+        /* Following State Styles */
+        .follow-btn.following {
+            background-color: var(--border-color) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-sub) !important;
+            box-shadow: none !important;
+        }
+
+        .follow-btn.following:hover {
+            background-color: #2a2d3a !important;
+        }
+
+        /* Responsive Columns */
+        @media (max-width: 1024px) {
+            .masonry-wrapper { column-count: 3; }
+        }
+        @media (max-width: 768px) {
+            .masonry-wrapper { column-count: 2; }
+        }
+        @media (max-width: 480px) {
+            .masonry-wrapper { column-count: 1; }
+        }
+    </style>
+
+
+
+    <div class="masonry-wrapper">
+        
+        <!-- Profile 1 (Pink) -->
+        <div class="profile-card color-pink">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&q=80" alt="User">
+                <span class="status-badge"></span>
+            </div>
+            <h3 class="name">Elena Rodriguez</h3>
+            <p class="handle">@elenacreates</p>
+            <span class="tag">Digital Art</span>
+            <p class="bio">Illustrator crafting cyberpunk neon worlds and dark aesthetic concepts.</p>
+            <button class="follow-btn">Follow</button>
+        </div>
+
+        <!-- Profile 2 (Blue) -->
+        <div class="profile-card color-blue">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&q=80" alt="User">
+            </div>
+            <h3 class="name">Marcus Chen</h3>
+            <p class="handle">@marcus_dev</p>
+            <span class="tag">Engineering</span>
+            <p class="bio">Building open-source tools for modern web developers.</p>
+            <button class="follow-btn">Follow</button>
+        </div>
+
+        <!-- Profile 3 (Orange) -->
+        <div class="profile-card color-orange">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80" alt="User">
+                <span class="status-badge"></span>
+            </div>
+            <h3 class="name">Sarah Jenkins</h3>
+            <p class="handle">@sarahj_style</p>
+            <span class="tag">Fashion</span>
+            <p class="bio">Curating monochrome wardrobes and minimalist looks daily.</p>
+            <button class="follow-btn">Follow</button>
+        </div>
+
+        <!-- Profile 4 (Cyan) -->
+        <div class="profile-card color-cyan">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80" alt="User">
+            </div>
+            <h3 class="name">David Miller</h3>
+            <p class="handle">@davidexplores</p>
+            <span class="tag">Photography</span>
+            <p class="bio">Nightscape photographer capturing moody, neon-lit cityscapes.</p>
+            <button class="follow-btn">Follow</button>
+        </div>
+
+        <!-- Profile 5 (Orange) -->
+        <div class="profile-card color-orange">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&q=80" alt="User">
+                <span class="status-badge"></span>
+            </div>
+            <h3 class="name">Aisha Patel</h3>
+            <p class="handle">@aishabakes</p>
+            <span class="tag">Culinary</span>
+            <p class="bio">Dark chocolate connoisseur & experimental pastry chef.</p>
+            <button class="follow-btn">Follow</button>
+        </div>
+
+        <!-- Profile 6 (Purple) -->
+        <div class="profile-card color-purple">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&q=80" alt="User">
+            </div>
+            <h3 class="name">James Wilson</h3>
+            <p class="handle">@jwilson_audio</p>
+            <span class="tag">Music</span>
+            <p class="bio">Synthwave producer making beats for late night drives.</p>
+            <button class="follow-btn">Follow</button>
+        </div>
+
+        <!-- Profile 7 (Pink) -->
+        <div class="profile-card color-pink">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&q=80" alt="User">
+            </div>
+            <h3 class="name">Chloe Bennett</h3>
+            <p class="handle">@chloedesigns</p>
+            <span class="tag">UI/UX</span>
+            <p class="bio">Obsessed with micro-interactions and dark UI.</p>
+            <button class="follow-btn">Follow</button>
+        </div>
+
+        <!-- Profile 8 (Purple) -->
+        <div class="profile-card color-purple">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&q=80" alt="User">
+                <span class="status-badge"></span>
+            </div>
+            <h3 class="name">Kaelen Vance</h3>
+            <p class="handle">@kvance_3d</p>
+            <span class="tag">3D Motion</span>
+            <p class="bio">Blender enthusiast creating surreal looping animations.</p>
+            <button class="follow-btn">Follow</button>
+        </div>
+
+        <!-- Profile 9 (Green) -->
+        <div class="profile-card color-green">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&q=80" alt="User">
+            </div>
+            <h3 class="name">Mia Thorne</h3>
+            <p class="handle">@miathorne</p>
+            <span class="tag">Writing</span>
+            <p class="bio">Sci-fi novelist weaving tales about rogue AI.</p>
+            <button class="follow-btn">Follow</button>
+        </div>
+
+        <!-- Profile 10 (Blue) -->
+        <div class="profile-card color-blue">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&q=80" alt="User">
+                <span class="status-badge"></span>
+            </div>
+            <h3 class="name">Liam Scott</h3>
+            <p class="handle">@liamcodes</p>
+            <span class="tag">Web3</span>
+            <p class="bio">Rust developer building decentralized protocols.</p>
+            <button class="follow-btn">Follow</button>
+        </div>
+
+        <!-- Profile 11 (Purple) -->
+        <div class="profile-card color-purple">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&q=80" alt="User">
+            </div>
+            <h3 class="name">Zoe Nakamura</h3>
+            <p class="handle">@zoe_gaming</p>
+            <span class="tag">Gaming</span>
+            <p class="bio">Indie game developer & pixel artist making cozy RPGs.</p>
+            <button class="follow-btn">Follow</button>
+        </div>
+
+        <!-- Profile 12 (Orange) -->
+        <div class="profile-card color-orange">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=150&q=80" alt="User">
+                <span class="status-badge"></span>
+            </div>
+            <h3 class="name">Alex Rivera</h3>
+            <p class="handle">@arivera_fit</p>
+            <span class="tag">Fitness</span>
+            <p class="bio">Calisthenics athlete and movement coach.</p>
+            <button class="follow-btn">Follow</button>
+        </div>
+
+        <!-- Profile 13 (Pink) -->
+        <div class="profile-card color-pink">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&q=80" alt="User">
+            </div>
+            <h3 class="name">Nina Simone</h3>
+            <p class="handle">@nina_ux</p>
+            <span class="tag">UX Writing</span>
+            <p class="bio">Making complex interfaces feel human through copy.</p>
+            <button class="follow-btn">Follow</button>
+        </div>
+
+        <!-- Profile 14 (Blue) -->
+        <div class="profile-card color-blue">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=150&q=80" alt="User">
+                <span class="status-badge"></span>
+            </div>
+            <h3 class="name">Tom Hardy</h3>
+            <p class="handle">@tom_cloud</p>
+            <span class="tag">DevOps</span>
+            <p class="bio">AWS Solutions Architect scaling cloud infrastructure.</p>
+            <button class="follow-btn">Follow</button>
+        </div>
+
+        <!-- Profile 15 (Cyan) -->
+        <div class="profile-card color-cyan">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150&q=80" alt="User">
+            </div>
+            <h3 class="name">Sophia Lin</h3>
+            <p class="handle">@sophia_mobile</p>
+            <span class="tag">iOS Dev</span>
+            <p class="bio">SwiftUI enthusiast and mobile accessibility advocate.</p>
+            <button class="follow-btn">Follow</button>
+        </div>
+
+        <!-- Profile 16 (Green) -->
+        <div class="profile-card color-green">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&q=80" alt="User">
+                <span class="status-badge"></span>
+            </div>
+            <h3 class="name">Omar Farooq</h3>
+            <p class="handle">@omar_db</p>
+            <span class="tag">Data</span>
+            <p class="bio">Database Administrator optimizing PostgreSQL at scale.</p>
+            <button class="follow-btn">Follow</button>
+        </div>
+
+    </div>
+
+    <!-- JavaScript for the Follow Button Logic -->
+    <script>
+        document.querySelectorAll('.follow-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Prevent the card hover effect from getting stuck on mobile
+                e.stopPropagation(); 
+                
+                // Toggle the 'following' state class
+                this.classList.toggle('following');
+                
+                // Update the text based on the state
+                if (this.classList.contains('following')) {
+                    this.innerText = 'Following';
+                } else {
+                    this.innerText = 'Follow';
+                }
+            });
+        });
+    </script>
+
+
+{% endblock %}
