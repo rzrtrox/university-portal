@@ -45,7 +45,7 @@
 
             <a href="#" class="avatar-link">
                 {% if user.profile.profile_pic %}
-                    <img src="" alt="Avatar" class="avatar" />
+                    <img src="{{profile.profile_pic.url}}" alt="Avatar" class="avatar" />
                 {% else %}
                     <div class="avatar avatar-placeholder">{{ user.username|first|upper }}</div>
                 {% endif %}

@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UniMatch · Create Account</title>
+
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* ── Reset & Base ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0F1117;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* ── Main Wrapper (two columns) ── */
+        .wrapper {
+            width: 1300px;
+            max-width: 100%;
+            min-height: 680px;
+            display: flex;
+            border-radius: 40px;
+            background: #0F1117;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 40px 120px rgba(0, 0, 0, .7);
+            border: 1px solid rgba(255, 255, 255, .03);
+        }
+
+        /* ── Left Column (Sign Up) ── */
+        .left-col {
+            flex: 0 0 46%;
+            padding: 48px 44px 40px 44px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            background: rgba(15, 17, 23, .65);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-right: 1px solid rgba(255, 255, 255, .03);
+        }
+
+        /* ── Right Column (Vectors) ── */
+        .right-col {
+            flex: 1;
+            position: relative;
+            background: #0F1117;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 500px;
+        }
+
+        /* ── Vector Canvas ── */
+        .vector-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0F1117;
+        }
+
+        /* ── blend containers ── */
+        .blend-layer {
+            position: absolute;
+            inset: 0;
+            mix-blend-mode: screen;
+            pointer-events: none;
+        }
+        .blend-layer-soft {
+            mix-blend-mode: soft-light;
+        }
+        .blend-layer-overlay {
+            mix-blend-mode: overlay;
+        }
+        .blend-layer-lighten {
+            mix-blend-mode: lighten;
+        }
+
+        /* ── Vector Shapes ── */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: .7;
+            will-change: transform;
+        }
+        .blob-1 {
+            width: 480px;
+            height: 480px;
+            top: -10%;
+            right: -8%;
+            background: radial-gradient(circle at 30% 30%, #8B5CF6, #3B82F6 60%, transparent 80%);
+            animation: floatBlob 12s ease-in-out infinite alternate;
+        }
+        .blob-2 {
+            width: 380px;
+            height: 380px;
+            bottom: -6%;
+            left: -6%;
+            background: radial-gradient(circle at 70% 60%, #EC4899, #F472B6 40%, transparent 75%);
+            animation: floatBlob 14s ease-in-out infinite alternate-reverse;
+            mix-blend-mode: screen;
+        }
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            top: 30%;
+            right: 15%;
+            background: radial-gradient(circle at 50% 50%, #FBBF24, #F59E0B 50%, transparent 75%);
+            animation: floatBlob 10s ease-in-out infinite alternate;
+            mix-blend-mode: overlay;
+            opacity: .5;
+        }
+        .blob-4 {
+            width: 220px;
+            height: 220px;
+            bottom: 20%;
+            right: 10%;
+            background: radial-gradient(circle at 40% 40%, #34D399, #10B981 50%, transparent 75%);
+            animation: floatBlob 16s ease-in-out infinite alternate-reverse;
+            mix-blend-mode: lighten;
+            opacity: .5;
+        }
+
+        /* ── Geometric accents ── */
+        .geo-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, .04);
+            pointer-events: none;
+            animation: spinSlow 40s linear infinite;
+        }
+        .geo-ring-1 {
+            width: 520px;
+            height: 520px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-color: rgba(59, 130, 246, .08);
+        }
+        .geo-ring-2 {
+            width: 360px;
+            height: 360px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-color: rgba(139, 92, 246, .08);
+            animation-duration: 30s;
+            animation-direction: reverse;
+        }
+        .geo-ring-3 {
+            width: 200px;
+            height: 200px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-color: rgba(236, 72, 153, .06);
+            animation-duration: 25s;
+        }
+
+        /* ── Grid lines ── */
+        .grid-lines {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: .04;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* ── small floating dots ── */
+        .dot-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .04);
+            pointer-events: none;
+            animation: floatDot 8s ease-in-out infinite alternate;
+        }
+        .dot-particle:nth-child(1) {
+            width: 6px;
+            height: 6px;
+            top: 18%;
+            left: 22%;
+            animation-duration: 9s;
+        }
+        .dot-particle:nth-child(2) {
+            width: 10px;
+            height: 10px;
+            top: 68%;
+            left: 70%;
+            animation-duration: 11s;
+            animation-delay: 1s;
+        }
+        .dot-particle:nth-child(3) {
+            width: 4px;
+            height: 4px;
+            top: 45%;
+            left: 15%;
+            animation-duration: 7s;
+            animation-delay: 2s;
+        }
+        .dot-particle:nth-child(4) {
+            width: 8px;
+            height: 8px;
+            top: 80%;
+            left: 40%;
+            animation-duration: 13s;
+            animation-delay: .5s;
+        }
+        .dot-particle:nth-child(5) {
+            width: 5px;
+            height: 5px;
+            top: 12%;
+            left: 75%;
+            animation-duration: 10s;
+            animation-delay: 1.5s;
+        }
+
+        /* ── Animations ── */
+        @keyframes floatBlob {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(20px, -30px) scale(1.05);
+            }
+            66% {
+                transform: translate(-10px, 20px) scale(.95);
+            }
+            100% {
+                transform: translate(15px, -10px) scale(1.02);
+            }
+        }
+        @keyframes spinSlow {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+        @keyframes floatDot {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(20px, -30px);
+            }
+        }
+
+        /* ── Brand ── */
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+        .brand-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, .25);
+            flex-shrink: 0;
+        }
+        .brand-text {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -.3px;
+            background: linear-gradient(to right, #F5F7FA, #A7B0C0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .brand-text span {
+            font-weight: 300;
+            -webkit-text-fill-color: #4F8CFF;
+            background: none;
+        }
+
+        /* ── Headline ── */
+        .headline {
+            margin-bottom: 6px;
+        }
+        .headline h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #F5F7FA;
+            letter-spacing: -.4px;
+        }
+        .headline p {
+            color: #8B95A9;
+            font-size: 15px;
+            margin-top: 6px;
+            font-weight: 400;
+        }
+        .headline p em {
+            font-style: normal;
+            color: #4F8CFF;
+            font-weight: 500;
+        }
+
+        /* ── Form ── */
+        form {
+            margin-top: 28px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #C9D1D9;
+            margin-bottom: 6px;
+            letter-spacing: .2px;
+        }
+        .input-group label .req {
+            color: #F87171;
+            margin-left: 2px;
+        }
+        .input-group label .optional {
+            color: #4B5563;
+            font-weight: 400;
+            font-size: 12px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap input,
+        .input-wrap select {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(15, 17, 23, .6);
+            border: 1px solid #262C36;
+            border-radius: 14px;
+            color: #F5F7FA;
+            font-size: 15px;
+            font-weight: 400;
+            outline: none;
+            transition: border .2s, box-shadow .2s, background .2s;
+            font-family: 'Inter', sans-serif;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .input-wrap input::placeholder {
+            color: #4B5563;
+            font-weight: 300;
+            font-size: 14px;
+        }
+
+        .input-wrap input:focus,
+        .input-wrap select:focus {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, .12);
+            background: rgba(15, 17, 23, .8);
+        }
+
+        /* ── input states: only green when valid, never red ── */
+        .input-wrap.valid input,
+        .input-wrap.valid select {
+            border-color: #22C55E;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, .10);
+        }
+
+        .input-wrap.valid .field-icon {
+            color: #22C55E;
+        }
+
+        /* default gray style - no invalid class used */
+
+        .input-wrap select {
+            cursor: pointer;
+            padding-right: 44px;
+            color: #C9D1D9;
+        }
+        .input-wrap select option {
+            background: #1A1D26;
+            color: #F5F7FA;
+        }
+
+        .input-wrap .select-arrow {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4B5563;
+            pointer-events: none;
+            font-size: 14px;
+        }
+
+        .input-wrap .toggle-vis {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #4B5563;
+            cursor: pointer;
+            font-size: 18px;
+            transition: color .2s;
+            padding: 4px;
+        }
+        .input-wrap .toggle-vis:hover {
+            color: #C9D1D9;
+        }
+
+        .input-wrap .field-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4B5563;
+            font-size: 16px;
+            pointer-events: none;
+            transition: color .2s;
+        }
+
+        .input-wrap input.with-icon {
+            padding-left: 44px;
+        }
+        .input-wrap select.with-icon {
+            padding-left: 44px;
+        }
+
+        /* ── Field error (backend only) ── */
+        .field-error {
+            color: #EF4444;
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            animation: fadeError .25s ease;
+        }
+        .field-error i {
+            font-size: 12px;
+        }
+
+        @keyframes fadeError {
+            0% {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Name row ── */
+        .name-row {
+            display: flex;
+            gap: 12px;
+        }
+        .name-row .input-group {
+            flex: 1;
+        }
+
+        /* ── Row actions ── */
+        .row-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 4px 0 22px;
+            font-size: 14px;
+        }
+
+        .row-actions .terms {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #B0B9CC;
+            cursor: pointer;
+            user-select: none;
+            font-size: 13px;
+        }
+        .row-actions .terms a {
+            color: #4F8CFF;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color .2s;
+        }
+        .row-actions .terms a:hover {
+            color: #7AA9FF;
+            text-decoration: underline;
+        }
+
+        .row-actions .terms input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: rgba(15, 17, 23, .6);
+            border: 1.5px solid #30363D;
+            border-radius: 5px;
+            display: grid;
+            place-content: center;
+            transition: background .2s, border .2s;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .row-actions .terms input[type="checkbox"]:checked {
+            background: #3B82F6;
+            border-color: #3B82F6;
+        }
+        .row-actions .terms input[type="checkbox"]:checked::before {
+            content: "✓";
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .row-actions .terms input[type="checkbox"]:focus-visible {
+            outline: 2px solid #3B82F6;
+            outline-offset: 2px;
+        }
+
+        .row-actions .login-link {
+            color: #4F8CFF;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13px;
+            transition: color .2s;
+        }
+        .row-actions .login-link:hover {
+            color: #7AA9FF;
+            text-decoration: underline;
+        }
+
+        /* ── Signup button ── */
+        .btn-signup {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #3B82F6, #6366F1);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform .15s, box-shadow .2s, opacity .25s;
+            box-shadow: 0 6px 24px rgba(59, 130, 246, .25);
+            letter-spacing: .2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .btn-signup.enabled {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .btn-signup.enabled:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px rgba(59, 130, 246, .35);
+        }
+
+        .btn-signup.enabled:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, .2);
+        }
+
+        /* ── Password strength hints ── */
+        .password-hint {
+            display: flex;
+            gap: 16px;
+            margin-top: 6px;
+            font-size: 12px;
+            color: #4B5563;
+            flex-wrap: wrap;
+        }
+        .password-hint .hint-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: color .2s;
+        }
+        .password-hint .hint-item i {
+            font-size: 10px;
+        }
+        .password-hint .hint-item.valid {
+            color: #34D399;
+        }
+        /* no invalid class → stays gray by default */
+
+        /* ── Divider ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 28px 0;
+            color: #4B5563;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: .3px;
+        }
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #30363D, transparent);
+        }
+
+        /* ── Social row ── */
+        .social-row {
+            display: flex;
+            gap: 12px;
+        }
+        .social-row button {
+            flex: 1;
+            padding: 13px 10px;
+            border-radius: 14px;
+            border: 1px solid #262C36;
+            background: rgba(15, 17, 23, .4);
+            color: #D0D7DE;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background .2s, border .2s, transform .15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .social-row button:hover {
+            background: rgba(28, 33, 40, .8);
+            border-color: #3B82F6;
+            transform: translateY(-1px);
+        }
+        .social-row button .icon {
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        /* ── Login CTA ── */
+        .login-cta {
+            margin-top: 30px;
+            text-align: center;
+            color: #8B95A9;
+            font-size: 15px;
+        }
+        .login-cta a {
+            color: #4F8CFF;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color .2s;
+        }
+        .login-cta a:hover {
+            color: #7AA9FF;
+            text-decoration: underline;
+        }
+
+        /* ── Vibe tag ── */
+        .vibe-tag {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin-top: 22px;
+            font-size: 12px;
+            font-weight: 400;
+            color: #4B5563;
+            letter-spacing: .2px;
+        }
+        .vibe-tag span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .vibe-tag .dot {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #3B82F6;
+            opacity: .5;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1000px) {
+            .wrapper {
+                flex-direction: column;
+                min-height: auto;
+                border-radius: 28px;
+            }
+            .left-col {
+                flex: 1;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, .03);
+                padding: 36px 30px 32px;
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+            }
+            .right-col {
+                min-height: 300px;
+                flex: 0 0 300px;
+            }
+            .blob-1 {
+                width: 300px;
+                height: 300px;
+                top: -15%;
+                right: -5%;
+            }
+            .blob-2 {
+                width: 250px;
+                height: 250px;
+                bottom: -10%;
+                left: -5%;
+            }
+            .blob-3 {
+                width: 200px;
+                height: 200px;
+                top: 20%;
+                right: 10%;
+            }
+            .blob-4 {
+                width: 160px;
+                height: 160px;
+                bottom: 15%;
+                right: 5%;
+            }
+            .geo-ring-1 {
+                width: 380px;
+                height: 380px;
+            }
+            .geo-ring-2 {
+                width: 260px;
+                height: 260px;
+            }
+            .geo-ring-3 {
+                width: 150px;
+                height: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .left-col {
+                padding: 28px 20px 26px;
+            }
+            .headline h1 {
+                font-size: 24px;
+            }
+            .social-row {
+                flex-direction: column;
+            }
+            .social-row button {
+                padding: 12px;
+            }
+            .brand-text {
+                font-size: 19px;
+            }
+            .row-actions {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .right-col {
+                min-height: 200px;
+                flex: 0 0 200px;
+            }
+            .blob-1 {
+                width: 200px;
+                height: 200px;
+            }
+            .blob-2 {
+                width: 160px;
+                height: 160px;
+            }
+            .blob-3 {
+                width: 140px;
+                height: 140px;
+            }
+            .blob-4 {
+                width: 100px;
+                height: 100px;
+            }
+            .geo-ring-1 {
+                width: 260px;
+                height: 260px;
+            }
+            .geo-ring-2 {
+                width: 180px;
+                height: 180px;
+            }
+            .geo-ring-3 {
+                width: 100px;
+                height: 100px;
+            }
+            .password-hint {
+                gap: 8px;
+            }
+            .name-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+
+        /* ── Entrance animation ── */
+        .wrapper {
+            animation: containerFade .8s ease both;
+        }
+        @keyframes containerFade {
+            0% {
+                opacity: 0;
+                transform: scale(.96) translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        .left-col {
+            animation: slideLeft .7s ease .15s both;
+        }
+        @keyframes slideLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .right-col {
+            animation: slideRight .7s ease .15s both;
+        }
+        @keyframes slideRight {
+            0% {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+
+        <!-- ─── LEFT COLUMN ─── -->
+        <div class="left-col">
+
+            <!-- Brand -->
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fas fa-heart" style="color:#fff;"></i>
+                </div>
+                <div class="brand-text">Uni<span>Match</span></div>
+            </div>
+
+            <!-- Headline -->
+            <div class="headline">
+                <h1>Create your account</h1>
+                <p>Join <em>12k+</em> students &amp; start ranking.</p>
+            </div>
+
+            <!-- Form -->
+            <form method="POST" action="{% url 'create_account' %}" autocomplete="off" novalidate>
+                {% csrf_token %}
+
+                <!-- Full Name Row -->
+                <div class="name-row">
+                    <div class="input-group">
+                        <label>First name <span class="req">*</span></label>
+                        <div class="input-wrap" id="firstNameWrap">
+                            <i class="fas fa-user field-icon"></i>
+                            <input name="first_name" id="firstName" type="text" class="with-icon" placeholder="Alex" required />
+                        </div>
+                        <!-- backend error for first_name can be displayed here -->
+                        {% if errors.first_name %}
+                            <div class="field-error">
+                                <i class="fas fa-circle-exclamation"></i>
+                                {{ errors.first_name }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="input-group">
+                        <label>Last name <span class="req">*</span></label>
+                        <div class="input-wrap" id="lastNameWrap">
+                            <i class="fas fa-user field-icon"></i>
+                            <input name="last_name" id="lastName" type="text" class="with-icon" placeholder="Rivera" required />
+                        </div>
+                        {% if errors.last_name %}
+                            <div class="field-error">
+                                <i class="fas fa-circle-exclamation"></i>
+                                {{ errors.last_name }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Username -->
+                <div class="input-group">
+                    <label>Username <span class="req">*</span></label>
+                    <div class="input-wrap" id="usernameWrap">
+                        <i class="fas fa-at field-icon"></i>
+                        <input name="username" id="username" type="text" class="with-icon" placeholder="alex_rivera" required />
+                    </div>
+                    {% if errors.username %}
+                        <div class="field-error">
+                            <i class="fas fa-circle-exclamation"></i>
+                            {{ errors.username }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Password -->
+                <div class="input-group">
+                    <label>Password <span class="req">*</span></label>
+                    <div class="input-wrap" id="passwordWrap">
+                        <i class="fas fa-lock field-icon"></i>
+                        <input name="password" id="password" type="password" class="with-icon" placeholder="••••••••" required />
+                        <button type="button" class="toggle-vis" id="togglePass" aria-label="Toggle password visibility">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <!-- Password hints (client‑side only, stays gray until green) -->
+                    <div class="password-hint" id="passwordHints">
+                        <span class="hint-item" data-rule="length"><i class="fas fa-circle"></i> 8+ chars</span>
+                        <span class="hint-item" data-rule="upper"><i class="fas fa-circle"></i> 1 uppercase</span>
+                        <span class="hint-item" data-rule="number"><i class="fas fa-circle"></i> 1 number</span>
+                    </div>
+                    {% if errors.password %}
+                        <div class="field-error">
+                            <i class="fas fa-circle-exclamation"></i>
+                            {{ errors.password }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="input-group">
+                    <label>Confirm password <span class="req">*</span></label>
+                    <div class="input-wrap" id="confirmWrap">
+                        <i class="fas fa-check-circle field-icon"></i>
+                        <input name="confirm_password" id="confirmPass" type="password" class="with-icon" placeholder="••••••••" required />
+                        <button type="button" class="toggle-vis" id="toggleConfirm" aria-label="Toggle confirm password visibility">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    {% if errors.confirm_password %}
+                        <div class="field-error">
+                            <i class="fas fa-circle-exclamation"></i>
+                            {{ errors.confirm_password }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- University (optional) -->
+                <div class="input-group">
+                    <label>University <span class="optional">(optional)</span></label>
+                    <div class="input-wrap">
+                        <i class="fas fa-graduation-cap field-icon"></i>
+                        <select name="university" class="with-icon">
+                            <option value="" disabled selected>Select your university</option>
+                            <option value="stanford">Stanford University</option>
+                            <option value="mit">Massachusetts Institute of Technology</option>
+                            <option value="harvard">Harvard University</option>
+                            <option value="berkeley">UC Berkeley</option>
+                            <option value="oxford">University of Oxford</option>
+                            <option value="cambridge">University of Cambridge</option>
+                            <option value="ucla">UCLA</option>
+                            <option value="nyu">New York University</option>
+                            <option value="columbia">Columbia University</option>
+                            <option value="yale">Yale University</option>
+                            <option value="princeton">Princeton University</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <i class="fas fa-chevron-down select-arrow"></i>
+                    </div>
+                </div>
+
+                <!-- Semester (optional) -->
+                <div class="input-group">
+                    <label>Semester <span class="optional">(optional)</span></label>
+                    <div class="input-wrap">
+                        <i class="fas fa-layer-group field-icon"></i>
+                        <select name="semester" class="with-icon">
+                            <option value="" disabled selected>Select your semester</option>
+                            <option value="1">1st Semester</option>
+                            <option value="2">2nd Semester</option>
+                            <option value="3">3rd Semester</option>
+                            <option value="4">4th Semester</option>
+                            <option value="5">5th Semester</option>
+                            <option value="6">6th Semester</option>
+                            <option value="7">7th Semester</option>
+                            <option value="8">8th Semester</option>
+                        </select>
+                        <i class="fas fa-chevron-down select-arrow"></i>
+                    </div>
+                </div>
+
+                <!-- Terms -->
+                <div class="row-actions">
+                    <label class="terms">
+                        <input type="checkbox" name="terms" checked />
+                        I agree to the <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a>
+                    </label>
+                    <a href="#" class="login-link">Log in →</a>
+                </div>
+
+                <button type="submit" class="btn-signup" id="signupBtn" disabled>
+                    <i class="fas fa-user-plus"></i> Create account
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="divider">or continue with</div>
+
+            <!-- Social -->
+            <div class="social-row">
+                <button><span class="icon"><i class="fab fa-google"></i></span> Google</button>
+                <button><span class="icon"><i class="fab fa-apple"></i></span> Apple</button>
+                <button><span class="icon"><i class="fab fa-facebook"></i></span> Facebook</button>
+            </div>
+
+            <!-- Login CTA -->
+            <div class="login-cta">
+                Already have an account? <a href="#">Log in</a>
+            </div>
+
+            <!-- Vibe tag -->
+            <div class="vibe-tag">
+                <span><span class="dot"></span> 12k+ students</span>
+                <span><span class="dot"></span> ranked daily</span>
+                <span><span class="dot"></span> verified .edu</span>
+            </div>
+        </div>
+
+        <!-- ─── RIGHT COLUMN ─── -->
+        <div class="right-col">
+            <div class="vector-canvas">
+                <div class="grid-lines"></div>
+                <div class="blend-layer"><div class="blob blob-1"></div></div>
+                <div class="blend-layer blend-layer-soft"><div class="blob blob-2"></div></div>
+                <div class="blend-layer blend-layer-overlay"><div class="blob blob-3"></div></div>
+                <div class="blend-layer blend-layer-lighten"><div class="blob blob-4"></div></div>
+                <div class="geo-ring geo-ring-1"></div>
+                <div class="geo-ring geo-ring-2"></div>
+                <div class="geo-ring geo-ring-3"></div>
+                <div class="dot-particle"></div>
+                <div class="dot-particle"></div>
+                <div class="dot-particle"></div>
+                <div class="dot-particle"></div>
+                <div class="dot-particle"></div>
+                <div style="position:absolute;top:50%;left:50%;width:600px;height:600px;transform:translate(-50%,-50%);background:radial-gradient(circle at center,rgba(59,130,246,.05)0%,transparent 70%);pointer-events:none;border-radius:50%;mix-blend-mode:screen;"></div>
+                <div style="position:absolute;bottom:15%;right:10%;width:80px;height:2px;background:linear-gradient(90deg,transparent,rgba(59,130,246,.15));border-radius:2px;transform:rotate(-20deg);pointer-events:none;"></div>
+                <div style="position:absolute;top:25%;left:12%;width:120px;height:1.5px;background:linear-gradient(90deg,rgba(139,92,246,.12),transparent);border-radius:2px;transform:rotate(15deg);pointer-events:none;"></div>
+                <div style="position:absolute;bottom:32px;right:40px;font-size:12px;font-weight:300;color:rgba(255,255,255,.04);letter-spacing:4px;text-transform:uppercase;pointer-events:none;user-select:none;">✦ connect · rank · vibe</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ── DOM refs ──
+            const firstName = document.getElementById('firstName');
+            const lastName = document.getElementById('lastName');
+            const username = document.getElementById('username');
+            const password = document.getElementById('password');
+            const confirmPass = document.getElementById('confirmPass');
+
+            const firstNameWrap = document.getElementById('firstNameWrap');
+            const lastNameWrap = document.getElementById('lastNameWrap');
+            const usernameWrap = document.getElementById('usernameWrap');
+            const passwordWrap = document.getElementById('passwordWrap');
+            const confirmWrap = document.getElementById('confirmWrap');
+
+            const hintItems = document.querySelectorAll('.password-hint .hint-item');
+            const signupBtn = document.getElementById('signupBtn');
+
+            // ── Helpers ──
+            function setValid(wrap, isValid) {
+                if (isValid) {
+                    wrap.classList.add('valid');
+                } else {
+                    wrap.classList.remove('valid');
+                }
+            }
+
+            function validateName(value) {
+                return value.trim().length > 0;
+            }
+
+            function validateUsername(value) {
+                return /^[a-zA-Z0-9_]{3,20}$/.test(value);
+            }
+
+            function validatePassword(value) {
+                const has8 = value.length >= 8;
+                const hasUpper = /[A-Z]/.test(value);
+                const hasNumber = /[0-9]/.test(value);
+                return { has8, hasUpper, hasNumber, valid: has8 && hasUpper && hasNumber };
+            }
+
+            function passwordsMatch() {
+                return password.value === confirmPass.value && password.value.length > 0;
+            }
+
+            // ── Update password hints (green when valid, stays gray otherwise) ──
+            function updatePasswordHints() {
+                const val = password.value;
+                const { has8, hasUpper, hasNumber } = validatePassword(val);
+
+                const rules = [
+                    { key: 'length', ok: has8, label: '8+ chars' },
+                    { key: 'upper', ok: hasUpper, label: '1 uppercase' },
+                    { key: 'number', ok: hasNumber, label: '1 number' }
+                ];
+
+                hintItems.forEach((hint, i) => {
+                    const rule = rules[i];
+                    if (rule.ok) {
+                        hint.classList.add('valid');
+                        hint.innerHTML = '<i class="fas fa-check-circle"></i> ' + rule.label;
+                    } else {
+                        hint.classList.remove('valid');
+                        hint.innerHTML = '<i class="fas fa-circle"></i> ' + rule.label;
+                    }
+                });
+            }
+
+            // ── Main validation ──
+            function validateAll() {
+                const fName = firstName.value;
+                const lName = lastName.value;
+                const uName = username.value;
+                const pass = password.value;
+                const confirm = confirmPass.value;
+
+                // First name
+                const fNameOk = validateName(fName);
+                setValid(firstNameWrap, fNameOk);
+
+                // Last name
+                const lNameOk = validateName(lName);
+                setValid(lastNameWrap, lNameOk);
+
+                // Username
+                const uNameOk = validateUsername(uName);
+                setValid(usernameWrap, uNameOk);
+
+                // Password validity
+                const passValid = validatePassword(pass).valid;
+                setValid(passwordWrap, passValid);
+
+                // Confirm password
+                const match = passwordsMatch();
+                const confirmOk = match && passValid;
+                setValid(confirmWrap, confirmOk);
+
+                // Update hints
+                updatePasswordHints();
+
+                // ── Overall enable button ──
+                const allValid = fNameOk && lNameOk && uNameOk && passValid && match;
+
+                if (allValid) {
+                    signupBtn.disabled = false;
+                    signupBtn.classList.add('enabled');
+                } else {
+                    signupBtn.disabled = true;
+                    signupBtn.classList.remove('enabled');
+                }
+
+                return allValid;
+            }
+
+            // ── Event listeners ──
+            firstName.addEventListener('input', validateAll);
+            lastName.addEventListener('input', validateAll);
+            username.addEventListener('input', validateAll);
+            password.addEventListener('input', validateAll);
+            confirmPass.addEventListener('input', validateAll);
+
+            // ── Toggle password visibility ──
+            const togglePass = document.getElementById('togglePass');
+            togglePass.addEventListener('click', () => {
+                const isPass = password.getAttribute('type') === 'password';
+                password.setAttribute('type', isPass ? 'text' : 'password');
+                togglePass.querySelector('i').className = isPass ? 'fas fa-eye-slash' : 'fas fa-eye';
+            });
+
+            const toggleConfirm = document.getElementById('toggleConfirm');
+            toggleConfirm.addEventListener('click', () => {
+                const isPass = confirmPass.getAttribute('type') === 'password';
+                confirmPass.setAttribute('type', isPass ? 'text' : 'password');
+                toggleConfirm.querySelector('i').className = isPass ? 'fas fa-eye-slash' : 'fas fa-eye';
+            });
+
+            // ── Initial validation ──
+            validateAll();
+
+        })();
+    </script>
+
+</body>
+</html>
