@@ -649,11 +649,13 @@
   <aside class="sidebar-left">
     <div class="card">
       <div class="profile-card">
-        <img
+        <a href="{% url 'profile' username=username %}">
+          <img
           src="{{profile.profile_pic.url}}"
           class="profile-avatar"
-          alt="Atharv Tigadi"
+          alt=""
         />
+        </a>
         <div class="profile-info">
           <h4>{{profile.f_name}} {{profile.l_name}}</h4>
           <p>@{{username}}</p>
@@ -666,7 +668,7 @@
           <a href="#" class="nav-link"><span>🏠</span> Home</a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link"><span>👥</span> Discover People</a>
+          <a href="/discover" class="nav-link"><span>👥</span> Discover People</a>
         </li>
         <li class="nav-item">
           <a href="#" class="nav-link"><span>📜</span> Posts</a>
