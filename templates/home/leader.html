@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UniMatch · The Judgement</title>
+
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* ── UniMatch Design System (reused) ── */
+        :root {
+            --bg-primary: #0F1117;
+            --bg-header: rgba(15, 17, 23, 0.85);
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.06);
+            --bg-input: rgba(15, 17, 23, 0.6);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --text-primary: #F5F7FA;
+            --text-sub: #C9D1D9;
+            --text-muted: #6B7280;
+            --accent-purple: #8B5CF6;
+            --accent-purple-dark: rgba(139, 92, 246, 0.15);
+            --accent-purple-light: #A78BFA;
+            --accent-blue: #3B82F6;
+            --accent-red: #EF4444;
+            --accent-gold: #F59E0B;
+            --accent-silver: #94A3B8;
+            --accent-bronze: #CD7F32;
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-primary);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: 60px;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #30363D; border-radius: 8px; }
+
+        /* ─── NAVBAR (same as before) ─── */
+        .navbar {
+            background: var(--bg-header);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 0 24px;
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+        }
+        .nav-container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            flex-shrink: 0;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.25);
+            flex-shrink: 0;
+        }
+        .logo-text {
+            background: linear-gradient(to right, #F5F7FA, #A7B0C0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+        .logo-text span {
+            font-weight: 300;
+            -webkit-text-fill-color: #4F8CFF;
+            background: none;
+        }
+        .search-wrap {
+            flex: 1;
+            max-width: 480px;
+            min-width: 160px;
+            position: relative;
+            margin: 0 8px;
+        }
+        .search-wrap .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #5A657A;
+            font-size: 15px;
+            pointer-events: none;
+        }
+        .search-wrap input {
+            width: 100%;
+            padding: 11px 18px 11px 42px;
+            border: 1px solid var(--border-color);
+            border-radius: 40px;
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 400;
+            font-family: 'Inter', sans-serif;
+            transition: border 0.25s, box-shadow 0.25s;
+            outline: none;
+        }
+        .search-wrap input::placeholder { color: #5A657A; }
+        .search-wrap input:focus {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+        }
+        .search-clear {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #5A657A;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+            display: none;
+        }
+        .search-wrap input:not(:placeholder-shown) ~ .search-clear { display: block; }
+
+        .desktop-menu {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .desktop-menu a {
+            color: #C9D1D9;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 10px 16px;
+            border-radius: 40px;
+            transition: all 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .desktop-menu a i { font-size: 16px; opacity: 0.7; }
+        .desktop-menu a:hover { background: rgba(59, 130, 246, 0.08); color: #FFFFFF; }
+        .desktop-menu a.active { background: rgba(59, 130, 246, 0.12); color: #FFFFFF; }
+        .desktop-menu a.active i { opacity: 1; }
+
+        .notif-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            transition: background 0.2s;
+            cursor: pointer;
+            color: #C9D1D9;
+            font-size: 20px;
+            text-decoration: none;
+        }
+        .notif-wrap:hover { background: rgba(59, 130, 246, 0.08); color: #FFFFFF; }
+        .notif-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 10px;
+            height: 10px;
+            background: #EF4444;
+            border-radius: 50%;
+            border: 2px solid #0F1117;
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .avatar-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            padding: 2px;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+        .avatar-link:hover { transform: scale(1.04); }
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #3B82F6;
+            background: #1C2128;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #F5F7FA;
+            flex-shrink: 0;
+        }
+        .avatar-placeholder { background: linear-gradient(135deg, #3B82F6, #8B5CF6); color: #fff; }
+
+        .mobile-controls {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .search-toggle {
+            background: none;
+            border: none;
+            color: #C9D1D9;
+            font-size: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .search-toggle:hover { background: rgba(255, 255, 255, 0.04); color: #FFFFFF; }
+        .mobile-notif { width: 44px; height: 44px; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px 6px;
+            border-radius: 10px;
+            background: transparent;
+            border: none;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+        .hamburger:hover { background: rgba(255, 255, 255, 0.04); }
+        .hamburger span {
+            display: block;
+            width: 28px;
+            height: 2.5px;
+            background: #D0D7DE;
+            border-radius: 4px;
+            transition: all 0.25s ease;
+            transform-origin: center;
+        }
+        .hamburger.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); background: #3B82F6; }
+        .hamburger.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+        .hamburger.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); background: #3B82F6; }
+
+        .mobile-search {
+            display: none;
+            flex: 1 1 100%;
+            margin: 8px 0 4px;
+            max-width: 100%;
+            animation: slideDown 0.25s ease both;
+        }
+        .mobile-search.open { display: block; }
+        .mobile-search input { padding: 10px 16px 10px 40px; font-size: 14px; border-radius: 40px; }
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-8px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            background: rgba(15, 17, 23, 0.98);
+            backdrop-filter: blur(24px);
+            padding: 20px 24px 28px;
+            border-bottom: 1px solid var(--border-color);
+            gap: 4px;
+            width: 100%;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 999;
+            animation: slideDown 0.3s ease both;
+            border-radius: 0 0 20px 20px;
+        }
+        .mobile-menu.open { display: flex; }
+        .mobile-menu a {
+            color: #C9D1D9;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .mobile-menu a i { width: 24px; text-align: center; font-size: 18px; opacity: 0.7; }
+        .mobile-menu a:hover { background: rgba(59, 130, 246, 0.08); color: #FFFFFF; }
+        .mobile-menu a.active { background: rgba(59, 130, 246, 0.12); color: #FFFFFF; }
+        .mobile-menu .notif-mobile { justify-content: space-between; }
+        .mobile-menu .notif-mobile .badge {
+            background: #EF4444;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 2px 12px;
+            border-radius: 20px;
+            color: #fff;
+            margin-left: auto;
+        }
+        .mobile-menu .avatar-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px 0;
+            margin-top: 8px;
+            border-top: 1px solid var(--border-color);
+        }
+        .mobile-menu .avatar-row .avatar { width: 40px; height: 40px; font-size: 16px; }
+        .mobile-menu .avatar-row span { color: #F5F7FA; font-weight: 600; flex: 1; }
+        .mobile-menu .avatar-row .settings-link {
+            color: #7B8AA3;
+            font-size: 20px;
+            padding: 6px;
+            border-radius: 50%;
+            transition: background 0.2s, color 0.2s;
+        }
+        .mobile-menu .avatar-row .settings-link:hover { background: rgba(255, 255, 255, 0.04); color: #F5F7FA; }
+
+        @media (max-width: 900px) {
+            .navbar { padding: 0 20px; min-height: 64px; }
+            .desktop-menu { display: none; }
+            .desktop-search { display: none; }
+            .mobile-controls { display: flex; }
+            .hamburger { display: flex; }
+            .search-toggle { display: flex; }
+            .logo { font-size: 20px; }
+            .logo-icon { width: 36px; height: 36px; font-size: 16px; }
+            .notif-wrap { width: 40px; height: 40px; font-size: 18px; }
+            .avatar { width: 40px; height: 40px; font-size: 16px; }
+            .mobile-notif { width: 40px; height: 40px; font-size: 18px; }
+        }
+        @media (max-width: 480px) {
+            .navbar { padding: 0 16px; min-height: 56px; }
+            .logo { font-size: 18px; gap: 8px; }
+            .logo-icon { width: 32px; height: 32px; font-size: 14px; }
+            .logo-text { font-size: 18px; }
+            .search-toggle { width: 38px; height: 38px; font-size: 17px; }
+            .notif-wrap { width: 38px; height: 38px; font-size: 17px; }
+            .avatar { width: 38px; height: 38px; font-size: 14px; }
+            .mobile-notif { width: 38px; height: 38px; font-size: 17px; }
+            .hamburger span { width: 24px; height: 2px; }
+            .hamburger.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+            .hamburger.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+            .mobile-search input { padding: 8px 14px 8px 36px; font-size: 13px; border-radius: 30px; }
+            .mobile-menu { padding: 16px 18px 22px; }
+            .mobile-menu a { font-size: 15px; padding: 12px 14px; }
+            .mobile-menu .avatar-row { padding: 12px 14px 0; }
+        }
+        @media (max-width: 380px) {
+            .logo-text { font-size: 16px; }
+            .logo-icon { width: 28px; height: 28px; font-size: 12px; }
+            .search-toggle { width: 34px; height: 34px; font-size: 15px; }
+            .notif-wrap { width: 34px; height: 34px; font-size: 15px; }
+            .mobile-notif { width: 34px; height: 34px; font-size: 15px; }
+            .avatar { width: 34px; height: 34px; font-size: 12px; }
+        }
+
+        /* ─── MAIN LAYOUT ─── */
+        .app-layout {
+            display: grid;
+            grid-template-columns: 240px minmax(0, 1fr) 290px;
+            gap: 1.25rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.25rem 1rem;
+        }
+
+        /* ─── CARD ─── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(4px);
+            transition: background .2s, border-color .2s;
+        }
+        .card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        /* ─── LEFT SIDEBAR (reused) ─── */
+        .sidebar-left .profile-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 0.75rem;
+        }
+        .profile-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+        }
+        .profile-info h4 { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); }
+        .profile-info p { font-size: 0.72rem; color: var(--text-muted); }
+        .rating-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            background: rgba(245, 158, 11, 0.12);
+            color: var(--accent-gold);
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 10px;
+            margin-top: 3px;
+        }
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.6rem 0.8rem;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.85rem;
+            border-radius: var(--radius-sm);
+            transition: all 0.15s ease;
+        }
+        .nav-link i { width: 20px; text-align: center; color: var(--text-muted); }
+        .nav-link:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+        .nav-item.active .nav-link {
+            background: var(--accent-purple-dark);
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .nav-item.active .nav-link i { color: var(--accent-purple-light); }
+        .nav-badge-purple {
+            margin-left: auto;
+            background: var(--accent-purple);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 10px;
+        }
+        .nav-badge-red {
+            margin-left: auto;
+            background: var(--accent-red);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 10px;
+        }
+        .daily-card {
+            background: linear-gradient(180deg, #18152b 0%, var(--bg-card) 100%);
+            border: 1px solid rgba(124, 58, 237, 0.25);
+        }
+        .daily-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .daily-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .daily-sub { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.8rem; line-height: 1.3; }
+        .flame-icon { font-size: 1.8rem; }
+        .btn-checkin {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            color: white;
+            border: none;
+            padding: 0.55rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: transform .15s, box-shadow .2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-checkin:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3); }
+
+        /* ─── RIGHT SIDEBAR ─── */
+        .sidebar-right .section-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        .section-title-row h5 { font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 0.35rem; }
+        .view-all-link {
+            font-size: 0.7rem;
+            color: var(--accent-purple-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color .2s;
+        }
+        .view-all-link:hover { color: #fff; text-decoration: underline; }
+        .widget-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .widget-item { display: flex; align-items: center; justify-content: space-between; }
+        .widget-left { display: flex; align-items: center; gap: 0.6rem; }
+        .crown-icon { font-size: 0.85rem; }
+        .widget-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .widget-info h6 { font-size: 0.8rem; font-weight: 600; color: var(--text-primary); }
+        .widget-info p { font-size: 0.7rem; color: var(--text-muted); }
+        .widget-score { font-size: 0.8rem; font-weight: 700; color: var(--accent-gold); }
+        .rank-box {
+            width: 22px; height: 22px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 700; color: #fff; flex-shrink: 0;
+        }
+        .rank-1 { background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #000; }
+        .rank-2 { background: linear-gradient(135deg, #94a3b8, #cbd5e1); color: #000; }
+        .rank-3 { background: linear-gradient(135deg, #d97706, #f59e0b); color: #fff; }
+        .rank-num { font-size: 0.75rem; color: var(--text-muted); width: 22px; text-align: center; font-weight: 600; }
+        .event-card-item { display: flex; gap: 0.75rem; align-items: center; }
+        .event-thumb { width: 44px; height: 44px; border-radius: var(--radius-sm); object-fit: cover; flex-shrink: 0; }
+        .event-meta h6 { font-size: 0.8rem; font-weight: 600; color: var(--text-primary); }
+        .event-meta p { font-size: 0.7rem; color: var(--text-muted); }
+
+        @media (max-width: 1100px) {
+            .app-layout { grid-template-columns: 220px minmax(0, 1fr); }
+            .sidebar-right { display: none; }
+        }
+        @media (max-width: 768px) {
+            .app-layout { grid-template-columns: 1fr; padding: 0.75rem; gap: 0.75rem; }
+            .sidebar-left { display: none; }
+            .card { padding: 0.75rem; }
+        }
+
+        /* ─── LEADERBOARD SPECIFIC STYLES ─── */
+
+        /* Header */
+        .leaderboard-header {
+            padding: 1.5rem 0 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 1rem;
+        }
+        .leaderboard-header .left h1 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #F5F7FA, #A7B0C0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .leaderboard-header .left h1 i {
+            -webkit-text-fill-color: var(--accent-gold);
+            background: none;
+            font-size: 1.8rem;
+        }
+        .leaderboard-header .left .subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 2px;
+        }
+        .leaderboard-header .left .subtitle em {
+            font-style: normal;
+            color: var(--accent-purple-light);
+            font-weight: 500;
+        }
+        .leaderboard-header .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: var(--bg-card);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            border: 1px solid var(--border-color);
+        }
+        .leaderboard-header .status i { color: #22C55E; font-size: 0.6rem; }
+
+        /* University Crush */
+        .crush-section {
+            margin-bottom: 2rem;
+        }
+        .crush-section .section-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .crush-section .section-label i { color: var(--accent-gold); }
+        .crush-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .crush-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .crush-card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+        .crush-card .crush-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--accent-gold);
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.15);
+            margin-bottom: 0.75rem;
+        }
+        .crush-card .crush-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .crush-card .crush-username {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .crush-card .crush-details {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            margin: 0.25rem 0 0.5rem;
+        }
+        .crush-card .crush-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+        .crush-card .crush-rating i { font-size: 0.9rem; }
+        .crush-card .crush-badge {
+            background: var(--accent-gold);
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.15rem 0.8rem;
+            border-radius: 40px;
+            margin-top: 0.25rem;
+        }
+        .crush-card .crush-btn {
+            margin-top: 0.75rem;
+            padding: 0.4rem 1.5rem;
+            border-radius: 40px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-sub);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+        }
+        .crush-card .crush-btn:hover {
+            background: var(--accent-purple-dark);
+            border-color: var(--accent-purple);
+            color: #fff;
+        }
+        .crush-card .crush-avatar.female { border-color: #EC4899; box-shadow: 0 0 30px rgba(236, 72, 153, 0.15); }
+        .crush-card .crush-avatar.male { border-color: var(--accent-blue); box-shadow: 0 0 30px rgba(59, 130, 246, 0.15); }
+
+        @media (max-width: 600px) {
+            .crush-grid { grid-template-columns: 1fr; }
+            .leaderboard-header .left h1 { font-size: 1.6rem; }
+        }
+
+        /* Controls */
+        .controls-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem 0;
+        }
+        .controls-bar .tabs {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+        }
+        .controls-bar .tabs .tab {
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .controls-bar .tabs .tab:hover { color: var(--text-primary); background: var(--bg-card-hover); }
+        .controls-bar .tabs .tab.active {
+            background: var(--accent-purple-dark);
+            color: #fff;
+            border-color: var(--accent-purple);
+        }
+        .controls-bar .filters {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: auto;
+            flex-wrap: wrap;
+        }
+        .controls-bar .filters select {
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-sub);
+            font-size: 0.8rem;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            outline: none;
+        }
+        .controls-bar .filters select:focus { border-color: var(--accent-blue); }
+        .controls-bar .filters select option { background: #1A1D26; color: #F5F7FA; }
+
+        @media (max-width: 768px) {
+            .controls-bar { flex-direction: column; align-items: stretch; }
+            .controls-bar .tabs { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 0.25rem; scrollbar-width: none; }
+            .controls-bar .tabs::-webkit-scrollbar { display: none; }
+            .controls-bar .filters { margin-left: 0; justify-content: flex-start; }
+        }
+
+        /* Top 3 Podium */
+        .podium {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding: 1rem 0;
+        }
+        .podium-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .podium-item:hover { transform: translateY(-5px); }
+        .podium-item .podium-avatar {
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--border-color);
+            margin-bottom: 0.5rem;
+        }
+        .podium-item .podium-rank {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+        .podium-item .podium-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .podium-item .podium-score {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+        .podium-item.first .podium-avatar {
+            width: 100px;
+            height: 100px;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 40px rgba(245, 158, 11, 0.2);
+        }
+        .podium-item.first .podium-rank { color: var(--accent-gold); }
+        .podium-item.second .podium-avatar {
+            width: 80px;
+            height: 80px;
+            border-color: var(--accent-silver);
+            box-shadow: 0 0 30px rgba(148, 163, 184, 0.15);
+        }
+        .podium-item.second .podium-rank { color: var(--accent-silver); }
+        .podium-item.third .podium-avatar {
+            width: 80px;
+            height: 80px;
+            border-color: var(--accent-bronze);
+            box-shadow: 0 0 30px rgba(205, 127, 50, 0.15);
+        }
+        .podium-item.third .podium-rank { color: var(--accent-bronze); }
+        .podium-item .crown {
+            font-size: 1.8rem;
+            margin-bottom: 0.2rem;
+        }
+
+        @media (max-width: 600px) {
+            .podium { gap: 0.8rem; }
+            .podium-item.first .podium-avatar { width: 70px; height: 70px; }
+            .podium-item.second .podium-avatar,
+            .podium-item.third .podium-avatar { width: 60px; height: 60px; }
+            .podium-item .crown { font-size: 1.2rem; }
+        }
+
+        /* Leaderboard List */
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .leaderboard-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            transition: all 0.2s;
+            cursor: default;
+            position: relative;
+        }
+        .leaderboard-card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        .leaderboard-card .rank {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            min-width: 40px;
+            text-align: center;
+        }
+        .leaderboard-card .rank.top1 { color: var(--accent-gold); }
+        .leaderboard-card .rank.top2 { color: var(--accent-silver); }
+        .leaderboard-card .rank.top3 { color: var(--accent-bronze); }
+        .leaderboard-card .avatar-wrap {
+            flex-shrink: 0;
+        }
+        .leaderboard-card .avatar-wrap img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+            transition: transform 0.2s;
+        }
+        .leaderboard-card:hover .avatar-wrap img { transform: scale(1.04); }
+        .leaderboard-card .info {
+            flex: 1;
+            min-width: 0;
+        }
+        .leaderboard-card .info .name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+        .leaderboard-card .info .username {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .leaderboard-card .info .details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            margin-top: 0.1rem;
+        }
+        .leaderboard-card .info .details span { display: flex; align-items: center; gap: 0.2rem; }
+        .leaderboard-card .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: var(--accent-gold);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-right: 1rem;
+        }
+        .leaderboard-card .score {
+            text-align: right;
+            min-width: 70px;
+        }
+        .leaderboard-card .score .number {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        .leaderboard-card .score .label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            display: block;
+        }
+        .leaderboard-card .view-btn {
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-sub);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .leaderboard-card .view-btn:hover {
+            background: var(--accent-purple-dark);
+            border-color: var(--accent-purple);
+            color: #fff;
+        }
+        .leaderboard-card.current-user {
+            border-color: var(--accent-purple);
+            background: var(--accent-purple-dark);
+        }
+        .leaderboard-card.current-user .rank::after {
+            content: " · You";
+            font-weight: 400;
+            font-size: 0.7rem;
+            color: var(--accent-purple-light);
+        }
+
+        @media (max-width: 600px) {
+            .leaderboard-card { flex-wrap: wrap; gap: 0.5rem; padding: 0.75rem; }
+            .leaderboard-card .rank { min-width: 30px; font-size: 0.9rem; }
+            .leaderboard-card .avatar-wrap img { width: 40px; height: 40px; }
+            .leaderboard-card .info .name { font-size: 0.85rem; }
+            .leaderboard-card .rating { margin-right: 0; }
+            .leaderboard-card .score .number { font-size: 1rem; }
+            .leaderboard-card .view-btn { padding: 0.2rem 0.8rem; font-size: 0.7rem; }
+        }
+
+        /* Load More */
+        .load-more {
+            text-align: center;
+            padding: 1.5rem 0;
+        }
+        .load-more button {
+            padding: 0.6rem 2.5rem;
+            border-radius: 40px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-sub);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .load-more button:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        /* Your Rank Sticky */
+        .your-rank-sticky {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 0.8rem 1.2rem;
+            backdrop-filter: blur(12px);
+            box-shadow: var(--shadow-card);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+        .your-rank-sticky.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .your-rank-sticky:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        .your-rank-sticky .rank-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .your-rank-sticky .rank-number {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        .your-rank-sticky .rank-score {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-gold);
+        }
+
+        @media (max-width: 768px) {
+            .your-rank-sticky {
+                bottom: 1rem;
+                right: 1rem;
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+            .your-rank-sticky .rank-number { font-size: 1rem; }
+        }
+
+        /* Info Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1.5rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-box {
+            background: #1A1D26;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            max-width: 480px;
+            width: 100%;
+            padding: 2rem;
+            transform: scale(0.95);
+            transition: transform 0.3s;
+        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-box h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .modal-box h3 i { color: var(--accent-gold); }
+        .modal-box p { color: var(--text-sub); font-size: 0.9rem; line-height: 1.5; margin-bottom: 0.5rem; }
+        .modal-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0.5rem 0 1rem;
+        }
+        .modal-box ul li {
+            padding: 0.3rem 0;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .modal-box ul li i { color: var(--accent-purple-light); font-size: 0.8rem; }
+        .modal-box .close-modal {
+            padding: 0.5rem 2rem;
+            border-radius: 40px;
+            border: none;
+            background: var(--accent-purple);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.2s;
+        }
+        .modal-box .close-modal:hover { background: var(--accent-purple-dark); }
+
+        /* Skeleton */
+        .skeleton-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+        }
+        .skeleton-card .skeleton-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #2A2F3A;
+            animation: pulse 1.5s infinite;
+        }
+        .skeleton-card .skeleton-line {
+            height: 12px;
+            background: #2A2F3A;
+            border-radius: 8px;
+            margin: 4px 0;
+            animation: pulse 1.5s infinite;
+        }
+        .skeleton-card .skeleton-line.w60 { width: 60%; }
+        .skeleton-card .skeleton-line.w40 { width: 40%; }
+        .skeleton-card .skeleton-line.w80 { width: 80%; }
+        .skeleton-card .skeleton-score {
+            width: 60px;
+            height: 30px;
+            background: #2A2F3A;
+            border-radius: 8px;
+            animation: pulse 1.5s infinite;
+            margin-left: auto;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.4; }
+        }
+
+        /* Entrance animation */
+        .leaderboard-header { animation: fadeUp 0.5s ease both; }
+        .crush-section { animation: fadeUp 0.5s ease 0.1s both; }
+        .controls-bar { animation: fadeUp 0.5s ease 0.15s both; }
+        .podium { animation: fadeUp 0.5s ease 0.2s both; }
+        .leaderboard-list .leaderboard-card {
+            animation: fadeUp 0.4s ease both;
+        }
+        .leaderboard-list .leaderboard-card:nth-child(1) { animation-delay: 0.25s; }
+        .leaderboard-list .leaderboard-card:nth-child(2) { animation-delay: 0.30s; }
+        .leaderboard-list .leaderboard-card:nth-child(3) { animation-delay: 0.35s; }
+        .leaderboard-list .leaderboard-card:nth-child(4) { animation-delay: 0.40s; }
+        .leaderboard-list .leaderboard-card:nth-child(5) { animation-delay: 0.45s; }
+        .leaderboard-list .leaderboard-card:nth-child(6) { animation-delay: 0.50s; }
+        .leaderboard-list .leaderboard-card:nth-child(7) { animation-delay: 0.55s; }
+        .leaderboard-list .leaderboard-card:nth-child(8) { animation-delay: 0.60s; }
+        .leaderboard-list .leaderboard-card:nth-child(9) { animation-delay: 0.65s; }
+        .leaderboard-list .leaderboard-card:nth-child(10) { animation-delay: 0.70s; }
+
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ─── NAVBAR ─── -->
+    <nav class="navbar" id="mainNav">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <div class="logo-icon"><i class="fas fa-crown"></i></div>
+                <span class="logo-text">Uni<span>Match</span></span>
+            </a>
+
+            <div class="search-wrap desktop-search">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search students, clubs, events..." id="searchInput" />
+                <button class="search-clear" id="searchClear"><i class="fas fa-times-circle"></i></button>
+            </div>
+
+            <div class="desktop-menu">
+                <a href="#"><i class="fas fa-house"></i> Home</a>
+                <a href="#"><i class="fas fa-people-group"></i> Clubs</a>
+                <a href="#"><i class="fas fa-calendar"></i> Events</a>
+                <a href="#" class="active"><i class="fas fa-trophy"></i> Leaderboard</a>
+                <a href="#" class="notif-wrap">
+                    <i class="fas fa-bell"></i>
+                    <span class="notif-badge"></span>
+                </a>
+                <a href="#" class="avatar-link">
+                    <div class="avatar avatar-placeholder">J</div>
+                </a>
+            </div>
+
+            <div class="mobile-controls">
+                <button class="search-toggle" id="searchToggle"><i class="fas fa-search"></i></button>
+                <a href="#" class="notif-wrap mobile-notif"><i class="fas fa-bell"></i><span class="notif-badge"></span></a>
+                <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+            </div>
+
+            <div class="search-wrap mobile-search" id="mobileSearch">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search..." id="mobileSearchInput" />
+                <button class="search-clear" id="mobileSearchClear"><i class="fas fa-times-circle"></i></button>
+            </div>
+
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="#"><i class="fas fa-house"></i> Home</a>
+                <a href="#"><i class="fas fa-people-group"></i> Clubs</a>
+                <a href="#"><i class="fas fa-calendar"></i> Events</a>
+                <a href="#" class="active"><i class="fas fa-trophy"></i> Leaderboard</a>
+                <a href="#" class="notif-mobile"><i class="fas fa-bell"></i> Notifications <span class="badge">3</span></a>
+                <div class="avatar-row">
+                    <div class="avatar avatar-placeholder">J</div>
+                    <span>James Wilson</span>
+                    <a href="#" class="settings-link"><i class="fas fa-gear"></i></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ─── APP LAYOUT ─── -->
+    <div class="app-layout">
+
+        <!-- ─── LEFT SIDEBAR ─── -->
+        <aside class="sidebar-left">
+            <div class="card">
+                <div class="profile-card">
+                    <a href="#"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" class="profile-avatar" alt="Profile" /></a>
+                    <div class="profile-info">
+                        <h4>James Wilson</h4>
+                        <p>@james_wilson</p>
+                        <div class="rating-badge"><i class="fas fa-star"></i> B.Tech CSE</div>
+                    </div>
+                </div>
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-house"></i> Home</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-users"></i> Discover People</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-file-lines"></i> Posts</a></li>
+                    <li class="nav-item active"><a href="#" class="nav-link"><i class="fas fa-trophy"></i> Leaderboard</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-calendar"></i> Events</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-people-group"></i> Clubs</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-message"></i> Messages <span class="nav-badge-purple">12</span></a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-bell"></i> Notifications <span class="nav-badge-red">3</span></a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-user"></i> My Profile</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-gear"></i> Settings</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="fas fa-right-from-bracket"></i> Logout</a></li>
+                </ul>
+            </div>
+            <div class="card daily-card">
+                <div class="daily-content">
+                    <div>
+                        <div class="daily-title">Daily Check-in</div>
+                        <div class="daily-sub">Check in daily and earn bonus score!</div>
+                    </div>
+                    <div class="flame-icon">🔥</div>
+                </div>
+                <button class="btn-checkin" id="checkinBtn">Check In</button>
+            </div>
+        </aside>
+
+        <!-- ─── MAIN CONTENT ─── -->
+        <main class="leaderboard-main">
+
+            <!-- Header -->
+            <div class="leaderboard-header">
+                <div class="left">
+                    <h1><i class="fas fa-trophy"></i> THE JUDGEMENT</h1>
+                    <div class="subtitle">See who stands above the rest. Ranked by <em>influence, interaction, popularity</em> and student ratings.</div>
+                </div>
+                <div class="status">
+                    <i class="fas fa-circle" style="color:#22C55E; font-size:0.6rem;"></i>
+                    Updated recently
+                </div>
+            </div>
+
+            <!-- University Crush -->
+            <section class="crush-section">
+                <div class="section-label"><i class="fas fa-crown"></i> UNIVERSITY CRUSH</div>
+                <div class="crush-grid" id="crushGrid">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- Controls -->
+            <div class="controls-bar">
+                <div class="tabs" id="filterTabs">
+                    <button class="tab active" data-filter="overall">Overall</button>
+                    <button class="tab" data-filter="rating">Rating</button>
+                    <button class="tab" data-filter="followers">Followers</button>
+                    <button class="tab" data-filter="interaction">Interaction</button>
+                </div>
+                <div class="filters">
+                    <select id="semesterFilter">
+                        <option value="all">All Semesters</option>
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                    </select>
+                    <select id="programFilter">
+                        <option value="all">All Programs</option>
+                        <option value="B.Tech CSE">B.Tech CSE</option>
+                        <option value="BCA">BCA</option>
+                        <option value="B.Tech ECE">B.Tech ECE</option>
+                        <option value="BBA">BBA</option>
+                        <option value="B.Sc Physics">B.Sc Physics</option>
+                    </select>
+                    <select id="genderFilter">
+                        <option value="all">All Genders</option>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                    </select>
+                    <button class="tab" id="infoTrigger" style="background:transparent;border:none;color:var(--text-muted);font-size:0.9rem;cursor:pointer;">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Top 3 Podium -->
+            <div class="podium" id="podium">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Leaderboard List -->
+            <div class="leaderboard-list" id="leaderboardList">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Load More -->
+            <div class="load-more">
+                <button id="loadMoreBtn">Load more</button>
+            </div>
+
+        </main>
+
+        <!-- ─── RIGHT SIDEBAR ─── -->
+        <aside class="sidebar-right">
+            <div class="card">
+                <div class="section-title-row">
+                    <h5><i class="fas fa-fire" style="color:var(--accent-red);"></i> Top This Week</h5>
+                    <a href="#" class="view-all-link">View All</a>
+                </div>
+                <div class="widget-list">
+                    <div class="widget-item">
+                        <div class="widget-left">
+                            <span class="crown-icon">👑</span>
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80" class="widget-avatar" alt="Arjun Mehta" />
+                            <div class="widget-info"><h6>Arjun Mehta</h6><p>Crush (M)</p></div>
+                        </div>
+                        <div class="widget-score">⭐ 9.2</div>
+                    </div>
+                    <div class="widget-item">
+                        <div class="widget-left">
+                            <span class="crown-icon">👑</span>
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" class="widget-avatar" alt="Riya Sharma" />
+                            <div class="widget-info"><h6>Riya Sharma</h6><p>Crush (F)</p></div>
+                        </div>
+                        <div class="widget-score">⭐ 9.1</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="section-title-row">
+                    <h5><i class="fas fa-trophy" style="color:var(--accent-gold);"></i> Leaderboard</h5>
+                    <a href="#" class="view-all-link">View All</a>
+                </div>
+                <div class="widget-list" id="miniLeaderboard">
+                    <!-- populated by JS -->
+                </div>
+            </div>
+            <div class="card">
+                <div class="section-title-row">
+                    <h5><i class="fas fa-calendar-check" style="color:var(--accent-blue);"></i> Upcoming Events</h5>
+                    <a href="#" class="view-all-link">View All</a>
+                </div>
+                <div class="widget-list">
+                    <div class="event-card-item">
+                        <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=150&auto=format&fit=crop&q=80" class="event-thumb" alt="HackNIT 2025" />
+                        <div class="event-meta"><h6>HackNIT 2025</h6><p>22 May, 10:00 AM</p></div>
+                    </div>
+                    <div class="event-card-item">
+                        <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=150&auto=format&fit=crop&q=80" class="event-thumb" alt="DJ Night" />
+                        <div class="event-meta"><h6>DJ Night</h6><p>26 May, 7:00 PM</p></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- ─── YOUR RANK STICKY ─── -->
+    <div class="your-rank-sticky" id="yourRankSticky">
+        <div>
+            <div class="rank-label">Your Rank</div>
+            <div class="rank-number" id="stickyRank">#27</div>
+        </div>
+        <div class="rank-score" id="stickyScore">84.6</div>
+    </div>
+
+    <!-- ─── INFO MODAL ─── -->
+    <div class="modal-overlay" id="infoModal">
+        <div class="modal-box">
+            <h3><i class="fas fa-info-circle"></i> How is this calculated?</h3>
+            <p>Your ranking is influenced by:</p>
+            <ul>
+                <li><i class="fas fa-check-circle"></i> Student ratings</li>
+                <li><i class="fas fa-check-circle"></i> Followers</li>
+                <li><i class="fas fa-check-circle"></i> Profile interactions</li>
+                <li><i class="fas fa-check-circle"></i> Social activity</li>
+                <li><i class="fas fa-check-circle"></i> Community engagement</li>
+                <li><i class="fas fa-check-circle"></i> Interests</li>
+            </ul>
+            <button class="close-modal" id="closeModal">Got it</button>
+        </div>
+    </div>
+
+    <script>
+        // ─── SAMPLE DATA ───
+        const students = [{
+            rank: 1,
+            username: "arjun_mehta",
+            name: "Arjun Mehta",
+            profileImage: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&auto=format&fit=crop&q=80",
+            semester: "Semester 5",
+            program: "B.Tech CSE",
+            rating: 9.2,
+            followers: 2400,
+            interactions: 850,
+            overallScore: 98.4,
+            gender: "M"
+        }, {
+            rank: 2,
+            username: "riya_sharma",
+            name: "Riya Sharma",
+            profileImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80",
+            semester: "Semester 4",
+            program: "BCA",
+            rating: 9.1,
+            followers: 2200,
+            interactions: 780,
+            overallScore: 96.8,
+            gender: "F"
+        }, {
+            rank: 3,
+            username: "aman_raj",
+            name: "Aman Raj",
+            profileImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
+            semester: "Semester 5",
+            program: "B.Tech CSE",
+            rating: 8.9,
+            followers: 2100,
+            interactions: 720,
+            overallScore: 95.4,
+            gender: "M"
+        }, {
+            rank: 4,
+            username: "neha_singh",
+            name: "Neha Singh",
+            profileImage: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&auto=format&fit=crop&q=80",
+            semester: "Semester 3",
+            program: "BCA",
+            rating: 8.8,
+            followers: 1900,
+            interactions: 650,
+            overallScore: 91.7,
+            gender: "F"
+        }, {
+            rank: 5,
+            username: "rahul_verma",
+            name: "Rahul Verma",
+            profileImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
+            semester: "Semester 6",
+            program: "B.Tech ECE",
+            rating: 8.6,
+            followers: 1700,
+            interactions: 600,
+            overallScore: 88.2,
+            gender: "M"
+        }, {
+            rank: 6,
+            username: "diya_patel",
+            name: "Diya Patel",
+            profileImage: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&auto=format&fit=crop&q=80",
+            semester: "Semester 2",
+            program: "BBA",
+            rating: 8.5,
+            followers: 1500,
+            interactions: 550,
+            overallScore: 86.5,
+            gender: "F"
+        }, {
+            rank: 7,
+            username: "sarthak_jain",
+            name: "Sarthak Jain",
+            profileImage: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&auto=format&fit=crop&q=80",
+            semester: "Semester 4",
+            program: "B.Tech CSE",
+            rating: 8.4,
+            followers: 1400,
+            interactions: 520,
+            overallScore: 84.6,
+            gender: "M"
+        }, {
+            rank: 8,
+            username: "ananya_reddy",
+            name: "Ananya Reddy",
+            profileImage: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&auto=format&fit=crop&q=80",
+            semester: "Semester 3",
+            program: "B.Sc Physics",
+            rating: 8.3,
+            followers: 1300,
+            interactions: 480,
+            overallScore: 82.1,
+            gender: "F"
+        }, {
+            rank: 9,
+            username: "karan_gupta",
+            name: "Karan Gupta",
+            profileImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
+            semester: "Semester 1",
+            program: "B.Tech CSE",
+            rating: 8.0,
+            followers: 1100,
+            interactions: 420,
+            overallScore: 79.3,
+            gender: "M"
+        }, {
+            rank: 10,
+            username: "priya_kumar",
+            name: "Priya Kumar",
+            profileImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80",
+            semester: "Semester 2",
+            program: "BCA",
+            rating: 7.9,
+            followers: 1050,
+            interactions: 400,
+            overallScore: 77.8,
+            gender: "F"
+        }, {
+            rank: 11,
+            username: "vikram_singh",
+            name: "Vikram Singh",
+            profileImage: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&auto=format&fit=crop&q=80",
+            semester: "Semester 5",
+            program: "B.Tech ECE",
+            rating: 7.8,
+            followers: 980,
+            interactions: 370,
+            overallScore: 75.4,
+            gender: "M"
+        }, {
+            rank: 12,
+            username: "sneha_menon",
+            name: "Sneha Menon",
+            profileImage: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&auto=format&fit=crop&q=80",
+            semester: "Semester 3",
+            program: "B.Sc Physics",
+            rating: 7.6,
+            followers: 920,
+            interactions: 350,
+            overallScore: 73.0,
+            gender: "F"
+        }, {
+            rank: 13,
+            username: "rohit_nair",
+            name: "Rohit Nair",
+            profileImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
+            semester: "Semester 4",
+            program: "B.Tech CSE",
+            rating: 7.5,
+            followers: 850,
+            interactions: 320,
+            overallScore: 70.8,
+            gender: "M"
+        }, {
+            rank: 14,
+            username: "meera_joshi",
+            name: "Meera Joshi",
+            profileImage: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&auto=format&fit=crop&q=80",
+            semester: "Semester 6",
+            program: "BBA",
+            rating: 7.4,
+            followers: 800,
+            interactions: 300,
+            overallScore: 68.5,
+            gender: "F"
+        }, {
+            rank: 15,
+            username: "akash_dubey",
+            name: "Akash Dubey",
+            profileImage: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&auto=format&fit=crop&q=80",
+            semester: "Semester 2",
+            program: "BCA",
+            rating: 7.2,
+            followers: 750,
+            interactions: 280,
+            overallScore: 66.2,
+            gender: "M"
+        }];
+
+        // ─── STATE ───
+        let filteredStudents = [...students];
+        let currentFilter = 'overall';
+        let semesterFilter = 'all';
+        let programFilter = 'all';
+        let genderFilter = 'all';
+        let displayedCount = 10;
+        const currentUser = students[6]; // Sarthak Jain as logged-in user
+
+        // ─── DOM refs ───
+        const crushGrid = document.getElementById('crushGrid');
+        const podium = document.getElementById('podium');
+        const leaderboardList = document.getElementById('leaderboardList');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const filterTabs = document.querySelectorAll('.tab');
+        const semesterSelect = document.getElementById('semesterFilter');
+        const programSelect = document.getElementById('programFilter');
+        const genderSelect = document.getElementById('genderFilter');
+        const stickyRank = document.getElementById('stickyRank');
+        const stickyScore = document.getElementById('stickyScore');
+        const yourRankSticky = document.getElementById('yourRankSticky');
+        const infoTrigger = document.getElementById('infoTrigger');
+        const infoModal = document.getElementById('infoModal');
+        const closeModalBtn = document.getElementById('closeModal');
+
+        // ─── Helper: get top crush per gender ───
+        function getCrush(gender) {
+            const filtered = students.filter(s => s.gender === gender);
+            if (filtered.length === 0) return null;
+            return filtered.reduce((a, b) => a.rating > b.rating ? a : b);
+        }
+
+        // ─── Render University Crush ───
+        function renderCrush() {
+            const male = getCrush('M');
+            const female = getCrush('F');
+            let html = '';
+            if (male) {
+                html += `
+                        <div class="crush-card">
+                            <img src="${male.profileImage}" class="crush-avatar male" alt="${male.name}" />
+                            <div class="crush-name">${male.name}</div>
+                            <div class="crush-username">@${male.username}</div>
+                            <div class="crush-details">${male.semester} • ${male.program}</div>
+                            <div class="crush-rating"><i class="fas fa-star"></i> ${male.rating}</div>
+                            <div class="crush-badge">#1 Male</div>
+                            <a href="/profile/${male.username}/" class="crush-btn">View Profile</a>
+                        </div>
+                    `;
+            }
+            if (female) {
+                html += `
+                        <div class="crush-card">
+                            <img src="${female.profileImage}" class="crush-avatar female" alt="${female.name}" />
+                            <div class="crush-name">${female.name}</div>
+                            <div class="crush-username">@${female.username}</div>
+                            <div class="crush-details">${female.semester} • ${female.program}</div>
+                            <div class="crush-rating"><i class="fas fa-star"></i> ${female.rating}</div>
+                            <div class="crush-badge">#1 Female</div>
+                            <a href="/profile/${female.username}/" class="crush-btn">View Profile</a>
+                        </div>
+                    `;
+            }
+            crushGrid.innerHTML = html;
+        }
+
+        // ─── Render Podium ───
+        function renderPodium() {
+            const top3 = filteredStudents.slice(0, 3);
+            if (top3.length === 0) {
+                podium.innerHTML = '<div class="card" style="text-align:center;padding:2rem;">No students to show</div>';
+                return;
+            }
+            const positions = ['first', 'second', 'third'];
+            const medals = ['👑', '🥈', '🥉'];
+            let html = '';
+            // order: #2, #1, #3
+            const order = [1, 0, 2];
+            order.forEach(idx => {
+                if (!top3[idx]) return;
+                const s = top3[idx];
+                const pos = positions[idx];
+                const medal = medals[idx];
+                const rankLabel = idx === 0 ? '#1' : idx === 1 ? '#2' : '#3';
+                html += `
+                        <div class="podium-item ${pos}">
+                            ${idx === 0 ? `<div class="crown">${medal}</div>` : ''}
+                            <img src="${s.profileImage}" class="podium-avatar" alt="${s.name}" />
+                            <div class="podium-rank">${rankLabel}</div>
+                            <div class="podium-name">${s.name}</div>
+                            <div class="podium-score">${s.overallScore}</div>
+                        </div>
+                    `;
+            });
+            podium.innerHTML = html;
+        }
+
+        // ─── Render Leaderboard List ───
+        function renderLeaderboard() {
+            const list = filteredStudents.slice(0, displayedCount);
+            if (list.length === 0) {
+                leaderboardList.innerHTML = `
+                        <div class="card" style="text-align:center;padding:2rem;color:var(--text-muted);">
+                            <i class="fas fa-users-slash" style="font-size:2rem;margin-bottom:0.5rem;"></i>
+                            <h3>No rankings yet.</h3>
+                            <p>There aren't enough students in this category to generate a leaderboard.<br>Try another filter.</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            let html = '';
+            list.forEach((s, index) => {
+                const isCurrent = s.username === currentUser.username;
+                let rankClass = '';
+                if (s.rank === 1) rankClass = 'top1';
+                else if (s.rank === 2) rankClass = 'top2';
+                else if (s.rank === 3) rankClass = 'top3';
+                const rankDisplay = `#${String(s.rank).padStart(2, '0')}`;
+                html += `
+                        <div class="leaderboard-card ${isCurrent ? 'current-user' : ''}">
+                            <div class="rank ${rankClass}">${rankDisplay}</div>
+                            <div class="avatar-wrap">
+                                <img src="${s.profileImage}" alt="${s.name}" />
+                            </div>
+                            <div class="info">
+                                <div class="name">${s.name}</div>
+                                <div class="username">@${s.username}</div>
+                                <div class="details">
+                                    <span><i class="fas fa-graduation-cap"></i> ${s.semester}</span>
+                                    <span><i class="fas fa-book"></i> ${s.program}</span>
+                                </div>
+                            </div>
+                            <div class="rating"><i class="fas fa-star"></i> ${s.rating}</div>
+                            <div class="score">
+                                <span class="number">${s.overallScore}</span>
+                                <span class="label">Overall Score</span>
+                            </div>
+                            <a href="/profile/${s.username}/" class="view-btn">View Profile</a>
+                        </div>
+                    `;
+            });
+            leaderboardList.innerHTML = html;
+
+            // Update sticky
+            const userRank = filteredStudents.findIndex(s => s.username === currentUser.username) + 1;
+            if (userRank > 0) {
+                const user = filteredStudents[userRank - 1];
+                stickyRank.textContent = `#${user.rank}`;
+                stickyScore.textContent = user.overallScore;
+                yourRankSticky.classList.add('visible');
+            } else {
+                yourRankSticky.classList.remove('visible');
+            }
+
+            // Show/hide load more
+            if (displayedCount >= filteredStudents.length) {
+                loadMoreBtn.style.display = 'none';
+            } else {
+                loadMoreBtn.style.display = 'block';
+            }
+        }
+
+        // ─── Apply filters ───
+        function applyFilters() {
+            let result = [...students];
+
+            // Semester
+            if (semesterFilter !== 'all') {
+                const semNum = parseInt(semesterFilter);
+                result = result.filter(s => {
+                    const num = parseInt(s.semester.match(/\d+/)?.[0] || 0);
+                    return num === semNum;
+                });
+            }
+
+            // Program
+            if (programFilter !== 'all') {
+                result = result.filter(s => s.program === programFilter);
+            }
+
+            // Gender
+            if (genderFilter !== 'all') {
+                result = result.filter(s => s.gender === genderFilter);
+            }
+
+            // Sort
+            switch (currentFilter) {
+                case 'overall':
+                    result.sort((a, b) => b.overallScore - a.overallScore);
+                    break;
+                case 'rating':
+                    result.sort((a, b) => b.rating - a.rating);
+                    break;
+                case 'followers':
+                    result.sort((a, b) => b.followers - a.followers);
+                    break;
+                case 'interaction':
+                    result.sort((a, b) => b.interactions - a.interactions);
+                    break;
+                default:
+                    result.sort((a, b) => b.overallScore - a.overallScore);
+            }
+
+            // Reassign rank numbers
+            result.forEach((s, i) => s.rank = i + 1);
+
+            filteredStudents = result;
+            displayedCount = 10;
+            renderPodium();
+            renderLeaderboard();
+        }
+
+        // ─── Event listeners ───
+        // Tabs
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                filterTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                applyFilters();
+            });
+        });
+
+        // Filters
+        semesterSelect.addEventListener('change', function() {
+            semesterFilter = this.value;
+            applyFilters();
+        });
+        programSelect.addEventListener('change', function() {
+            programFilter = this.value;
+            applyFilters();
+        });
+        genderSelect.addEventListener('change', function() {
+            genderFilter = this.value;
+            applyFilters();
+        });
+
+        // Load more
+        loadMoreBtn.addEventListener('click', function() {
+            displayedCount += 10;
+            renderLeaderboard();
+        });
+
+        // Sticky click: scroll to current user
+        yourRankSticky.addEventListener('click', function() {
+            const card = document.querySelector('.leaderboard-card.current-user');
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+
+        // Info modal
+        infoTrigger.addEventListener('click', function() {
+            infoModal.classList.add('active');
+        });
+        closeModalBtn.addEventListener('click', function() {
+            infoModal.classList.remove('active');
+        });
+        infoModal.addEventListener('click', function(e) {
+            if (e.target === this) infoModal.classList.remove('active');
+        });
+
+        // ─── Mobile nav interactions ───
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        hamburger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.classList.toggle('active');
+            mobileMenu.classList.toggle('open');
+        });
+        const searchToggle = document.getElementById('searchToggle');
+        const mobileSearch = document.getElementById('mobileSearch');
+        searchToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            mobileSearch.classList.toggle('open');
+            if (mobileSearch.classList.contains('open')) {
+                document.getElementById('mobileSearchInput').focus();
+            }
+        });
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.navbar')) {
+                mobileSearch.classList.remove('open');
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('open');
+            }
+        });
+
+        // ─── Initialize ───
+        renderCrush();
+        applyFilters();
+    </script>
+</body>
+</html>

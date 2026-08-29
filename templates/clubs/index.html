@@ -1,0 +1,1377 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+{% block head %}
+    <title>OnnCampus · Discover Clubs</title>
+
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* ── Reset & Base ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0F1117;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 24px 32px 48px;
+            overflow-x: hidden;
+            color: #F5F7FA;
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #30363D;
+            border-radius: 8px;
+        }
+
+        /* ── Top Bar ── */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, .25);
+            flex-shrink: 0;
+        }
+
+        .brand-text {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -.3px;
+            background: linear-gradient(to right, #F5F7FA, #A7B0C0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-text span {
+            font-weight: 300;
+            -webkit-text-fill-color: #4F8CFF;
+            background: none;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .top-actions .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, .04);
+            padding: 8px 16px 8px 12px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, .05);
+            cursor: pointer;
+            transition: background .2s;
+        }
+
+        .top-actions .user-badge:hover {
+            background: rgba(255, 255, 255, .08);
+        }
+
+        .top-actions .user-badge .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 13px;
+            color: #fff;
+        }
+
+        .top-actions .user-badge .name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #C9D1D9;
+        }
+
+        .top-actions .user-badge .role {
+            font-size: 11px;
+            font-weight: 400;
+            color: #4B5563;
+            background: rgba(255, 255, 255, .04);
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+
+        .top-actions .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, .05);
+            background: rgba(255, 255, 255, .03);
+            color: #8B95A9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .top-actions .icon-btn:hover {
+            background: rgba(255, 255, 255, .08);
+            border-color: rgba(255, 255, 255, .12);
+            color: #F5F7FA;
+        }
+
+        .top-actions .icon-btn .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #EF4444;
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            border: 2px solid #0F1117;
+        }
+
+        /* ── Page Header ── */
+        .page-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 8px 0 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, .04);
+        }
+
+        .page-header .left h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -.5px;
+            background: linear-gradient(to right, #F5F7FA, #A7B0C0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header .left p {
+            color: #8B95A9;
+            font-size: 15px;
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
+        .page-header .left p em {
+            font-style: normal;
+            color: #4F8CFF;
+            font-weight: 500;
+        }
+
+        .page-header .right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        /* ── Create Club Button ── */
+        .btn-create {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 40px;
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .25s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 6px 24px rgba(59, 130, 246, .25);
+            font-family: 'Inter', sans-serif;
+            letter-spacing: .2px;
+        }
+
+        .btn-create:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 36px rgba(59, 130, 246, .35);
+        }
+
+        .btn-create:active {
+            transform: translateY(0) scale(.98);
+        }
+
+        .btn-create i {
+            font-size: 15px;
+        }
+
+        /* ── Search & Filter ── */
+        .search-filter {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 40px;
+            padding: 8px 18px 8px 20px;
+            transition: all .25s;
+            min-width: 220px;
+        }
+
+        .search-box:focus-within {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, .08);
+            background: rgba(255, 255, 255, .06);
+        }
+
+        .search-box i {
+            color: #4B5563;
+            font-size: 14px;
+        }
+
+        .search-box input {
+            background: none;
+            border: none;
+            outline: none;
+            color: #F5F7FA;
+            font-size: 14px;
+            font-weight: 400;
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+            padding: 6px 0;
+        }
+
+        .search-box input::placeholder {
+            color: #4B5563;
+        }
+
+        .filter-chip-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 8px 18px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, .06);
+            background: rgba(255, 255, 255, .03);
+            color: #8B95A9;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all .2s;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+        }
+
+        .filter-chip:hover {
+            background: rgba(255, 255, 255, .07);
+            border-color: rgba(255, 255, 255, .12);
+            color: #F5F7FA;
+        }
+
+        .filter-chip.active {
+            background: rgba(59, 130, 246, .15);
+            border-color: #3B82F6;
+            color: #4F8CFF;
+        }
+
+        /* ── Club Grid ── */
+        .club-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 24px;
+            padding: 32px 0 48px;
+        }
+
+        /* ── Club Card ── */
+        .club-card {
+            background: rgba(255, 255, 255, .03);
+            border: 1px solid rgba(255, 255, 255, .05);
+            border-radius: 24px;
+            padding: 28px 28px 24px;
+            transition: all .35s cubic-bezier(.25, .46, .45, .94);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+            cursor: default;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .club-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, .08), rgba(139, 92, 246, .05));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .4s;
+        }
+
+        .club-card:hover {
+            transform: translateY(-6px);
+            background: rgba(255, 255, 255, .06);
+            border-color: rgba(255, 255, 255, .10);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .4);
+        }
+
+        .club-card:hover::before {
+            opacity: 1;
+        }
+
+        .club-card .card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .club-card .club-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+            color: #fff;
+            transition: transform .3s;
+        }
+
+        .club-card:hover .club-icon {
+            transform: scale(1.05) rotate(-2deg);
+        }
+
+        .club-card .club-icon .emoji {
+            font-size: 28px;
+        }
+
+        .club-card .club-icon.gradient-1 {
+            background: linear-gradient(135deg, #3B82F6, #6366F1);
+        }
+        .club-card .club-icon.gradient-2 {
+            background: linear-gradient(135deg, #8B5CF6, #D946EF);
+        }
+        .club-card .club-icon.gradient-3 {
+            background: linear-gradient(135deg, #EC4899, #F472B6);
+        }
+        .club-card .club-icon.gradient-4 {
+            background: linear-gradient(135deg, #F59E0B, #FBBF24);
+        }
+        .club-card .club-icon.gradient-5 {
+            background: linear-gradient(135deg, #10B981, #34D399);
+        }
+        .club-card .club-icon.gradient-6 {
+            background: linear-gradient(135deg, #06B6D4, #22D3EE);
+        }
+        .club-card .club-icon.gradient-7 {
+            background: linear-gradient(135deg, #F43F5E, #FB7185);
+        }
+        .club-card .club-icon.gradient-8 {
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+        }
+
+        .club-card .card-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .club-card .card-actions button {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, .06);
+            background: rgba(255, 255, 255, .03);
+            color: #4B5563;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        .club-card .card-actions button:hover {
+            background: rgba(255, 255, 255, .08);
+            border-color: rgba(255, 255, 255, .15);
+            color: #F5F7FA;
+        }
+
+        .club-card .card-actions button.liked {
+            color: #EF4444;
+            border-color: rgba(239, 68, 68, .2);
+            background: rgba(239, 68, 68, .08);
+        }
+
+        .club-card .club-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #F5F7FA;
+            margin-bottom: 4px;
+            letter-spacing: -.2px;
+        }
+
+        .club-card .club-category {
+            font-size: 12px;
+            font-weight: 500;
+            color: #4F8CFF;
+            background: rgba(59, 130, 246, .10);
+            padding: 2px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 10px;
+            letter-spacing: .3px;
+        }
+
+        .club-card .club-desc {
+            color: #8B95A9;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .club-card .club-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, .04);
+        }
+
+        .club-card .club-meta .stats {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 13px;
+            color: #6B7280;
+        }
+
+        .club-card .club-meta .stats span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .club-card .club-meta .stats i {
+            font-size: 13px;
+        }
+
+        .club-card .club-meta .join-btn {
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all .25s;
+            background: linear-gradient(135deg, #3B82F6, #6366F1);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, .2);
+        }
+
+        .club-card .club-meta .join-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, .3);
+        }
+
+        .club-card .club-meta .join-btn.joined {
+            background: rgba(255, 255, 255, .06);
+            color: #8B95A9;
+            box-shadow: none;
+        }
+
+        .club-card .club-meta .join-btn.joined:hover {
+            background: rgba(239, 68, 68, .12);
+            color: #EF4444;
+        }
+
+        /* ── Create Club Modal ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .35s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: #1A1D26;
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 32px;
+            max-width: 580px;
+            width: 100%;
+            padding: 40px 44px 36px;
+            transform: scale(.96) translateY(20px);
+            transition: transform .35s cubic-bezier(.25, .46, .45, .94);
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal::-webkit-scrollbar {
+            width: 3px;
+        }
+        .modal::-webkit-scrollbar-thumb {
+            background: #30363D;
+            border-radius: 8px;
+        }
+
+        .modal .close-btn {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #4B5563;
+            font-size: 22px;
+            cursor: pointer;
+            transition: color .2s;
+            padding: 4px;
+        }
+
+        .modal .close-btn:hover {
+            color: #F5F7FA;
+        }
+
+        .modal h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #F5F7FA;
+            margin-bottom: 4px;
+            letter-spacing: -.3px;
+        }
+
+        .modal .subtitle {
+            color: #8B95A9;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .modal .form-group {
+            margin-bottom: 18px;
+        }
+
+        .modal .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #C9D1D9;
+            margin-bottom: 6px;
+        }
+
+        .modal .form-group label .req {
+            color: #F87171;
+            margin-left: 2px;
+        }
+
+        .modal .form-group input,
+        .modal .form-group select,
+        .modal .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(15, 17, 23, .6);
+            border: 1px solid #262C36;
+            border-radius: 14px;
+            color: #F5F7FA;
+            font-size: 14px;
+            font-weight: 400;
+            outline: none;
+            transition: border .2s, box-shadow .2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .modal .form-group input:focus,
+        .modal .form-group select:focus,
+        .modal .form-group textarea:focus {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, .10);
+        }
+
+        .modal .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal .form-group select {
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+            color: #C9D1D9;
+        }
+
+        .modal .form-group select option {
+            background: #1A1D26;
+            color: #F5F7FA;
+        }
+
+        .modal .form-row {
+            display: flex;
+            gap: 14px;
+        }
+
+        .modal .form-row .form-group {
+            flex: 1;
+        }
+
+        .modal .form-group .char-count {
+            text-align: right;
+            font-size: 12px;
+            color: #4B5563;
+            margin-top: 4px;
+        }
+
+        .modal .btn-submit {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .25s;
+            box-shadow: 0 6px 24px rgba(59, 130, 246, .2);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .modal .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px rgba(59, 130, 246, .3);
+        }
+
+        .modal .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        /* ── Toast Notification ── */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1A1D26;
+            border: 1px solid rgba(255, 255, 255, .06);
+            border-radius: 16px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .6);
+            transform: translateY(100px) scale(.95);
+            opacity: 0;
+            transition: all .4s cubic-bezier(.25, .46, .45, .94);
+            z-index: 2000;
+            max-width: 420px;
+        }
+
+        .toast.show {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .toast .toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(34, 197, 94, .12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #22C55E;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .toast .toast-content .toast-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #F5F7FA;
+        }
+
+        .toast .toast-content .toast-desc {
+            font-size: 13px;
+            color: #8B95A9;
+            margin-top: 2px;
+        }
+
+        /* ── Empty State ── */
+        .empty-state {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            color: #4B5563;
+            text-align: center;
+        }
+
+        .empty-state i {
+            font-size: 56px;
+            color: #262C36;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: #8B95A9;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            max-width: 380px;
+            margin-top: 6px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .club-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px 16px 32px;
+            }
+
+            .top-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .top-actions {
+                justify-content: space-between;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 16px;
+            }
+
+            .page-header .right {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-filter {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: unset;
+            }
+
+            .filter-chip-group {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 4px;
+            }
+
+            .club-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                padding: 20px 0 32px;
+            }
+
+            .modal {
+                padding: 28px 20px 24px;
+            }
+
+            .modal .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .top-actions .user-badge .role {
+                display: none;
+            }
+
+            .toast {
+                left: 16px;
+                right: 16px;
+                bottom: 16px;
+                max-width: unset;
+            }
+
+            .page-header .left h1 {
+                font-size: 26px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .club-card {
+                padding: 20px 18px 18px;
+            }
+
+            .club-card .club-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
+            }
+
+            .club-card .club-name {
+                font-size: 16px;
+            }
+        }
+
+        /* ── Entrance animations ── */
+        .club-card {
+            animation: cardFade .6s ease both;
+        }
+
+        .club-card:nth-child(1) {
+            animation-delay: .05s;
+        }
+        .club-card:nth-child(2) {
+            animation-delay: .10s;
+        }
+        .club-card:nth-child(3) {
+            animation-delay: .15s;
+        }
+        .club-card:nth-child(4) {
+            animation-delay: .20s;
+        }
+        .club-card:nth-child(5) {
+            animation-delay: .25s;
+        }
+        .club-card:nth-child(6) {
+            animation-delay: .30s;
+        }
+        .club-card:nth-child(7) {
+            animation-delay: .35s;
+        }
+        .club-card:nth-child(8) {
+            animation-delay: .40s;
+        }
+
+        @keyframes cardFade {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(.97);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .page-header {
+            animation: slideDown .5s ease .1s both;
+        }
+
+        @keyframes slideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .top-bar {
+            animation: fadeIn .5s ease both;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+{% endblock %}
+
+
+    <!-- ─── PAGE HEADER ─── -->
+    <div class="page-header">
+        <div class="left">
+            <h1>Discover Clubs</h1>
+            <p>Find your <em>vibe</em> &amp; connect with like-minded students.</p>
+        </div>
+        <div class="right">
+            <div class="search-filter">
+                <!-- <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search clubs..." />
+                </div> -->
+                <div class="filter-chip-group" id="filterGroup">
+                    <button class="filter-chip active" data-filter="all">All</button>
+                    <button class="filter-chip" data-filter="tech">Tech</button>
+                    <button class="filter-chip" data-filter="arts">Arts</button>
+                    <button class="filter-chip" data-filter="sports">Sports</button>
+                    <button class="filter-chip" data-filter="academic">Academic</button>
+                    <button class="filter-chip" data-filter="social">Social</button>
+                </div>
+            </div>
+            <button class="btn-create" id="openModalBtn">
+                <i class="fas fa-plus"></i> New Club
+            </button>
+        </div>
+    </div>
+
+    <!-- ─── CLUB GRID ─── -->
+    <div class="club-grid" id="clubGrid">
+        <!-- Cards will be rendered by JS -->
+    </div>
+
+    <!-- ─── CREATE CLUB MODAL ─── -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <button class="close-btn" id="closeModalBtn"><i class="fas fa-times"></i></button>
+            <h2>Start a new club</h2>
+            <p class="subtitle">Build your community — it takes just a minute.</p>
+
+            <form id="createClubForm" novalidate>
+                <div class="form-group">
+                    <label>Club name <span class="req">*</span></label>
+                    <input type="text" id="clubName" placeholder="e.g. AI &amp; Machine Learning" required />
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category <span class="req">*</span></label>
+                        <select id="clubCategory" required>
+                            <option value="" disabled selected>Select category</option>
+                            <option value="tech">Tech</option>
+                            <option value="arts">Arts</option>
+                            <option value="sports">Sports</option>
+                            <option value="academic">Academic</option>
+                            <option value="social">Social</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Icon <span style="color:#4B5563;font-weight:400;font-size:12px;">(emoji)</span></label>
+                        <input type="text" id="clubIcon" placeholder="🎯" maxlength="2" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Description <span class="req">*</span></label>
+                    <textarea id="clubDesc" placeholder="What's your club about? What kind of people are you looking for?" maxlength="200" required></textarea>
+                    <div class="char-count"><span id="charCount">0</span> / 200</div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-rocket"></i> Launch club
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ─── TOAST ─── -->
+    <div class="toast" id="toast">
+        <div class="toast-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="toast-content">
+            <div class="toast-title" id="toastTitle">Club created!</div>
+            <div class="toast-desc" id="toastDesc">Your club is now live for everyone to join.</div>
+        </div>
+    </div>
+
+    <script>
+        // ─── Data ───
+        const clubsData = [{
+            id: 1,
+            name: 'AI & Machine Learning',
+            category: 'tech',
+            icon: '🤖',
+            gradient: 'gradient-1',
+            desc: 'Exploring the future of intelligence — from neural networks to real-world applications. All skill levels welcome.',
+            members: 142,
+            online: 12,
+            joined: false
+        }, {
+            id: 2,
+            name: 'Creative Writing',
+            category: 'arts',
+            icon: '✍️',
+            gradient: 'gradient-3',
+            desc: 'A space for poets, novelists, and storytellers. Weekly workshops and open mic nights.',
+            members: 89,
+            online: 7,
+            joined: true
+        }, {
+            id: 3,
+            name: 'Basketball Society',
+            category: 'sports',
+            icon: '🏀',
+            gradient: 'gradient-4',
+            desc: 'Pickup games, drills, and tournaments. All skill levels — just bring your energy.',
+            members: 210,
+            online: 24,
+            joined: false
+        }, {
+            id: 4,
+            name: 'Quantum Physics',
+            category: 'academic',
+            icon: '⚛️',
+            gradient: 'gradient-2',
+            desc: 'Dive into the weird world of quantum mechanics. Study groups, guest lectures, and research projects.',
+            members: 67,
+            online: 4,
+            joined: false
+        }, {
+            id: 5,
+            name: 'Board Game Night',
+            category: 'social',
+            icon: '🎲',
+            gradient: 'gradient-5',
+            desc: 'From Catan to D&D — every Thursday night. Bring your strategy and your friends.',
+            members: 156,
+            online: 18,
+            joined: false
+        }, {
+            id: 6,
+            name: 'Photography Club',
+            category: 'arts',
+            icon: '📸',
+            gradient: 'gradient-6',
+            desc: 'Capture the world through your lens. Outings, editing workshops, and annual exhibitions.',
+            members: 103,
+            online: 9,
+            joined: false
+        }, {
+            id: 7,
+            name: 'Robotics & Automation',
+            category: 'tech',
+            icon: '🔧',
+            gradient: 'gradient-7',
+            desc: 'Build, code, and compete. From Arduino to autonomous drones — hands-on projects every week.',
+            members: 78,
+            online: 6,
+            joined: false
+        }, {
+            id: 8,
+            name: 'Debate Union',
+            category: 'academic',
+            icon: '🎙️',
+            gradient: 'gradient-8',
+            desc: 'Sharpen your argumentation skills. Weekly debates, public speaking workshops, and inter-college competitions.',
+            members: 94,
+            online: 8,
+            joined: false
+        }];
+
+        let clubs = [...clubsData];
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        // ─── DOM refs ───
+        const grid = document.getElementById('clubGrid');
+        const searchInput = document.getElementById('searchInput');
+        const filterGroup = document.getElementById('filterGroup');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const createForm = document.getElementById('createClubForm');
+        const toast = document.getElementById('toast');
+        const toastTitle = document.getElementById('toastTitle');
+        const toastDesc = document.getElementById('toastDesc');
+
+        // ─── Render clubs ───
+        function renderClubs() {
+            const filtered = clubs.filter(club => {
+                const matchFilter = currentFilter === 'all' || club.category === currentFilter;
+                const matchSearch = club.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    club.desc.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchFilter && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-compass"></i>
+                            <h3>No clubs found</h3>
+                            <p>Try adjusting your search or filter, or start a new club.</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(club => {
+                const memberLabel = club.members >= 1000 ? (club.members / 1000).toFixed(1) + 'k' : club.members;
+                return `
+                        <div class="club-card" data-id="${club.id}">
+                            <div class="card-top">
+                                <div class="club-icon ${club.gradient}">
+                                    <span class="emoji">${club.icon}</span>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="like-btn ${club.joined ? 'liked' : ''}" data-id="${club.id}" aria-label="Like club">
+                                        <i class="fas ${club.joined ? 'fa-heart' : 'fa-heart'}"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="club-category">${club.category.charAt(0).toUpperCase() + club.category.slice(1)}</div>
+                            <div class="club-name">${club.name}</div>
+                            <p class="club-desc">${club.desc}</p>
+                            <div class="club-meta">
+                                <div class="stats">
+                                    <span><i class="fas fa-users"></i> ${memberLabel}</span>
+                                    <span><i class="fas fa-circle" style="color:#22C55E;font-size:8px;"></i> ${club.online} online</span>
+                                </div>
+                                <button class="join-btn ${club.joined ? 'joined' : ''}" data-id="${club.id}">
+                                    ${club.joined ? 'Joined' : 'Join'}
+                                </button>
+                            </div>
+                        </div>
+                    `;
+            }).join('');
+
+            // ── Attach event listeners ──
+            document.querySelectorAll('.join-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const id = parseInt(this.dataset.id);
+                    toggleJoin(id);
+                });
+            });
+
+            document.querySelectorAll('.like-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const id = parseInt(this.dataset.id);
+                    toggleLike(id);
+                });
+            });
+        }
+
+        // ─── Toggle join ───
+        function toggleJoin(id) {
+            const club = clubs.find(c => c.id === id);
+            if (!club) return;
+            club.joined = !club.joined;
+            renderClubs();
+            showToast(
+                club.joined ? 'You joined the club!' : 'Left the club',
+                club.joined ? `You're now part of ${club.name}. Welcome!` : `You've left ${club.name}.`
+            );
+        }
+
+        // ─── Toggle like ───
+        function toggleLike(id) {
+            const club = clubs.find(c => c.id === id);
+            if (!club) return;
+            // For demo: just toggle a visual state (we'll store it as a "liked" flag)
+            // We'll just re-render and show a toast.
+            // In a real app, you'd store this in a separate user state.
+            // We'll use the joined flag as a proxy for "liked" for simplicity.
+            // Actually let's add a "liked" property.
+            if (!club.liked) club.liked = false;
+            club.liked = !club.liked;
+            renderClubs();
+            showToast(
+                club.liked ? 'Added to favorites' : 'Removed from favorites',
+                club.liked ? `${club.name} is now in your favorites.` : `You removed ${club.name} from favorites.`
+            );
+        }
+
+        // ─── Toast ───
+        let toastTimeout;
+
+        function showToast(title, desc) {
+            toastTitle.textContent = title;
+            toastDesc.textContent = desc;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3200);
+        }
+
+        // ─── Filter & Search ───
+        filterGroup.addEventListener('click', function(e) {
+            const chip = e.target.closest('.filter-chip');
+            if (!chip) return;
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            currentFilter = chip.dataset.filter;
+            renderClubs();
+        });
+
+        searchInput.addEventListener('input', function() {
+            searchQuery = this.value.trim();
+            renderClubs();
+        });
+
+        // ─── Modal ───
+        function openModal() {
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+            createForm.reset();
+            document.getElementById('charCount').textContent = '0';
+        }
+
+        openModalBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // ─── Character counter ───
+        const descTextarea = document.getElementById('clubDesc');
+        const charCount = document.getElementById('charCount');
+
+        descTextarea.addEventListener('input', function() {
+            charCount.textContent = this.value.length;
+        });
+
+        // ─── Create club form ───
+        createForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('clubName').value.trim();
+            const category = document.getElementById('clubCategory').value;
+            const icon = document.getElementById('clubIcon').value.trim() || '🚀';
+            const desc = document.getElementById('clubDesc').value.trim();
+
+            if (!name || !category || !desc) {
+                showToast('Please fill in all required fields', 'Make sure to complete the form before launching.');
+                return;
+            }
+
+            const newClub = {
+                id: Date.now(),
+                name,
+                category,
+                icon,
+                gradient: 'gradient-' + (Math.floor(Math.random() * 8) + 1),
+                desc,
+                members: 1,
+                online: 1,
+                joined: true,
+                liked: false
+            };
+
+            clubs.unshift(newClub);
+            renderClubs();
+            closeModal();
+            showToast('🎉 Club launched!', `${name} is now live for everyone to join.`);
+        });
+
+        // ─── Initial render ───
+        renderClubs();
+
+        // ─── Add some extra polish: click on card to view detail (demo) ───
+        document.addEventListener('click', function(e) {
+            const card = e.target.closest('.club-card');
+            if (card && !e.target.closest('.join-btn') && !e.target.closest('.like-btn') && !e.target.closest(
+                    '.card-actions')) {
+                const id = parseInt(card.dataset.id);
+                const club = clubs.find(c => c.id === id);
+                if (club) {
+                    showToast(
+                        `📋 ${club.name}`,
+                        `${club.members} members · ${club.online} online now`
+                    );
+                }
+            }
+        });
+    </script>
+
+
+
+{% endblock %}

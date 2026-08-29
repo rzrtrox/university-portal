@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render,get_object_or_404
-from .models import Profile
+from .models import Profile, Post
 from django.contrib.auth.models import User
 
 
@@ -72,7 +72,8 @@ def home(request):
 
 def profile(request,username):
     profile_obj = Profile.objects.get(username__username=username)
-    return render(request, "profile/index.html",{"profile":profile_obj})
+    user_posts = Post.objects.filter(profile=profile_obj)
+    return render(request, "profile/index.html",{"profile":profile_obj, "user_post":user_posts})
 
 
 def update_profile(request, username):
@@ -106,4 +107,12 @@ def update_profile(request, username):
 
 
 def discover_people(request):
-    return render(request, "discover/index.html")
+    username = request.user.username
+    profile_obj = get_object_or_404(Profile, username__username=username)
+    return render(request, "discover/index.html",{"username":username,"profile":profile_obj})
+
+
+def clubs(request):
+    username = request.user.username
+    profile_obj = get_object_or_404(Profile, username__username=username)
+    return render(request, "clubs/index.html" ,{"username":username,"profile":profile_obj})

@@ -10,9 +10,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
 {% block head %}
 <style>
     /* ─── RESET & BASE ─── */
+    .flex-c{
+        display: flex;
+       margin-bottom:12px;
+    }
     * {
         margin: 0;
         padding: 0;
@@ -22,345 +27,302 @@
     .profile-page {
         width: 100%;
         min-height: 100vh;
-        background: #0B0D14;
+        background: #0A0C14;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
-        padding: 40px 24px;
+        padding: 24px 16px 48px;
         position: relative;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    /* ─── Animated Background ─── */
     .profile-page::before {
         content: '';
         position: fixed;
         inset: 0;
-        background:
-            radial-gradient(ellipse at 15% 25%, rgba(139, 92, 246, 0.12), transparent 55%),
-            radial-gradient(ellipse at 85% 75%, rgba(59, 130, 246, 0.10), transparent 50%),
-            radial-gradient(ellipse at 50% 50%, rgba(236, 72, 153, 0.04), transparent 70%);
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    .profile-page::after {
-        content: '';
-        position: fixed;
-        inset: 0;
-        background-image:
-            radial-gradient(2px 2px at 20% 30%, rgba(255, 255, 255, 0.03), transparent),
-            radial-gradient(2px 2px at 40% 70%, rgba(255, 255, 255, 0.02), transparent),
-            radial-gradient(2px 2px at 60% 20%, rgba(255, 255, 255, 0.03), transparent),
-            radial-gradient(2px 2px at 80% 80%, rgba(255, 255, 255, 0.02), transparent);
-        background-size: 200px 200px;
+        background: radial-gradient(ellipse at 10% 20%, rgba(99, 102, 241, 0.04), transparent 55%);
         pointer-events: none;
         z-index: 0;
     }
 
     /* ─── MAIN CARD ─── */
     .profile-card {
-        max-width: 1140px;
+        max-width: 820px;
         width: 100%;
-        background: rgba(18, 22, 33, 0.65);
-        backdrop-filter: blur(28px);
-        -webkit-backdrop-filter: blur(28px);
-        border-radius: 44px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        box-shadow:
-            0 50px 120px rgba(0, 0, 0, 0.70),
-            inset 0 1px 0 rgba(255, 255, 255, 0.03);
+        background: #11141F;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.04);
         overflow: hidden;
         position: relative;
         z-index: 1;
-        display: grid;
-        grid-template-columns: 320px 1fr;
-        transition: border-color 0.5s ease, box-shadow 0.5s ease;
     }
 
-    .profile-card:hover {
-        border-color: rgba(139, 92, 246, 0.20);
-        box-shadow:
-            0 50px 120px rgba(0, 0, 0, 0.75),
-            0 0 80px rgba(139, 92, 246, 0.03),
-            inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    }
-
-    /* ─── Glow Border ─── */
-    .profile-card::before {
-        content: '';
-        position: absolute;
-        inset: -2px;
-        border-radius: 46px;
-        padding: 2px;
-        background: linear-gradient(135deg,
-                rgba(139, 92, 246, 0.25),
-                rgba(59, 130, 246, 0.15),
-                rgba(236, 72, 153, 0.20),
-                rgba(139, 92, 246, 0.10));
-        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.7s ease;
-    }
-
-    .profile-card:hover::before {
-        opacity: 1;
-    }
-
-    /* ─── SIDEBAR ─── */
-    .profile-sidebar {
-        padding: 36px 28px 32px;
-        background: rgba(10, 12, 20, 0.40);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border-right: 1px solid rgba(255, 255, 255, 0.04);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
+    /* ─── BANNER (optional, kept for consistency) ─── */
+    .banner-wrap {
         position: relative;
-    }
-
-    .profile-sidebar .avatar-wrapper {
-        position: relative;
-        width: 140px;
-        height: 140px;
+        width: 100%;
+        height: 160px;
+        background: linear-gradient(135deg, #1A1E2E, #0F1320);
+        overflow: hidden;
         flex-shrink: 0;
     }
 
-    .profile-sidebar .avatar-wrapper .ring {
-        position: absolute;
-        inset: -4px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #8B5CF6, #3B82F6, #EC4899, #8B5CF6);
-        background-size: 300% 300%;
-        animation: gradientRotate 6s ease-in-out infinite;
-        padding: 3px;
-        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-    }
-
-    @keyframes gradientRotate {
-        0% {
-            background-position: 0% 50%;
-        }
-        50% {
-            background-position: 100% 50%;
-        }
-        100% {
-            background-position: 0% 50%;
-        }
-    }
-
-    .profile-sidebar .avatar-wrapper .avatar {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        border:0px;
-        overflow: hidden;
-        position: relative;
-        background: #0B0D14;
-    }
-
-    .profile-sidebar .avatar-wrapper .avatar img {
+    .banner-wrap .banner-img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         display: block;
     }
 
-    .profile-sidebar .avatar-wrapper .edit-badge {
-        position: absolute;
-        bottom: 2px;
-        right: 2px;
-        width: 38px;
-        height: 38px;
-        background: linear-gradient(135deg, #3B82F6, #8B5CF6);
-        border-radius: 50%;
-        border: 3px solid #0B0D14;
+    .banner-wrap .banner-placeholder {
+        width: 100%;
+        height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
+        color: #3D4A5C;
         font-size: 14px;
-        color: #fff;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.35);
-        z-index: 2;
+        font-weight: 500;
+        background: linear-gradient(135deg, #161B2A, #0E121E);
     }
 
-    .profile-sidebar .avatar-wrapper .edit-badge:hover {
-        transform: scale(1.12) rotate(12deg);
-        box-shadow: 0 6px 32px rgba(59, 130, 246, 0.50);
+    .banner-wrap .banner-placeholder i {
+        font-size: 28px;
+        margin-right: 12px;
+        opacity: 0.5;
     }
 
-    /* ─── Avatar file input (hidden) ─── */
-    #avatar-input {
-        display: none;
-    }
-
-    .profile-sidebar .avatar-wrapper .status-dot {
+    .banner-wrap .banner-edit {
         position: absolute;
         bottom: 14px;
         right: 14px;
-        width: 16px;
-        height: 16px;
-        background: #22C55E;
+        width: 38px;
+        height: 38px;
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(8px);
         border-radius: 50%;
-        border: 3px solid #0B0D14;
-        z-index: 3;
-        box-shadow: 0 0 20px rgba(34, 197, 94, 0.30);
-        animation: pulseDot 2s ease-in-out infinite;
-    }
-
-    @keyframes pulseDot {
-        0%,
-        100% {
-            box-shadow: 0 0 20px rgba(34, 197, 94, 0.30);
-        }
-        50% {
-            box-shadow: 0 0 40px rgba(34, 197, 94, 0.60);
-        }
-    }
-
-    .profile-sidebar h2 {
-        font-size: 26px;
-        font-weight: 700;
-        color: #F1F4F9;
-        margin: 18px 0 2px;
-        letter-spacing: -0.5px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
         display: flex;
         align-items: center;
-        gap: 6px;
-        flex-wrap: wrap;
         justify-content: center;
+        color: #D0D7DE;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 2;
     }
 
-    .profile-sidebar h2 .verified {
-        display: inline-block;
-        font-size: 16px;
-        color: #3B82F6;
+    .banner-wrap .banner-edit:hover {
+        background: rgba(99, 102, 241, 0.25);
+        color: #fff;
+        transform: scale(1.08);
     }
 
-    .profile-sidebar .handle {
-        font-size: 14px;
-        color: #7B8AA3;
-        font-weight: 400;
-        margin-bottom: 14px;
-        letter-spacing: 0.2px;
+    #banner-input {
+        display: none;
     }
 
-    .profile-sidebar .handle i {
-        margin-right: 4px;
-        opacity: 0.6;
-    }
-
-    .profile-sidebar .bio-short {
-        font-size: 14px;
-        color: #ACB8CC;
-        line-height: 1.7;
-        margin-bottom: 18px;
-        padding: 0 6px;
-        max-width: 100%;
-    }
-
-    .profile-sidebar .bio-short .highlight {
-        color: #A78BFA;
-        font-weight: 500;
-    }
-
-    .profile-sidebar .bio-short i {
-        margin-right: 4px;
-        opacity: 0.8;
-    }
-
-    /* ─── Stats ─── */
-    .profile-sidebar .stats-row {
+    /* ─── PROFILE HEADER (no overlap) ─── */
+    .profile-header {
+        padding: 20px 28px 16px;
         display: flex;
-        justify-content: center;
-        gap: 28px;
+        align-items: flex-start;
+        gap: 24px;
+        flex-wrap: wrap;
+        background: #11141F;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Avatar */
+    .profile-header .avatar-wrapper {
+        position: relative;
+        width: 110px;
+        height: 110px;
+        flex-shrink: 0;
+    }
+
+    .profile-header .avatar-wrapper .avatar {
         width: 100%;
-        padding: 16px 0;
-        border-top: 1px solid rgba(255, 255, 255, 0.04);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-        margin-bottom: 20px;
+        height: 100%;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 4px solid #1A1E2E;
+        background: #080A12;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        position: relative;
     }
 
-    .profile-sidebar .stats-row .stat {
-        text-align: center;
-        cursor: default;
-        transition: transform 0.25s ease;
-    }
-
-    .profile-sidebar .stats-row .stat:hover {
-        transform: translateY(-2px);
-    }
-
-    .profile-sidebar .stats-row .stat .num {
+    .profile-header .avatar-wrapper .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
         display: block;
-        font-size: 22px;
+    }
+
+    .profile-header .avatar-wrapper .edit-trigger {
+        position: absolute;
+        bottom: 4px;
+        left: 4px;
+        width: 32px;
+        height: 32px;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        border-radius: 50%;
+        border: 2px solid #1A1E2E;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #D0D7DE;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 2;
+    }
+
+    .profile-header .avatar-wrapper .edit-trigger:hover {
+        background: rgba(99, 102, 241, 0.4);
+        color: #fff;
+        transform: scale(1.1);
+    }
+
+    /* Info */
+    .profile-header .info {
+        flex: 1;
+        min-width: 200px;
+        padding-top: 4px;
+    }
+
+    .profile-header .info .name-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .profile-header .info .name-row h2 {
+        font-size: 24px;
         font-weight: 700;
         color: #F1F4F9;
         letter-spacing: -0.3px;
     }
 
-    .profile-sidebar .stats-row .stat .num i {
+    .profile-header .info .program-detail {
         font-size: 14px;
+        color: #7B8AA3;
+        font-weight: 400;
+        margin: 2px 0 6px;
+    }
+
+    .profile-header .info .program-detail i {
+        margin-right: 4px;
+        opacity: 0.5;
+    }
+
+    .profile-header .info .bio {
+        font-size: 14px;
+        color: #ACB8CC;
+        line-height: 1.7;
+        max-width: 480px;
+        margin-bottom: 8px;
+    }
+
+    .profile-header .info .bio i {
+        margin-right: 6px;
+        opacity: 0.7;
+        color: #818CF8;
+    }
+
+    /* Stats row */
+    .profile-header .info .stats-row {
+        display: flex;
+        gap: 28px;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+    }
+
+    .profile-header .info .stats-row .stat {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+    }
+
+    .profile-header .info .stats-row .stat .num {
+        font-size: 16px;
+        font-weight: 700;
+        color: #F1F4F9;
+    }
+
+    .profile-header .info .stats-row .stat .num i {
+        font-size: 12px;
         color: #F59E0B;
         margin-right: 2px;
     }
 
-    .profile-sidebar .stats-row .stat .label {
-        font-size: 12px;
+    .profile-header .info .stats-row .stat .label {
+        font-size: 13px;
         color: #5D6C83;
         font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-        margin-top: 2px;
     }
 
-    /* ─── Action Buttons ─── */
-    .profile-sidebar .action-buttons {
+    /* Relationship & extra info */
+    .profile-header .info .meta-line {
+        font-size: 14px;
+        color: #7B8AA3;
+        margin-bottom: 12px;
         display: flex;
-        flex-direction: column;
-        gap: 10px;
-        width: 100%;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
     }
 
-    .profile-sidebar .action-buttons .btn {
-        padding: 13px 20px;
+    .profile-header .info .meta-line i {
+        opacity: 0.6;
+        margin-right: 2px;
+    }
+
+    .profile-header .info .meta-line .tag {
+        background: rgba(99, 102, 241, 0.08);
+        color: #818CF8;
+        padding: 2px 12px;
+        border-radius: 40px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    /* Actions */
+    .profile-header .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-top: 4px;
+    }
+
+    .profile-header .actions .btn {
+        padding: 9px 20px;
         border: none;
         border-radius: 60px;
         font-weight: 600;
-        font-size: 14px;
+        font-size: 13px;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         font-family: 'Inter', sans-serif;
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 10px;
+        gap: 8px;
         letter-spacing: 0.2px;
-        text-decoration: none;
     }
 
     .btn-primary {
-        background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+        background: linear-gradient(135deg, #6366F1, #8B5CF6);
         color: #fff;
-        box-shadow: 0 4px 28px rgba(59, 130, 246, 0.25);
+        box-shadow: 0 4px 24px rgba(99, 102, 241, 0.25);
     }
 
     .btn-primary:hover {
         transform: translateY(-3px) scale(1.01);
-        box-shadow: 0 8px 44px rgba(59, 130, 246, 0.35);
-    }
-
-    .btn-primary:active {
-        transform: translateY(0) scale(0.98);
+        box-shadow: 0 8px 40px rgba(99, 102, 241, 0.35);
     }
 
     .btn-secondary {
@@ -370,175 +332,175 @@
     }
 
     .btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(139, 92, 246, 0.30) !important;
+        background: rgba(255, 255, 255, 0.07);
+        border-color: rgba(99, 102, 241, 0.25) !important;
         transform: translateY(-3px);
         color: #fff;
     }
 
-    .btn-success {
-        background: linear-gradient(135deg, #22C55E, #16A34A);
-        color: #fff;
-        box-shadow: 0 4px 28px rgba(34, 197, 94, 0.25);
-    }
-
-    .btn-success:hover {
-        transform: translateY(-3px) scale(1.01);
-        box-shadow: 0 8px 44px rgba(34, 197, 94, 0.35);
-    }
-
-    .btn-danger {
-        background: rgba(239, 68, 68, 0.12);
-        color: #F87171;
-        border: 1px solid rgba(239, 68, 68, 0.10) !important;
-    }
-
-    .btn-danger:hover {
-        background: rgba(239, 68, 68, 0.20);
-        border-color: rgba(239, 68, 68, 0.25) !important;
-        transform: translateY(-3px);
-        color: #FCA5A5;
-    }
-
-    /* ─── MAIN CONTENT ─── */
-    .profile-main {
-        padding: 36px 36px 32px;
-        overflow: hidden;
-    }
-
-    .profile-main .section-header {
+    /* ─── TABS ─── */
+    .profile-tabs {
+        padding: 0 28px;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
         display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 22px;
+        gap: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
     }
 
-    .profile-main .section-header .section-title {
+    .profile-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .profile-tabs .tab-btn {
+        padding: 14px 18px 12px;
+        background: transparent;
+        border: none;
+        border-bottom: 3px solid transparent;
+        color: #7B8AA3;
+        font-family: 'Inter', sans-serif;
         font-size: 14px;
-        font-weight: 600;
-        color: #7B8AA3;
-        letter-spacing: 0.6px;
-        text-transform: uppercase;
-    }
-
-    .profile-main .section-header .section-line {
-        flex: 1;
-        height: 1px;
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0.06), transparent);
-    }
-
-    .profile-main .section-header i {
-        color: #7B8AA3;
-        font-size: 16px;
-        opacity: 0.7;
-    }
-
-    /* ─── Info Grid ─── */
-    .profile-main .info-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px 16px;
-    }
-
-    .info-item {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        padding: 16px 18px;
-        background: rgba(255, 255, 255, 0.02);
-        border-radius: 18px;
-        border: 1px solid rgba(255, 255, 255, 0.04);
-        transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-        position: relative;
-        overflow: hidden;
-        min-height: 70px;
-    }
-
-    .info-item::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, rgba(139, 92, 246, 0.02), rgba(59, 130, 246, 0.01));
-        opacity: 0;
-        transition: opacity 0.4s ease;
-        pointer-events: none;
-    }
-
-    .info-item:hover::after {
-        opacity: 1;
-    }
-
-    .info-item:hover {
-        border-color: rgba(139, 92, 246, 0.15);
-        background: rgba(255, 255, 255, 0.04);
-        transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
-    }
-
-    .info-item .icon-box {
-        width: 38px;
-        height: 38px;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.03);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 17px;
-        flex-shrink: 0;
-        color: #8B95A9;
-        transition: all 0.3s ease;
-        z-index: 1;
-    }
-
-    .info-item:hover .icon-box {
-        background: rgba(139, 92, 246, 0.10);
-        color: #A78BFA;
-    }
-
-    .info-item .content {
-        flex: 1;
-        min-width: 0;
-        z-index: 1;
-        position: relative;
-    }
-
-    .info-item .content .label {
-        font-size: 11px;
-        font-weight: 600;
-        color: #5D6C83;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 2px;
-    }
-
-    /* ─── Display value ─── */
-    .info-item .content .value {
-        font-size: 15px;
         font-weight: 500;
-        color: #E8EDF5;
+        cursor: pointer;
+        transition: all 0.3s ease;
         display: flex;
         align-items: center;
         gap: 8px;
-        flex-wrap: wrap;
-        transition: opacity 0.25s ease, transform 0.25s ease;
+        white-space: nowrap;
+        letter-spacing: 0.2px;
     }
 
-    /* ─── Edit input ─── */
-    .info-item .content .edit-input {
+    .profile-tabs .tab-btn i {
+        font-size: 15px;
+        opacity: 0.5;
+        transition: opacity 0.3s ease;
+    }
+
+    .profile-tabs .tab-btn:hover {
+        color: #D0D7DE;
+    }
+
+    .profile-tabs .tab-btn:hover i {
+        opacity: 1;
+    }
+
+    .profile-tabs .tab-btn.active {
+        color: #F1F4F9;
+        border-bottom-color: #6366F1;
+    }
+
+    .profile-tabs .tab-btn.active i {
+        opacity: 1;
+        color: #818CF8;
+    }
+
+    .profile-tabs .tab-btn .badge {
+        background: rgba(99, 102, 241, 0.12);
+        color: #818CF8;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 1px 10px;
+        border-radius: 40px;
+        margin-left: 2px;
+    }
+
+    .profile-tabs .tab-btn.active .badge {
+        background: rgba(99, 102, 241, 0.20);
+    }
+
+    /* ─── TAB CONTENT ─── */
+    .tab-content-wrapper {
+        padding: 24px 28px 28px;
+        min-height: 200px;
+    }
+
+    .tab-pane {
         display: none;
-        width: 100%;
-        transition: opacity 0.25s ease, transform 0.25s ease;
+        animation: fadeUp 0.4s ease forwards;
     }
 
-    .info-item .content .edit-input.is-visible {
-        display: block;
-        animation: fadeSlideIn 0.3s ease forwards;
+    .tab-pane.active {
+        display: flex;
+        gap:12px
+    }
+    .post_img{
+        width: 160px;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 12px;
     }
 
-    @keyframes fadeSlideIn {
+.posts-grid {
+    column-count: 3;
+    column-gap: 14px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.post-card {
+    width: 100%;
+    margin-bottom: 14px;
+    break-inside: avoid;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #181b23;
+    cursor: pointer;
+    position: relative;
+}
+
+.post_img {
+    width: 100%;
+    height: auto;
+    max-height: 370px;
+    display: block;
+    object-fit: cover;
+    border: 0.5px solid white;
+    transition: transform 0.3s ease;
+}
+
+/* Subtle Pinterest-like hover effect */
+.post-card:hover .post_img {
+    transform: scale(1.03);
+}
+
+
+/* =========================
+   Responsive
+   ========================= */
+
+/* Tablet */
+@media (max-width: 900px) {
+    .posts-grid {
+        column-count: 2;
+        column-gap: 12px;
+    }
+
+    .post-card {
+        margin-bottom: 12px;
+    }
+}
+
+
+/* Mobile */
+@media (max-width: 600px) {
+    .posts-grid {
+        column-count: 2;
+        column-gap: 8px;
+    }
+
+    .post-card {
+        margin-bottom: 8px;
+        border-radius: 8px;
+    }
+}
+
+
+
+    @keyframes fadeUp {
         0% {
             opacity: 0;
-            transform: translateY(6px);
+            transform: translateY(12px);
         }
         100% {
             opacity: 1;
@@ -546,136 +508,143 @@
         }
     }
 
-    .info-item .content .edit-input input,
-    .info-item .content .edit-input select,
-    .info-item .content .edit-input textarea {
+    /* Empty State */
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 40px 20px 32px;
+        background: rgba(255, 255, 255, 0.01);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        min-height: 160px;
+    }
+
+    .empty-state .icon-wrap {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: rgba(99, 102, 241, 0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #5D6C83;
+        margin-bottom: 12px;
+    }
+
+    .empty-state h3 {
+        font-size: 17px;
+        font-weight: 600;
+        color: #E8EDF5;
+        margin-bottom: 4px;
+    }
+
+    .empty-state p {
+        font-size: 14px;
+        color: #7B8AA3;
+        max-width: 300px;
+        line-height: 1.7;
+    }
+
+    .empty-state .empty-cta {
+        margin-top: 14px;
+        padding: 8px 24px;
+        border-radius: 60px;
+        background: rgba(99, 102, 241, 0.08);
+        color: #818CF8;
+        border: 1px solid rgba(99, 102, 241, 0.06);
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .empty-state .empty-cta:hover {
+        background: rgba(99, 102, 241, 0.14);
+        border-color: rgba(99, 102, 241, 0.15);
+        transform: translateY(-2px);
+        color: #A5B4FC;
+    }
+
+    /* ─── EDIT FORM ─── */
+    .edit-form-container {
+        display: none;
+        margin-top: 4px;
+        padding-top: 18px;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .edit-form-container.is-visible {
+        display: block;
+        animation: fadeUp 0.35s ease forwards;
+    }
+
+    .edit-form-container .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px 20px;
+    }
+
+    .edit-form-container .form-grid .full {
+        grid-column: 1 / -1;
+    }
+
+    .edit-form-container .form-group label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: #5D6C83;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-bottom: 4px;
+    }
+
+    .edit-form-container .form-group input,
+    .edit-form-container .form-group select,
+    .edit-form-container .form-group textarea {
         width: 100%;
-        padding: 8px 12px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 10px;
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
         color: #F1F4F9;
         font-size: 14px;
         font-family: 'Inter', sans-serif;
         font-weight: 500;
         transition: border-color 0.3s ease, box-shadow 0.3s ease;
         outline: none;
-        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
     }
 
-    .info-item .content .edit-input input:focus,
-    .info-item .content .edit-input select:focus,
-    .info-item .content .edit-input textarea:focus {
-        border-color: rgba(139, 92, 246, 0.40);
-        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.10);
-        background: rgba(255, 255, 255, 0.07);
+    .edit-form-container .form-group input:focus,
+    .edit-form-container .form-group select:focus,
+    .edit-form-container .form-group textarea:focus {
+        border-color: rgba(99, 102, 241, 0.35);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+        background: rgba(255, 255, 255, 0.05);
     }
 
-    .info-item .content .edit-input input::placeholder {
-        color: #5D6C83;
-        font-weight: 400;
-    }
-
-    .info-item .content .edit-input select {
-        cursor: pointer;
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237B8AA3' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 12px center;
-        padding-right: 36px;
-    }
-
-    .info-item .content .edit-input select option {
-        background: #1A1F2E;
-        color: #F1F4F9;
-    }
-
-    .info-item .content .edit-input textarea {
+    .edit-form-container .form-group textarea {
         resize: vertical;
-        min-height: 60px;
+        min-height: 72px;
         line-height: 1.6;
     }
 
-    .value .tag {
-        font-size: 11px;
-        padding: 3px 14px;
-        border-radius: 40px;
-        font-weight: 500;
-        letter-spacing: 0.2px;
-    }
-
-    .tag-gender {
-        background: rgba(59, 130, 246, 0.10);
-        color: #60A5FA;
-        border: 1px solid rgba(59, 130, 246, 0.08);
-    }
-
-    .tag-relationship {
-        background: rgba(236, 72, 153, 0.10);
-        color: #F472B6;
-        border: 1px solid rgba(236, 72, 153, 0.08);
-    }
-
-    .tag-program {
-        background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(59, 130, 246, 0.08));
-        color: #A78BFA;
-        border: 1px solid rgba(139, 92, 246, 0.06);
-    }
-
-    .tag-private {
-        background: rgba(255, 255, 255, 0.03);
-        color: #5D6C83;
-        font-weight: 400;
-        font-size: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.04);
-        padding: 2px 10px;
-    }
-
-    .info-item.full {
-        grid-column: 1 / -1;
-    }
-
-    .info-item.full .value {
-        font-weight: 400;
-        color: #ACB8CC;
-        line-height: 1.7;
-    }
-
-    .info-item .value i {
-        opacity: 0.5;
-        font-size: 13px;
-        margin-right: 2px;
-    }
-
-    /* ─── Hide display value when editing ─── */
-    .info-item.is-editing .value {
-        display: none;
-    }
-
-    .info-item.is-editing .edit-input {
-        display: block;
-        animation: fadeSlideIn 0.3s ease forwards;
-    }
-
-    /* ─── Form actions (Save / Cancel) ─── */
-    .form-actions {
-        display: none;
-        margin-top: 24px;
-        padding-top: 20px;
-        border-top: 1px solid rgba(255, 255, 255, 0.04);
+    .edit-form-container .form-actions {
+        display: flex;
         gap: 12px;
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
         flex-wrap: wrap;
         justify-content: flex-end;
-        align-items: center;
     }
 
-    .form-actions.is-visible {
-        display: flex;
-        animation: fadeSlideIn 0.35s ease forwards;
-    }
-
-    .form-actions .btn {
-        padding: 11px 28px;
+    .edit-form-container .form-actions .btn {
+        padding: 10px 28px;
         border: none;
         border-radius: 60px;
         font-weight: 600;
@@ -689,37 +658,37 @@
         letter-spacing: 0.2px;
     }
 
-    .form-actions .btn-cancel {
+    .edit-form-container .form-actions .btn-cancel {
         background: rgba(255, 255, 255, 0.04);
         color: #D0D7DE;
         border: 1px solid rgba(255, 255, 255, 0.06) !important;
     }
 
-    .form-actions .btn-cancel:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(239, 68, 68, 0.30) !important;
+    .edit-form-container .form-actions .btn-cancel:hover {
+        background: rgba(255, 255, 255, 0.07);
+        border-color: rgba(239, 68, 68, 0.20) !important;
         color: #F87171;
         transform: translateY(-2px);
     }
 
-    .form-actions .btn-save {
-        background: linear-gradient(135deg, #22C55E, #16A34A);
+    .edit-form-container .form-actions .btn-save {
+        background: linear-gradient(135deg, #0EA5E9, #6366F1);
         color: #fff;
-        box-shadow: 0 4px 28px rgba(34, 197, 94, 0.20);
+        box-shadow: 0 4px 24px rgba(14, 165, 233, 0.18);
     }
 
-    .form-actions .btn-save:hover {
+    .edit-form-container .form-actions .btn-save:hover {
         transform: translateY(-2px) scale(1.01);
-        box-shadow: 0 8px 40px rgba(34, 197, 94, 0.30);
+        box-shadow: 0 8px 36px rgba(14, 165, 233, 0.28);
     }
 
-    .form-actions .btn-save:disabled {
+    .edit-form-container .form-actions .btn-save:disabled {
         opacity: 0.5;
         cursor: not-allowed;
         transform: none !important;
     }
 
-    .form-actions .btn .spinner {
+    .edit-form-container .form-actions .btn .spinner {
         display: inline-block;
         width: 16px;
         height: 16px;
@@ -735,719 +704,687 @@
         }
     }
 
-    /* ─── CTA ─── */
-    .profile-cta {
-        margin-top: 28px;
-        padding-top: 20px;
-        border-top: 1px solid rgba(255, 255, 255, 0.04);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 14px;
-        flex-wrap: wrap;
-    }
-
-    .profile-cta .cta-text {
-        color: #7B8AA3;
-        font-size: 14px;
-        font-weight: 400;
-    }
-
-    .profile-cta .cta-text strong {
-        color: #E8EDF5;
-        font-weight: 600;
-        background: linear-gradient(135deg, #8B5CF6, #3B82F6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .profile-cta .cta-icon {
-        font-size: 20px;
-        color: #7B8AA3;
-        opacity: 0.6;
-        animation: floatIcon 3s ease-in-out infinite;
-        transition: opacity 0.3s ease;
-    }
-
-    .profile-cta .cta-icon:hover {
-        opacity: 1;
-    }
-
-    .profile-cta .cta-icon:first-child {
-        animation-delay: 0s;
-    }
-    .profile-cta .cta-icon:last-child {
-        animation-delay: 1.5s;
-    }
-
-    @keyframes floatIcon {
-        0%,
-        100% {
-            transform: translateY(0) scale(1);
-            opacity: 0.6;
-        }
-        50% {
-            transform: translateY(-4px) scale(1.08);
-            opacity: 1;
-        }
-    }
-
-    /* ─── SCROLLBAR ─── */
-    .profile-main::-webkit-scrollbar {
-        width: 4px;
-    }
-    .profile-main::-webkit-scrollbar-track {
-        background: transparent;
-    }
-    .profile-main::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.06);
-        border-radius: 8px;
-    }
-
-    /* ─── RESPONSIVE ─── */
-
-    @media (max-width: 900px) {
-        .profile-card {
-            grid-template-columns: 280px 1fr;
-            border-radius: 32px;
-        }
-        .profile-sidebar {
-            padding: 28px 20px 24px;
-        }
-        .profile-sidebar .avatar-wrapper {
-            width: 120px;
-            height: 120px;
-        }
-        .profile-sidebar h2 {
-            font-size: 22px;
-        }
-        .profile-main {
-            padding: 28px 24px 24px;
-        }
-        .profile-main .info-grid {
-            gap: 10px 14px;
-        }
-        .info-item {
-            padding: 14px 16px;
-            min-height: 64px;
-        }
-    }
+    /* ═══════════════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════════════ */
 
     @media (max-width: 768px) {
         .profile-page {
-            padding: 24px 16px;
+            padding: 12px 8px 32px;
         }
         .profile-card {
-            grid-template-columns: 1fr;
-            border-radius: 28px;
-            max-width: 520px;
+            border-radius: 18px;
         }
-        .profile-sidebar {
-            border-right: none;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            padding: 28px 20px 22px;
+        .banner-wrap {
+            height: 120px;
         }
-        .profile-sidebar .avatar-wrapper {
-            width: 110px;
-            height: 110px;
+        .banner-wrap .banner-edit {
+            width: 32px;
+            height: 32px;
+            font-size: 13px;
+            bottom: 10px;
+            right: 10px;
         }
-        .profile-sidebar .stats-row {
-            gap: 20px;
+        .profile-header {
+            padding: 14px 16px 12px;
+            gap: 16px;
+            flex-direction: row;
+            align-items: flex-start;
         }
-        .profile-sidebar .stats-row .stat .num {
-            font-size: 19px;
+        .profile-header .avatar-wrapper {
+            width: 80px;
+            height: 80px;
         }
-        .profile-main {
-            padding: 24px 20px 20px;
+        .profile-header .avatar-wrapper .edit-trigger {
+            width: 26px;
+            height: 26px;
+            font-size: 9px;
+            bottom: 2px;
+            left: 2px;
         }
-        .profile-main .info-grid {
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .info-item {
-            padding: 14px 14px;
-            min-height: 60px;
-        }
-        .info-item .icon-box {
-            width: 34px;
-            height: 34px;
-            font-size: 14px;
-        }
-        .form-actions {
-            justify-content: center;
-        }
-        .form-actions .btn {
+        .profile-header .info {
             flex: 1;
-            justify-content: center;
-            min-width: 100px;
+            min-width: 0;
+            padding-top: 0;
+            text-align: left;
         }
-        .profile-cta {
+        .profile-header .info .name-row {
+            justify-content: flex-start;
+        }
+        .profile-header .info .name-row h2 {
+            font-size: 20px;
+        }
+        .profile-header .info .program-detail {
+            font-size: 13px;
+        }
+        .profile-header .info .bio {
+            font-size: 13px;
+            max-width: 100%;
+        }
+        .profile-header .info .stats-row {
+            gap: 16px;
+            justify-content: flex-start;
+        }
+        .profile-header .info .stats-row .stat .num {
+            font-size: 15px;
+        }
+        .profile-header .info .stats-row .stat .label {
+            font-size: 12px;
+        }
+        .profile-header .info .meta-line {
+            font-size: 13px;
+        }
+        .profile-header .actions {
+            justify-content: flex-start;
+            width: 100%;
+        }
+        .profile-header .actions .btn {
+            padding: 7px 14px;
+            font-size: 12px;
+        }
+        .profile-tabs {
+            padding: 0 16px;
+        }
+        .profile-tabs .tab-btn {
+            padding: 10px 12px 8px;
+            font-size: 13px;
+        }
+        .profile-tabs .tab-btn i {
+            font-size: 13px;
+        }
+        .profile-tabs .tab-btn .badge {
+            font-size: 10px;
+            padding: 0 8px;
+        }
+        .tab-content-wrapper {
+            padding: 14px 16px 18px;
+            min-height: 140px;
+        }
+        .empty-state {
+            padding: 24px 16px 20px;
+            min-height: 120px;
+        }
+        .empty-state .icon-wrap {
+            width: 48px;
+            height: 48px;
+            font-size: 18px;
+        }
+        .empty-state h3 {
+            font-size: 15px;
+        }
+        .empty-state p {
+            font-size: 13px;
+        }
+        .edit-form-container .form-grid {
+            grid-template-columns: 1fr;
             gap: 10px;
-            flex-wrap: wrap;
+        }
+        .edit-form-container .form-actions {
+            flex-direction: column;
+        }
+        .edit-form-container .form-actions .btn {
+            width: 100%;
+            justify-content: center;
         }
     }
 
     @media (max-width: 480px) {
-        .profile-page {
-            padding: 16px 10px;
-        }
-        .profile-card {
-            border-radius: 20px;
-        }
-        .profile-sidebar {
-            padding: 20px 16px 18px;
-        }
-        .profile-sidebar .avatar-wrapper {
-            width: 90px;
+        .banner-wrap {
             height: 90px;
         }
-        .profile-sidebar .avatar-wrapper .edit-badge {
-            width: 30px;
-            height: 30px;
-            font-size: 11px;
+        .profile-header .avatar-wrapper {
+            width: 64px;
+            height: 64px;
         }
-        .profile-sidebar .avatar-wrapper .status-dot {
-            width: 12px;
-            height: 12px;
-            bottom: 10px;
-            right: 10px;
+        .profile-header .avatar-wrapper .edit-trigger {
+            width: 22px;
+            height: 22px;
+            font-size: 8px;
         }
-        .profile-sidebar h2 {
-            font-size: 19px;
-            margin-top: 14px;
-        }
-        .profile-sidebar .bio-short {
-            font-size: 13px;
-        }
-        .profile-sidebar .stats-row {
-            gap: 14px;
-            padding: 12px 0;
-        }
-        .profile-sidebar .stats-row .stat .num {
+        .profile-header .info .name-row h2 {
             font-size: 17px;
         }
-        .profile-sidebar .stats-row .stat .label {
-            font-size: 10px;
-        }
-        .profile-sidebar .action-buttons .btn {
-            padding: 11px 16px;
-            font-size: 13px;
-        }
-        .profile-main {
-            padding: 18px 14px 16px;
-        }
-        .profile-main .section-header .section-title {
+        .profile-header .info .program-detail {
             font-size: 12px;
         }
-        .profile-main .info-grid {
-            grid-template-columns: 1fr;
-            gap: 8px;
+        .profile-header .info .bio {
+            font-size: 12px;
         }
-        .info-item {
-            padding: 12px 14px;
-            border-radius: 14px;
-            min-height: 56px;
+        .profile-header .info .stats-row {
+            gap: 12px;
         }
-        .info-item .icon-box {
-            width: 30px;
-            height: 30px;
-            font-size: 13px;
-            border-radius: 10px;
-        }
-        .info-item .content .label {
-            font-size: 10px;
-        }
-        .info-item .content .value {
+        .profile-header .info .stats-row .stat .num {
             font-size: 14px;
         }
-        .info-item .content .edit-input input,
-        .info-item .content .edit-input select,
-        .info-item .content .edit-input textarea {
-            font-size: 13px;
-            padding: 6px 10px;
+        .profile-header .info .stats-row .stat .label {
+            font-size: 11px;
         }
-        .value .tag {
-            font-size: 10px;
-            padding: 2px 10px;
+        .profile-header .info .meta-line {
+            font-size: 12px;
         }
-        .info-item.full .value {
-            font-size: 13px;
+        .profile-tabs .tab-btn {
+            font-size: 12px;
+            padding: 8px 8px 6px;
         }
-        .form-actions {
-            margin-top: 18px;
-            padding-top: 16px;
-            flex-direction: column;
+        .profile-tabs .tab-btn i {
+            font-size: 12px;
         }
-        .form-actions .btn {
-            width: 100%;
-            justify-content: center;
+        .tab-content-wrapper {
+            padding: 10px 12px 14px;
         }
-        .profile-cta {
-            margin-top: 20px;
-            padding-top: 16px;
-            gap: 8px;
-            flex-direction: column;
-            text-align: center;
+        .empty-state {
+            padding: 16px 12px;
         }
-        .profile-cta .cta-text {
-            font-size: 13px;
+        .empty-state .icon-wrap {
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
         }
-        .profile-cta .cta-icon {
-            font-size: 17px;
+        .empty-state h3 {
+            font-size: 14px;
         }
-        .profile-cta .cta-icon:first-child,
-        .profile-cta .cta-icon:last-child {
-            display: none;
+        .empty-state p {
+            font-size: 12px;
         }
-    }
-
-    @media (max-width: 360px) {
-        .profile-sidebar .stats-row {
-            gap: 10px;
-        }
-        .profile-sidebar .stats-row .stat .num {
-            font-size: 15px;
-        }
-        .profile-sidebar h2 {
-            font-size: 17px;
-        }
-        .profile-sidebar .avatar-wrapper {
-            width: 76px;
-            height: 76px;
-        }
-        .info-item .content .value {
-            font-size: 13px;
-        }
-        .info-item {
-            padding: 10px 12px;
+        .profile-header .actions .btn {
+            padding: 6px 12px;
+            font-size: 11px;
         }
     }
 
     /* ─── REDUCED MOTION ─── */
     @media (prefers-reduced-motion: reduce) {
-        .profile-card::before,
-        .profile-sidebar .avatar-wrapper .ring,
-        .profile-sidebar .avatar-wrapper .status-dot,
-        .profile-cta .cta-icon,
-        .profile-page::before,
-        .profile-page::after {
+        .tab-pane,
+        .edit-form-container.is-visible {
             animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.01ms !important;
-        }
-        .info-item .content .edit-input.is-visible,
-        .form-actions.is-visible {
-            animation: none !important;
         }
     }
+
+    /* ─── SCROLLBAR ─── */
+    .profile-card::-webkit-scrollbar {
+        width: 4px;
+    }
+    .profile-card::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .profile-card::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 8px;
+    }
 </style>
-<title>{{profile.username}}</title>
+<title>{{ profile.username }}</title>
 {% endblock %}
+
 <div class="profile-page">
     <div class="profile-card">
 
-        <!-- ─── LEFT SIDEBAR ─── -->
-        <aside class="profile-sidebar">
+        <!-- ═══════ BANNER ═══════ -->
+        <div class="banner-wrap">
+            {% if profile.profile_pic %}
+            <img class="banner-img" src="https://images.unsplash.com/photo-1485470733090-0aae1788d5af?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8d2FsbHBhcGVyJTIwNGt8ZW58MHx8MHx8fDA%3D" alt="Banner" />
+            {% else %}
+            <div class="banner-placeholder">
+                <i class="fas fa-image"></i> <span>Add a banner image</span>
+            </div>
+            {% endif %}
+            <div class="banner-edit" id="banner-edit-trigger" aria-label="Edit banner">
+                <i class="fas fa-camera"></i>
+            </div>
+        </div>
+
+        <!-- ═══════ PROFILE HEADER ═══════ -->
+        <div class="profile-header">
+            <!-- Avatar -->
             <div class="avatar-wrapper">
-                <div class="ring"></div>
                 <div class="avatar">
                     <img id="profile-avatar-img" src="{{ profile.profile_pic.url }}" alt="Profile photo" />
                 </div>
-                <div class="edit-badge" id="avatar-edit-trigger" aria-label="Edit profile photo">
-                    <i class="fas fa-camera"></i>
-                </div>
-                <!-- <div class="status-dot" aria-label="Online"></div> -->
-            </div>
-
-            <h2>
-                <span id="display-fullname">Prince Paswan</span>
-                <span class="verified"><i class="fas fa-check-circle"></i></span>
-            </h2>
-            <div class="handle">
-                <i class="fas fa-at"></i> <span id="display-username">{{ profile.username }}</span>
-            </div>
-
-            <div class="bio-short" id="display-bio-short">
-                <i class="fas fa-rocket" style="color:#A78BFA;"></i>
-                <span>{{ profile.bio }}</span>
-            </div>
-
-            <div class="stats-row">
-                <div class="stat">
-                    <span class="num">284</span>
-                    <span class="label">Followers</span>
-                </div>
-                <div class="stat">
-                    <span class="num">156</span>
-                    <span class="label">Following</span>
-                </div>
-                <div class="stat">
-                    <span class="num"><i class="fas fa-star"></i> 8.7</span>
-                    <span class="label">Rank</span>
+                <div class="edit-trigger" id="avatar-edit-trigger" aria-label="Edit profile photo">
+                    <i class="fas fa-pen"></i>
                 </div>
             </div>
 
-            <div class="action-buttons">
-                <button class="btn btn-primary" aria-label="Send message">
-                    <i class="fas fa-paper-plane"></i> Message
-                </button>
-                <button class="btn btn-secondary" id="edit-toggle-btn" aria-label="Edit profile">
-                    <i class="fas fa-sliders-h"></i> <span id="edit-btn-text">Edit Profile</span>
-                </button>
-            </div>
-        </aside>
-
-        <!-- ─── RIGHT MAIN ─── -->
-        <main class="profile-main">
-
-            <!-- ─── FORM ─── -->
-              <form id="profile-form" method="post" enctype="multipart/form-data" action="{% url 'update_profile' profile.username %}">
-                        {% csrf_token %}
-
-                <div class="section-header">
-                    <i class="fas fa-address-card"></i>
-                    <span class="section-title">Personal Details</span>
-                    <span class="section-line"></span>
+            <!-- Info -->
+            <div class="info">
+                <div class="name-row">
+                    <h2 id="display-fullname">{{ profile.full_name|default:profile.username }}</h2>
                 </div>
 
-                <div class="info-grid" id="info-grid">
-
-                    <!-- ─── Full Name ─── -->
-                    <div class="info-item" data-field="fullname">
-                        <div class="icon-box"><i class="fas fa-user"></i></div>
-                        <div class="content">
-                            <div class="label">Full Name</div>
-                            <div class="value" id="display-fullname-val">Prince Paswan</div>
-                            <div class="edit-input">
-                                <input type="text" name="fullname" id="input-fullname" value="Prince Paswan" placeholder="Full Name" autocomplete="name" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ─── Username ─── -->
-                    <div class="info-item" data-field="username">
-                        <div class="icon-box"><i class="fas fa-hashtag"></i></div>
-                        <div class="content">
-                            <div class="label">Username</div>
-                            <div class="value" id="display-username-val">{{profile.username}}</div>
-                            <div class="edit-input">
-                                <input type="text" name="username" id="input-username" value="{{profile.username}}" placeholder="Username" autocomplete="username" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ─── Gender ─── -->
-                    <div class="info-item" data-field="gender">
-                        <div class="icon-box"><i class="fas fa-venus-mars"></i></div>
-                        <div class="content">
-                            <div class="label">Gender</div>
-                            <div class="value"><span class="tag tag-gender" id="display-gender">{{profile.gender}}</span></div>
-                            <div class="edit-input">
-                                <select name="gender" id="input-gender">
-                                    <option value="Male" selected>Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
-                                    <option value="Prefer not to say">Prefer not to say</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ─── Relationship ─── -->
-                    <div class="info-item" data-field="relationship">
-                        <div class="icon-box"><i class="fas fa-heart"></i></div>
-                        <div class="content">
-                            <div class="label">Relationship</div>
-                            <div class="value"><span class="tag tag-relationship" id="display-relationship">{{profile.relationship}}</span></div>
-                            <div class="edit-input">
-                                <select name="relationship" id="input-relationship">
-                                    <option value="Single" selected>Single</option>
-                                    <option value="In a relationship">In a relationship</option>
-                                    <option value="Married">Married</option>
-                                    <option value="Divorced">Divorced</option>
-                                    <option value="Widowed">Widowed</option>
-                                    <option value="Prefer not to say">Prefer not to say</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ─── Program ─── -->
-                    <div class="info-item" data-field="program">
-                        <div class="icon-box"><i class="fas fa-graduation-cap"></i></div>
-                        <div class="content">
-                            <div class="label">Program</div>
-                            <div class="value"><span class="tag tag-program" id="display-program">{{profile.program}}</span></div>
-                            <div class="edit-input">
-                                <input type="text" name="program" id="input-program" value="{{profile.program}}" placeholder="Program" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ─── Birthdate ─── -->
-                    <div class="info-item" data-field="birthdate">
-                        <div class="icon-box"><i class="fas fa-cake-candles"></i></div>
-                        <div class="content">
-                            <div class="label">Birthdate</div>
-                           <div class="value">
-                            <span>{{ profile.birth_date|date:"d M Y" }}</span>
-                          </div>
-
-                        <div class="edit-input">
-                            <input type="date"
-                                  name="birthdate"
-                                  id="input-birthdate"
-                                  value="{{ profile.birth_date|date:'Y-m-d' }}">
-                        </div>
-                        </div>
-                     </div>
-
-                    <!-- ─── Bio (full width) ─── -->
-                    <div class="info-item full" data-field="bio">
-                        <div class="icon-box"><i class="fas fa-pen-fancy"></i></div>
-                        <div class="content">
-                            <div class="label">Bio</div>
-                            <div class="value" id="display-bio">
-                                <i class="fas fa-rocket" style="color:#A78BFA; opacity:0.7;"></i>
-                                {{ profile.bio }}
-                            </div>
-                            <div class="edit-input">
-                                <textarea name="bio" id="input-bio" placeholder="Tell us about yourself..." rows="3">{{ profile.bio }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ─── Hidden avatar input ─── -->
-                    <input type="file" name="profile_pic" id="avatar-input" accept="image/*" />
-
+                <!-- Program + Semester (if available) -->
+                <div class="program-detail" id="display-program">
+                    {% if profile.program %}
+                        <i class="fas fa-graduation-cap"></i> Semester 3 • {{ profile.program }}
+                    {% else %}
+                        <i class="fas fa-graduation-cap"></i> Student
+                    {% endif %}
                 </div>
 
-                <!-- ─── Form Actions ─── -->
-                <div class="form-actions" id="form-actions">
-                    <button type="button" class="btn btn-cancel" id="cancel-edit-btn">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                    <button type="submit" class="btn btn-save" id="save-btn">
-                        <i class="fas fa-check"></i> Save Changes
+                <!-- Bio -->
+                <div class="bio" id="display-bio-short">
+                    <i class="fas fa-quote-left" style="opacity:0.5;"></i>
+                    <span>{{ profile.bio|default:"No bio yet." }}</span>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-row">
+                    <div class="stat">
+                        <span class="num" id="stat-followers">321</span>
+                        <span class="label">Followers</span>
+                    </div>
+                    <div class="stat">
+                        <span class="num" id="stat-following">201</span>
+                        <span class="label">Following</span>
+                    </div>
+                    <div class="stat">
+                        <span class="num" id="stat-score"><i class="fas fa-star"></i> 8.7</span>
+                        <span class="label">Total Score</span>
+                    </div>
+                    <div class="stat">
+                        <span class="num" id="stat-posts">48</span>
+                        <span class="label">Posts</span>
+                    </div>
+                </div>
+
+                <!-- Relationship + other meta -->
+                <div class="meta-line">
+                    <i class="fas fa-heart" style="color:#EC4899; opacity:0.7;"></i>
+                    <span id="display-relationship">{{ profile.relationship|default:"Single" }}</span>
+                    {% if profile.birth_date %}
+                        <span style="opacity:0.4; margin:0 4px;">•</span>
+                        <i class="fas fa-cake-candles" style="opacity:0.5;"></i>
+                        <span>{{ profile.birth_date|date:"M d, Y" }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Actions -->
+                <div class="actions">
+                    <button class="btn btn-secondary" id="edit-toggle-btn" aria-label="Edit profile">
+                        <i class="fas fa-sliders-h"></i> <span id="edit-btn-text">Edit Profile</span>
                     </button>
                 </div>
-  <!-- <button type="submit" class="btn btn-save">
-        Save Changes
-    </button> -->
-            </form>
+            </div>
+        </div>
 
-            <!-- ─── CTA ─── -->
-            <div class="profile-cta">
-                <span class="cta-icon"><i class="fas fa-comment-dots"></i></span>
-                <span class="cta-text">Start chatting with <strong>Instant</strong></span>
-                <span class="cta-icon"><i class="fas fa-sparkles"></i></span>
+        <!-- ═══════ TABS ═══════ -->
+        <nav class="profile-tabs" id="tab-nav">
+            <button class="tab-btn active" data-tab="posts">
+                <i class="fas fa-newspaper"></i> Posts <span class="badge">0</span>
+            </button>
+            <button class="tab-btn" data-tab="personal">
+                <i class="fas fa-user-edit"></i> Personal
+            </button>
+            <button class="tab-btn" data-tab="linked">
+                <i class="fas fa-link"></i> Linked
+            </button>
+        </nav>
+
+        <!-- ═══════ TAB CONTENT ═══════ -->
+        <div class="tab-content-wrapper">
+
+            <!-- ─── Posts ─── -->
+
+<div class="tab-pane active" id="tab-posts">
+
+    {% if user_post %}
+
+        <div class="posts-grid">
+            {% for post in user_post %}
+                <div class="post-card">
+                    <img
+                        src="{{ post.image.url }}"
+                        class="post_img"
+                        alt="Post image"
+                    >
+                </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+            <div class="icon-wrap">
+                <i class="fas fa-newspaper"></i>
             </div>
 
-        </main>
+            <h3>No Posts Yet</h3>
 
-    </div>
+            <p>When you share something, it will show up here.</p>
+
+            <button type="button" class="empty-cta">
+                <i class="fas fa-plus"></i>
+                Create Post
+            </button>
+        </div>
+
+    {% endif %}
+
 </div>
+
+
+
+            <!-- ─── Personal ─── -->
+            <div class="tab-pane" id="tab-personal">
+                <div class="empty-state">
+                    <div class="icon-wrap"><i class="fas fa-user-edit"></i></div>
+                    <h3>Personal Space</h3>
+                    <p>Your personal thoughts and updates live here.</p>
+                    <button class="empty-cta"><i class="fas fa-pen-fancy"></i> Write Something</button>
+                </div>
+            </div>
+
+            <!-- ─── Linked ─── -->
+            <div class="tab-pane" id="tab-linked">
+                <div class="empty-state">
+                    <div class="icon-wrap"><i class="fas fa-link"></i></div>
+                    <h3>No Linked Content</h3>
+                    <p>Share links, resources, or external content.</p>
+                    <button class="empty-cta"><i class="fas fa-plus-circle"></i> Add Link</button>
+                </div>
+            </div>
+
+            <!-- ═══════ EDIT FORM ─═══════ -->
+            <div class="edit-form-container" id="edit-form-container">
+                <form id="profile-form" method="post" enctype="multipart/form-data" action="{% url 'update_profile' profile.username %}">
+                    {% csrf_token %}
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="input-fullname">Full Name</label>
+                            <input type="text" name="fullname" id="input-fullname" value="{{ profile.full_name|default:profile.username }}" placeholder="Full Name" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-username">Username</label>
+                            <input type="text" name="username" id="input-username" value="{{ profile.username }}" placeholder="Username" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-gender">Gender</label>
+                            <select name="gender" id="input-gender">
+                                <option value="Male" {% if profile.gender == "Male" %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if profile.gender == "Female" %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if profile.gender == "Other" %}selected{% endif %}>Other</option>
+                                <option value="Prefer not to say" {% if profile.gender == "Prefer not to say" %}selected{% endif %}>Prefer not to say</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-relationship">Relationship</label>
+                            <select name="relationship" id="input-relationship">
+                                <option value="Single" {% if profile.relationship == "Single" %}selected{% endif %}>Single</option>
+                                <option value="In a relationship" {% if profile.relationship == "In a relationship" %}selected{% endif %}>In a relationship</option>
+                                <option value="Married" {% if profile.relationship == "Married" %}selected{% endif %}>Married</option>
+                                <option value="Divorced" {% if profile.relationship == "Divorced" %}selected{% endif %}>Divorced</option>
+                                <option value="Widowed" {% if profile.relationship == "Widowed" %}selected{% endif %}>Widowed</option>
+                                <option value="Prefer not to say" {% if profile.relationship == "Prefer not to say" %}selected{% endif %}>Prefer not to say</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-program">Program</label>
+                            <input type="text" name="program" id="input-program" value="{{ profile.program|default:'' }}" placeholder="e.g. BCA AI" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-birthdate">Birthdate</label>
+                            <input type="date" name="birthdate" id="input-birthdate" value="{{ profile.birth_date|date:'Y-m-d' }}" />
+                        </div>
+
+                        <div class="form-group full">
+                            <label for="input-bio">Bio</label>
+                            <textarea name="bio" id="input-bio" placeholder="Tell us about yourself..." rows="3">{{ profile.bio|default:'' }}</textarea>
+                        </div>
+
+                        <!-- Hidden file inputs -->
+                        <input type="file" name="profile_pic" id="avatar-input" accept="image/*" />
+                        <input type="file" name="banner_image" id="banner-input" accept="image/*" />
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-cancel" id="cancel-edit-btn">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn btn-save" id="save-btn">
+                            <i class="fas fa-check"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div><!-- /tab-content-wrapper -->
+
+    </div><!-- /profile-card -->
+</div><!-- /profile-page -->
 
 <!-- ─── JAVASCRIPT ─── -->
 <script>
-(function () {
-    'use strict';
+    (function() {
+        'use strict';
 
-    // ─── DOM references ───
+        // ─── DOM refs ───
+        const editToggleBtn = document.getElementById('edit-toggle-btn');
+        const editBtnText = document.getElementById('edit-btn-text');
+        const cancelBtn = document.getElementById('cancel-edit-btn');
+        const saveBtn = document.getElementById('save-btn');
+        const form = document.getElementById('profile-form');
+        const editContainer = document.getElementById('edit-form-container');
 
-    const editToggleBtn = document.getElementById('edit-toggle-btn');
-    const editBtnText = document.getElementById('edit-btn-text');
-    const cancelBtn = document.getElementById('cancel-edit-btn');
-    const saveBtn = document.getElementById('save-btn');
-    const form = document.getElementById('profile-form');
-    const formActions = document.getElementById('form-actions');
-    const infoItems = document.querySelectorAll('.info-item');
+        const avatarInput = document.getElementById('avatar-input');
+        const avatarTrigger = document.getElementById('avatar-edit-trigger');
+        const avatarImg = document.getElementById('profile-avatar-img');
 
-    const avatarInput = document.getElementById('avatar-input');
-    const avatarTrigger = document.getElementById('avatar-edit-trigger');
-    const avatarImg = document.getElementById('profile-avatar-img');
+        const bannerInput = document.getElementById('banner-input');
+        const bannerTrigger = document.getElementById('banner-edit-trigger');
+        const bannerImg = document.getElementById('profile-banner-img');
+        const bannerPlaceholder = document.querySelector('.banner-placeholder');
 
-    // ─── Display elements ───
+        // Display elements
+        const displayFullname = document.getElementById('display-fullname');
+        const displayUsername = document.getElementById('display-username');
+        const displayBioShort = document.getElementById('display-bio-short');
+        const displayProgram = document.getElementById('display-program');
+        const displayRelationship = document.getElementById('display-relationship');
 
-    const displayFullname = document.getElementById('display-fullname-val');
-    const displayUsername = document.getElementById('display-username-val');
-    const displayGender = document.getElementById('display-gender');
-    const displayRelationship = document.getElementById('display-relationship');
-    const displayProgram = document.getElementById('display-program');
-    const displayBio = document.getElementById('display-bio');
-    const displayBioShort = document.getElementById('display-bio-short');
-    const displayNameHeading = document.querySelector(
-        '.profile-sidebar h2 span:first-child'
-    );
-    const displayUsernameHandle = document.getElementById('display-username');
+        // Inputs
+        const inputFullname = document.getElementById('input-fullname');
+        const inputUsername = document.getElementById('input-username');
+        const inputGender = document.getElementById('input-gender');
+        const inputRelationship = document.getElementById('input-relationship');
+        const inputProgram = document.getElementById('input-program');
+        const inputBio = document.getElementById('input-bio');
 
-    // ─── Input elements ───
+        // ─── State ───
+        let isEditing = false;
+        let originalData = {};
 
-    const inputFullname = document.getElementById('input-fullname');
-    const inputUsername = document.getElementById('input-username');
-    const inputGender = document.getElementById('input-gender');
-    const inputRelationship = document.getElementById('input-relationship');
-    const inputProgram = document.getElementById('input-program');
-    const inputBio = document.getElementById('input-bio');
-
-    // ─── State ───
-
-    let isEditing = false;
-    let originalData = {};
-
-    // ─── Store original values ───
-
-    function captureOriginalData() {
-        originalData = {
-            fullname: inputFullname.value,
-            username: inputUsername.value,
-            gender: inputGender.value,
-            relationship: inputRelationship.value,
-            program: inputProgram.value,
-            bio: inputBio.value
+        // ─── Tab switching ───
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabPanes = {
+            posts: document.getElementById('tab-posts'),
+            personal: document.getElementById('tab-personal'),
+            linked: document.getElementById('tab-linked'),
         };
-    }
 
-    // ─── Sync displayed values with inputs ───
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                Object.values(tabPanes).forEach(p => p.classList.remove('active'));
 
-    function syncDisplayValues() {
-        const fullname = inputFullname.value.trim();
-        const username = inputUsername.value.trim();
-        const gender = inputGender.value;
-        const relationship = inputRelationship.value;
-        const program = inputProgram.value.trim();
-        const bio = inputBio.value.trim() || 'No bio yet.';
-
-        displayFullname.textContent = fullname;
-        displayNameHeading.textContent = fullname;
-
-        displayUsername.textContent = username;
-        displayUsernameHandle.textContent = username;
-
-        displayGender.textContent = gender;
-        displayRelationship.textContent = relationship;
-        displayProgram.textContent = program;
-
-        displayBio.innerHTML = bio;
-
-        const shortBio =
-            bio.length > 60 ? bio.slice(0, 60) + '…' : bio;
-
-        displayBioShort.innerHTML =
-            `<i class="fas fa-rocket" style="color:#A78BFA;"></i> ${shortBio}`;
-    }
-
-    // ─── Toggle edit mode ───
-
-    function setEditMode(enabled) {
-        isEditing = enabled;
-
-        infoItems.forEach(item => {
-            item.classList.toggle('is-editing', enabled);
+                this.classList.add('active');
+                const target = this.dataset.tab;
+                if (tabPanes[target]) {
+                    tabPanes[target].classList.add('active');
+                }
+            });
         });
 
-        formActions.classList.toggle('is-visible', enabled);
+        // ─── Store original values ───
+        function captureOriginalData() {
+            originalData = {
+                fullname: inputFullname.value,
+                username: inputUsername.value,
+                gender: inputGender.value,
+                relationship: inputRelationship.value,
+                program: inputProgram.value,
+                bio: inputBio.value,
+            };
+        }
 
-        if (enabled) {
-            editBtnText.textContent = 'Editing…';
+        // ─── Sync display with inputs ───
+        function syncDisplayValues() {
+            const fullname = inputFullname.value.trim() || inputUsername.value.trim();
+            const username = inputUsername.value.trim();
+            const bio = inputBio.value.trim() || 'No bio yet.';
+            const program = inputProgram.value.trim() || 'Student';
+            const relationship = inputRelationship.value || 'Single';
 
-            editToggleBtn.classList.add('btn-primary');
-            editToggleBtn.classList.remove('btn-secondary');
+            displayFullname.textContent = fullname;
+            displayUsername.textContent = username;
+            displayRelationship.textContent = relationship;
 
-            setTimeout(() => {
-                inputFullname.focus();
-                inputFullname.select();
-            }, 350);
-        } else {
-            editBtnText.textContent = 'Edit Profile';
+            // Program display
+            if (program !== 'Student') {
+                displayProgram.innerHTML = `<i class="fas fa-graduation-cap"></i> Semester 3 • ${program}`;
+            } else {
+                displayProgram.innerHTML = `<i class="fas fa-graduation-cap"></i> Student`;
+            }
 
-            editToggleBtn.classList.remove('btn-primary');
-            editToggleBtn.classList.add('btn-secondary');
+            const bioShort = bio.length > 80 ? bio.slice(0, 80) + '…' : bio;
+            displayBioShort.innerHTML =
+                `<i class="fas fa-quote-left" style="opacity:0.5;"></i> ${bioShort}`;
+
+            // Also update the heading if needed
+            const headingName = document.querySelector('.profile-header .info .name-row h2');
+            if (headingName) headingName.textContent = fullname;
+        }
+
+        // ─── Toggle edit mode ───
+        function setEditMode(enabled) {
+            isEditing = enabled;
+
+            if (enabled) {
+                editContainer.classList.add('is-visible');
+                editBtnText.textContent = 'Editing…';
+                editToggleBtn.classList.add('btn-primary');
+                editToggleBtn.classList.remove('btn-secondary');
+
+                document.querySelectorAll('.tab-pane .empty-state').forEach(el => {
+                    el.style.opacity = '0.25';
+                    el.style.pointerEvents = 'none';
+                });
+
+                setTimeout(() => {
+                    inputFullname.focus();
+                    inputFullname.select();
+                }, 300);
+            } else {
+                editContainer.classList.remove('is-visible');
+                editBtnText.textContent = 'Edit Profile';
+                editToggleBtn.classList.remove('btn-primary');
+                editToggleBtn.classList.add('btn-secondary');
+
+                document.querySelectorAll('.tab-pane .empty-state').forEach(el => {
+                    el.style.opacity = '1';
+                    el.style.pointerEvents = 'auto';
+                });
+
+                syncDisplayValues();
+                captureOriginalData();
+            }
+        }
+
+        // ─── Cancel edit ───
+        function cancelEdit() {
+            inputFullname.value = originalData.fullname;
+            inputUsername.value = originalData.username;
+            inputGender.value = originalData.gender;
+            inputRelationship.value = originalData.relationship;
+            inputProgram.value = originalData.program;
+            inputBio.value = originalData.bio;
 
             syncDisplayValues();
+            setEditMode(false);
+        }
+
+        // ─── Form submit ───
+        form.addEventListener('submit', function() {
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<span class="spinner"></span> Saving…';
+            syncDisplayValues();
+        });
+
+        // ─── Avatar upload ───
+        avatarTrigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            avatarInput.click();
+        });
+
+        avatarInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    avatarImg.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // ─── Banner upload ───
+        bannerTrigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            bannerInput.click();
+        });
+
+        bannerInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    if (bannerImg) {
+                        bannerImg.src = event.target.result;
+                        bannerImg.style.display = 'block';
+                    }
+                    if (bannerPlaceholder) {
+                        bannerPlaceholder.style.display = 'none';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // ─── Edit toggle ───
+        editToggleBtn.addEventListener('click', function() {
+            if (isEditing) return;
             captureOriginalData();
-        }
-    }
+            setEditMode(true);
+        });
 
-    // ─── Cancel edit ───
+        // ─── Cancel ───
+        cancelBtn.addEventListener('click', cancelEdit);
 
-    function cancelEdit() {
-        inputFullname.value = originalData.fullname;
-        inputUsername.value = originalData.username;
-        inputGender.value = originalData.gender;
-        inputRelationship.value = originalData.relationship;
-        inputProgram.value = originalData.program;
-        inputBio.value = originalData.bio;
+        // ─── Live preview ───
+        inputFullname.addEventListener('input', syncDisplayValues);
+        inputUsername.addEventListener('input', syncDisplayValues);
+        inputBio.addEventListener('input', syncDisplayValues);
+        inputProgram.addEventListener('input', syncDisplayValues);
+        inputRelationship.addEventListener('change', syncDisplayValues);
 
-        syncDisplayValues();
-        setEditMode(false);
-    }
-
-    // ─── Form submit ───
-
-    form.addEventListener('submit', function () {
-        saveBtn.disabled = true;
-        saveBtn.innerHTML =
-            '<span class="spinner"></span> Saving…';
-
-        syncDisplayValues();
-
-        // Do not use preventDefault().
-        // Django will receive the POST normally.
-    });
-
-    // ─── Avatar upload ───
-
-    avatarTrigger.addEventListener('click', function (e) {
-        e.stopPropagation();
-        avatarInput.click();
-    });
-
-    avatarInput.addEventListener('change', function () {
-        const file = this.files[0];
-
-        if (file) {
-            const reader = new FileReader();
-
-            reader.onload = function (event) {
-                avatarImg.src = event.target.result;
-            };
-
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // ─── Edit button ───
-
-    editToggleBtn.addEventListener('click', function () {
-        if (isEditing) {
-            return;
-        }
-
+        // ─── Init ───
         captureOriginalData();
-        setEditMode(true);
-    });
+        syncDisplayValues();
 
-    // ─── Cancel button ───
+        // Show banner image if exists
+        if (bannerImg && bannerImg.src && bannerImg.src !== window.location.href) {
+            const img = new Image();
+            img.onload = function() {
+                if (bannerPlaceholder) bannerPlaceholder.style.display = 'none';
+            };
+            img.onerror = function() {};
+            img.src = bannerImg.src;
+        }
 
-    cancelBtn.addEventListener('click', cancelEdit);
-
-    // ─── Initial display ───
-
-    captureOriginalData();
-    syncDisplayValues();
-
-    // ─── Live preview while editing ───
-
-    inputFullname.addEventListener('input', syncDisplayValues);
-    inputUsername.addEventListener('input', syncDisplayValues);
-    inputGender.addEventListener('change', syncDisplayValues);
-    inputRelationship.addEventListener('change', syncDisplayValues);
-    inputProgram.addEventListener('input', syncDisplayValues);
-    inputBio.addEventListener('input', syncDisplayValues);
-
-})();
+    })();
 </script>
 
 {% endblock %}
