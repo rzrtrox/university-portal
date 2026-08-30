@@ -1,28 +1,38 @@
 from django.shortcuts import redirect, render,get_object_or_404
 from .models import Profile, Post
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
+# xqc4FNpGdP3BHlt4
 
 
 def index(request):
     return render(request, "index.html")
 
-def login(request):
-    print("Login request method:")
+def login_view(request):
+
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
-        print("Login attempt for user:", username)
-        user = User.objects.filter(username=username).first()
 
-        if user is not None and user.check_password(password):
-            # Successful login
+        print("Login attempt for user:", username)
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+
             print("Login successful for user:", username)
+
             return redirect("home")
+
         else:
-            # Invalid credentials
             error_message = "Invalid username or password."
-            return render(request, "authentication/login.html", {"error_message": error_message})
+            return render(
+                request,
+                "authentication/login.html",
+                {"error_message": error_message}
+            )
 
     return render(request, "authentication/login.html")
 
