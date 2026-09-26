@@ -1,0 +1,1276 @@
+<!-- templates/events.html -->
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<!-- ─── FONTS & ICONS ─── -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link rel="stylesheet" href="{% static 'css/home/style.css' %}">
+
+{% block head %}
+<style>
+    /* ─── RESET & BASE ─── */
+  
+    .events-page {
+        width: 100%;
+        min-height: 100vh;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        padding: 20px 16px 48px;
+        position: relative;
+    }
+
+    .events-page::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background:
+            radial-gradient(ellipse at 20% 10%, rgba(99, 102, 241, 0.05), transparent 50%),
+            radial-gradient(ellipse at 80% 90%, rgba(236, 72, 153, 0.04), transparent 45%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .events-container {
+        max-width: 1280px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ─── HERO HEADER ─── */
+    .events-hero {
+        padding: 32px 0 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .events-hero .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(99, 102, 241, 0.10);
+        border: 1px solid rgba(99, 102, 241, 0.08);
+        padding: 4px 14px 4px 10px;
+        border-radius: 60px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #818CF8;
+        width: fit-content;
+        letter-spacing: 0.3px;
+    }
+
+    .events-hero .hero-badge i {
+        font-size: 10px;
+        color: #34D399;
+    }
+
+    .events-hero h1 {
+        font-size: 36px;
+        font-weight: 800;
+        color: #F1F4F9;
+        letter-spacing: -0.8px;
+        margin-top: 6px;
+    }
+
+    .events-hero h1 span {
+        background: linear-gradient(135deg, #818CF8, #A78BFA);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .events-hero p {
+        font-size: 16px;
+        color: #7B8AA3;
+        max-width: 520px;
+        line-height: 1.7;
+        margin-top: 4px;
+    }
+
+    .hero-stats {
+        display: flex;
+        gap: 32px;
+        margin-top: 16px;
+        flex-wrap: wrap;
+    }
+
+    .hero-stats .stat-item {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+    }
+
+    .hero-stats .stat-item .num {
+        font-size: 22px;
+        font-weight: 700;
+        color: #F1F4F9;
+    }
+
+    .hero-stats .stat-item .num i {
+        font-size: 14px;
+        color: #F59E0B;
+        margin-right: 2px;
+    }
+
+    .hero-stats .stat-item .label {
+        font-size: 13px;
+        color: #5D6C83;
+        font-weight: 500;
+    }
+
+    /* ─── FILTER BAR ─── */
+    .filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px 16px;
+        padding: 16px 0 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        margin-bottom: 24px;
+    }
+
+    .filter-bar .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .filter-bar .filter-group .filter-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #5D6C83;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-right: 4px;
+    }
+
+    .filter-bar .filter-chip {
+        padding: 6px 16px;
+        border-radius: 60px;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        background: rgba(255, 255, 255, 0.02);
+        color: #7B8AA3;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Inter', sans-serif;
+        white-space: nowrap;
+    }
+
+    .filter-bar .filter-chip:hover {
+        background: rgba(99, 102, 241, 0.06);
+        border-color: rgba(99, 102, 241, 0.12);
+        color: #D0D7DE;
+    }
+
+    .filter-bar .filter-chip.active {
+        background: rgba(99, 102, 241, 0.12);
+        border-color: rgba(99, 102, 241, 0.20);
+        color: #818CF8;
+    }
+
+    .filter-bar .filter-chip .count {
+        background: rgba(255, 255, 255, 0.04);
+        padding: 0 8px;
+        border-radius: 40px;
+        font-size: 10px;
+        font-weight: 600;
+        margin-left: 4px;
+        color: #5D6C83;
+    }
+
+    .filter-bar .filter-chip.active .count {
+        background: rgba(99, 102, 241, 0.12);
+        color: #818CF8;
+    }
+
+    .filter-bar .search-wrap {
+        position: relative;
+        flex: 1;
+        min-width: 160px;
+        max-width: 300px;
+        margin-left: auto;
+    }
+
+    .filter-bar .search-wrap i {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #4E5F7E;
+        font-size: 13px;
+        pointer-events: none;
+    }
+
+    .filter-bar .search-wrap input {
+        width: 100%;
+        padding: 8px 16px 8px 36px;
+        border-radius: 60px;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        background: rgba(255, 255, 255, 0.02);
+        color: #F1F4F9;
+        font-size: 13px;
+        font-family: 'Inter', sans-serif;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .filter-bar .search-wrap input::placeholder {
+        color: #4E5F7E;
+    }
+
+    .filter-bar .search-wrap input:focus {
+        border-color: rgba(99, 102, 241, 0.25);
+        background: rgba(255, 255, 255, 0.04);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.06);
+    }
+
+    /* ─── EVENTS GRID ─── */
+    .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 4px 0 12px;
+    }
+
+    /* ─── EVENT CARD ─── */
+    .event-card {
+        background: #11161F;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        cursor: pointer;
+        position: relative;
+    }
+
+    .event-card:hover {
+        transform: translateY(-6px);
+        border-color: rgba(99, 102, 241, 0.15);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .event-card .card-image {
+        position: relative;
+        width: 100%;
+        height: 180px;
+        overflow: hidden;
+        background: #0A0E18;
+    }
+
+    .event-card .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .event-card:hover .card-image img {
+        transform: scale(1.04);
+    }
+
+    .event-card .card-image .event-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        padding: 4px 14px;
+        border-radius: 60px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        color: #D0D7DE;
+    }
+
+    .event-card .card-image .event-badge.live {
+        background: rgba(239, 68, 68, 0.15);
+        color: #F87171;
+        border-color: rgba(239, 68, 68, 0.10);
+        animation: pulse-live 1.8s ease-in-out infinite;
+    }
+
+    .event-card .card-image .event-badge.live::before {
+        content: '';
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #EF4444;
+        margin-right: 6px;
+        animation: pulse-dot 1.2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-live {
+        0%,
+        100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    @keyframes pulse-dot {
+        0%,
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.4);
+            opacity: 0.6;
+        }
+    }
+
+    .event-card .card-image .event-badge.upcoming {
+        background: rgba(99, 102, 241, 0.12);
+        color: #818CF8;
+        border-color: rgba(99, 102, 241, 0.10);
+    }
+
+    .event-card .card-image .event-badge.ended {
+        background: rgba(255, 255, 255, 0.04);
+        color: #4E5F7E;
+        border-color: rgba(255, 255, 255, 0.04);
+    }
+
+    .event-card .card-image .event-bookmark {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #7B8AA3;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .event-card .card-image .event-bookmark:hover {
+        background: rgba(99, 102, 241, 0.15);
+        color: #818CF8;
+        transform: scale(1.1);
+    }
+
+    .event-card .card-image .event-bookmark.saved {
+        color: #818CF8;
+        background: rgba(99, 102, 241, 0.12);
+    }
+
+    .event-card .card-body {
+        padding: 16px 18px 18px;
+    }
+
+    .event-card .card-body .event-meta-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 12px;
+        color: #5D6C83;
+        margin-bottom: 6px;
+        flex-wrap: wrap;
+    }
+
+    .event-card .card-body .event-meta-top .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .event-card .card-body .event-meta-top .meta-item i {
+        font-size: 11px;
+        opacity: 0.5;
+    }
+
+    .event-card .card-body .event-meta-top .meta-item .dot {
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: #3D4A5C;
+    }
+
+    .event-card .card-body h3 {
+        font-size: 17px;
+        font-weight: 700;
+        color: #F1F4F9;
+        line-height: 1.4;
+        margin-bottom: 4px;
+        letter-spacing: -0.2px;
+    }
+
+    .event-card .card-body .event-desc {
+        font-size: 13px;
+        color: #7B8AA3;
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-bottom: 12px;
+    }
+
+    .event-card .card-body .event-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .event-card .card-body .event-footer .attendees {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: #7B8AA3;
+    }
+
+    .event-card .card-body .event-footer .attendees .avatars {
+        display: flex;
+        margin-right: 4px;
+    }
+
+    .event-card .card-body .event-footer .attendees .avatars .mini-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 2px solid #11161F;
+        margin-left: -6px;
+        overflow: hidden;
+        background: #1A1E2E;
+    }
+
+    .event-card .card-body .event-footer .attendees .avatars .mini-avatar:first-child {
+        margin-left: 0;
+    }
+
+    .event-card .card-body .event-footer .attendees .avatars .mini-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .event-card .card-body .event-footer .attendees .avatars .mini-avatar.more {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        font-weight: 600;
+        color: #7B8AA3;
+        background: #1A1E2E;
+        border-color: #1A1E2E;
+    }
+
+    .event-card .card-body .event-footer .event-action {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .event-card .card-body .event-footer .event-action .btn-rsvp {
+        padding: 6px 18px;
+        border-radius: 60px;
+        border: none;
+        font-size: 12px;
+        font-weight: 600;
+        font-family: 'Inter', sans-serif;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        background: linear-gradient(135deg, #6366F1, #8B5CF6);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(99, 102, 241, 0.18);
+    }
+
+    .event-card .card-body .event-footer .event-action .btn-rsvp:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 32px rgba(99, 102, 241, 0.30);
+    }
+
+    .event-card .card-body .event-footer .event-action .btn-rsvp.going {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34D399;
+        border: 1px solid rgba(16, 185, 129, 0.10);
+        box-shadow: none;
+    }
+
+    .event-card .card-body .event-footer .event-action .btn-rsvp.going:hover {
+        background: rgba(239, 68, 68, 0.10);
+        color: #F87171;
+        border-color: rgba(239, 68, 68, 0.10);
+        transform: translateY(-2px);
+    }
+
+    .event-card .card-body .event-footer .event-action .btn-rsvp.going .btn-text {
+        display: inline;
+    }
+
+    .event-card .card-body .event-footer .event-action .btn-rsvp.going .btn-text-going {
+        display: none;
+    }
+
+    .event-card .card-body .event-footer .event-action .btn-rsvp.going:hover .btn-text {
+        display: none;
+    }
+
+    .event-card .card-body .event-footer .event-action .btn-rsvp.going:hover .btn-text-going {
+        display: inline;
+    }
+
+    .event-card .card-body .event-footer .event-action .btn-rsvp .btn-text-going {
+        display: none;
+    }
+
+    /* ─── EMPTY STATE ─── */
+    .empty-events {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px 48px;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.01);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .empty-events .icon-wrap {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: rgba(99, 102, 241, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: #4E5F7E;
+        margin-bottom: 16px;
+    }
+
+    .empty-events h3 {
+        font-size: 19px;
+        font-weight: 700;
+        color: #F1F4F9;
+        margin-bottom: 4px;
+    }
+
+    .empty-events p {
+        font-size: 14px;
+        color: #7B8AA3;
+        max-width: 320px;
+        line-height: 1.7;
+    }
+
+    /* ─── TOAST ─── */
+    .toast {
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #11161F;
+        border: 1px solid rgba(99, 102, 241, 0.20);
+        padding: 12px 20px;
+        border-radius: 60px;
+        box-shadow: 0 12px 44px rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(12px);
+        transform: translateY(24px) scale(0.96);
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        font-family: 'Inter', sans-serif;
+    }
+
+    .toast.show {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .toast .toast-icon {
+        color: #34D399;
+        font-size: 16px;
+    }
+
+    .toast .toast-msg {
+        font-size: 13px;
+        font-weight: 500;
+        color: #F1F4F9;
+    }
+
+    .toast .toast-undo {
+        background: none;
+        border: none;
+        color: #818CF8;
+        font-weight: 600;
+        font-size: 12px;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 40px;
+        transition: background 0.2s;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .toast .toast-undo:hover {
+        background: rgba(99, 102, 241, 0.08);
+    }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #070A14;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #1A1E2E;
+        border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #2A2F42;
+    }
+
+    /* ═══════════════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════════════ */
+
+    @media (max-width: 900px) {
+        .events-grid {
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .events-page {
+            padding: 12px 12px 32px;
+        }
+
+        .events-hero h1 {
+            font-size: 28px;
+        }
+
+        .events-hero p {
+            font-size: 14px;
+        }
+
+        .hero-stats {
+            gap: 20px;
+        }
+
+        .hero-stats .stat-item .num {
+            font-size: 18px;
+        }
+
+        .filter-bar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+            padding: 12px 0 16px;
+        }
+
+        .filter-bar .filter-group {
+            justify-content: flex-start;
+            overflow-x: auto;
+            flex-wrap: nowrap;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .filter-bar .filter-group::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-bar .search-wrap {
+            max-width: 100%;
+            margin-left: 0;
+        }
+
+        .events-grid {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .event-card .card-image {
+            height: 160px;
+        }
+
+        .event-card .card-body h3 {
+            font-size: 16px;
+        }
+
+        .toast {
+            right: 16px;
+            left: 16px;
+            bottom: 16px;
+            border-radius: 40px;
+            padding: 10px 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .events-hero h1 {
+            font-size: 22px;
+        }
+
+        .events-hero .hero-badge {
+            font-size: 10px;
+            padding: 3px 12px 3px 8px;
+        }
+
+        .hero-stats .stat-item .num {
+            font-size: 16px;
+        }
+        .hero-stats .stat-item .label {
+            font-size: 11px;
+        }
+
+        .filter-bar .filter-chip {
+            font-size: 12px;
+            padding: 4px 12px;
+        }
+
+        .event-card .card-image {
+            height: 140px;
+        }
+
+        .event-card .card-body {
+            padding: 12px 14px 14px;
+        }
+
+        .event-card .card-body h3 {
+            font-size: 15px;
+        }
+
+        .event-card .card-body .event-desc {
+            font-size: 12px;
+            -webkit-line-clamp: 2;
+        }
+
+        .event-card .card-body .event-footer .attendees {
+            font-size: 12px;
+        }
+
+        .event-card .card-body .event-footer .event-action .btn-rsvp {
+            padding: 5px 14px;
+            font-size: 11px;
+        }
+
+        .empty-events .icon-wrap {
+            width: 56px;
+            height: 56px;
+            font-size: 22px;
+        }
+        .empty-events h3 {
+            font-size: 16px;
+        }
+        .empty-events p {
+            font-size: 13px;
+        }
+    }
+
+    @media (max-width: 380px) {
+        .events-grid {
+            gap: 10px;
+        }
+        .event-card {
+            border-radius: 16px;
+        }
+        .event-card .card-image {
+            height: 120px;
+        }
+    }
+
+    /* ─── REDUCED MOTION ─── */
+    @media (prefers-reduced-motion: reduce) {
+        .event-card,
+        .event-card .card-image img,
+        .event-card .card-image .event-badge.live,
+        .event-card .card-image .event-badge.live::before,
+        .toast,
+        .filter-chip {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+</style>
+<title>Events · Campus Connect</title>
+{% endblock %}
+
+<div style="display: grid;
+        grid-template-columns: 220px minmax(0, 1fr) ;
+        gap: 1rem;
+        max-width: 1400px;
+        margin: 1rem auto 0;
+        padding: 0 1rem 2rem;
+        position: relative;
+        z-index: 1">
+    {% include 'components/sidebar.html' %}
+
+<div class="events-page">
+    <div class="events-container">
+
+        <!-- ═══════ HERO HEADER ═══════ -->
+        <div class="events-hero">
+            <div class="hero-badge">
+                <i class="fas fa-circle"></i>
+                <span>3 events happening now</span>
+            </div>
+            <h1>Discover <span>Events</span></h1>
+            <p>Find and join the best events happening around campus — workshops, hackathons, socials, and more.</p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="num" id="total-events">0</span>
+                    <span class="label">Total Events</span>
+                </div>
+                <div class="stat-item">
+                    <span class="num" id="live-count">0</span>
+                    <span class="label">Live Now</span>
+                </div>
+                <div class="stat-item">
+                    <span class="num" id="upcoming-count">0</span>
+                    <span class="label">Upcoming</span>
+                </div>
+                <div class="stat-item">
+                    <span class="num"><i class="fas fa-users"></i> 1.2k</span>
+                    <span class="label">Attendees</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ FILTER BAR ═══════ -->
+        <div class="filter-bar">
+            <div class="filter-group">
+                <span class="filter-label"><i class="fas fa-sliders-h"></i> Filter</span>
+                <button class="filter-chip active" data-filter="all">All <span class="count">0</span></button>
+                <button class="filter-chip" data-filter="live">Live <span class="count">0</span></button>
+                <button class="filter-chip" data-filter="upcoming">Upcoming <span class="count">0</span></button>
+                <button class="filter-chip" data-filter="workshop">Workshop <span class="count">0</span></button>
+                <button class="filter-chip" data-filter="social">Social <span class="count">0</span></button>
+                <button class="filter-chip" data-filter="hackathon">Hackathon <span class="count">0</span></button>
+            </div>
+            <div class="search-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" id="event-search" placeholder="Search events…" autocomplete="off" />
+            </div>
+        </div>
+
+        <!-- ═══════ EVENTS GRID ═══════ -->
+        <div class="events-grid" id="events-grid">
+            <!-- Cards will be injected by JS -->
+        </div>
+
+    </div>
+</div>
+  
+
+</div>
+<!-- ─── TOAST ─── -->
+<div id="toast" class="toast">
+    <i class="fas fa-check-circle toast-icon"></i>
+    <span id="toast-message" class="toast-msg">You're going!</span>
+    <button id="toast-undo" class="toast-undo">Undo</button>
+</div>
+
+<!-- ─── JAVASCRIPT ─── -->
+<script>
+    (function() {
+        'use strict';
+
+        // ─── DATA ─────────────────────────────────────────────────────────────
+        const eventsData = [{
+            id: 1,
+            title: 'AI & Machine Learning Workshop',
+            description: 'Hands-on workshop covering the fundamentals of AI, neural networks, and practical ML applications with real datasets.',
+            category: 'workshop',
+            status: 'live',
+            date: 'Today, 2:00 PM',
+            location: 'Innovation Lab, Building 4',
+            image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600&auto=format&fit=crop',
+            attendees: 48,
+            maxAttendees: 60,
+            organizer: 'Tech Club',
+            organizerAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop',
+            isSaved: false,
+            isGoing: false,
+        }, {
+            id: 2,
+            title: 'Campus Hackathon 2026',
+            description: '24-hour hackathon to build innovative solutions for real-world problems. Prizes, mentorship, and networking included.',
+            category: 'hackathon',
+            status: 'upcoming',
+            date: 'Sat, 2:00 PM',
+            location: 'Main Auditorium',
+            image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&auto=format&fit=crop',
+            attendees: 112,
+            maxAttendees: 150,
+            organizer: 'DevSoc',
+            organizerAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&auto=format&fit=crop',
+            isSaved: true,
+            isGoing: false,
+        }, {
+            id: 3,
+            title: 'Friday Social Mixer',
+            description: 'Unwind and connect with fellow students over music, games, and great conversations. Open to all!',
+            category: 'social',
+            status: 'live',
+            date: 'Today, 6:00 PM',
+            location: 'Student Lounge, Block C',
+            image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&auto=format&fit=crop',
+            attendees: 76,
+            maxAttendees: 100,
+            organizer: 'Student Council',
+            organizerAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&auto=format&fit=crop',
+            isSaved: false,
+            isGoing: true,
+        }, {
+            id: 4,
+            title: 'Data Science Bootcamp',
+            description: 'An intensive 3-day bootcamp covering data analysis, visualization, and machine learning with Python and Pandas.',
+            category: 'workshop',
+            status: 'upcoming',
+            date: 'Mon, 9:00 AM',
+            location: 'CS Lab, Building 2',
+            image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop',
+            attendees: 34,
+            maxAttendees: 45,
+            organizer: 'DataScience Club',
+            organizerAvatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=60&auto=format&fit=crop',
+            isSaved: false,
+            isGoing: false,
+        }, {
+            id: 5,
+            title: 'Campus Clean-up Drive',
+            description: 'Join us in making the campus greener and cleaner. Community service hours + free refreshments!',
+            category: 'social',
+            status: 'upcoming',
+            date: 'Sun, 8:00 AM',
+            location: 'Main Gate Assembly',
+            image: 'https://images.unsplash.com/photo-1528323273322-d81458248d40?w=600&auto=format&fit=crop',
+            attendees: 28,
+            maxAttendees: 50,
+            organizer: 'EcoSoc',
+            organizerAvatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=60&auto=format&fit=crop',
+            isSaved: false,
+            isGoing: false,
+        }, {
+            id: 6,
+            title: 'Web3 & Blockchain Demo Day',
+            description: 'Showcase of student-built Web3 projects, keynote from industry leaders, and networking session.',
+            category: 'hackathon',
+            status: 'ended',
+            date: 'Yesterday, 10:00 AM',
+            location: 'Convention Hall',
+            image: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=600&auto=format&fit=crop',
+            attendees: 89,
+            maxAttendees: 120,
+            organizer: 'Blockchain Club',
+            organizerAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=60&auto=format&fit=crop',
+            isSaved: false,
+            isGoing: false,
+        }, {
+            id: 7,
+            title: 'Photography Walk & Workshop',
+            description: 'A guided photography walk around campus followed by a workshop on composition, lighting, and editing.',
+            category: 'workshop',
+            status: 'upcoming',
+            date: 'Wed, 4:00 PM',
+            location: 'Art Studio, Building 5',
+            image: 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=600&auto=format&fit=crop',
+            attendees: 19,
+            maxAttendees: 30,
+            organizer: 'PhotoClub',
+            organizerAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&auto=format&fit=crop',
+            isSaved: false,
+            isGoing: false,
+        }, {
+            id: 8,
+            title: 'Startup Pitch Night',
+            description: 'Watch student entrepreneurs pitch their startup ideas to a panel of investors and industry experts.',
+            category: 'social',
+            status: 'upcoming',
+            date: 'Thu, 6:30 PM',
+            location: 'Business School Auditorium',
+            image: 'https://images.unsplash.com/photo-1556761175-4b46a572b786?w=600&auto=format&fit=crop',
+            attendees: 55,
+            maxAttendees: 80,
+            organizer: 'E-Cell',
+            organizerAvatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=60&auto=format&fit=crop',
+            isSaved: false,
+            isGoing: false,
+        }, ];
+
+        // ─── STATE ────────────────────────────────────────────────────────────
+        let events = JSON.parse(JSON.stringify(eventsData));
+        let currentFilter = 'all';
+        let searchQuery = '';
+        let toastTimeout = null;
+        let pendingUndo = null;
+
+        // ─── DOM REFS ────────────────────────────────────────────────────────
+        const grid = document.getElementById('events-grid');
+        const searchInput = document.getElementById('event-search');
+        const filterChips = document.querySelectorAll('.filter-chip');
+        const totalEl = document.getElementById('total-events');
+        const liveCountEl = document.getElementById('live-count');
+        const upcomingCountEl = document.getElementById('upcoming-count');
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toast-message');
+        const toastUndo = document.getElementById('toast-undo');
+
+        // ─── HELPERS ────────────────────────────────────────────────────────
+        function getStatusCounts() {
+            const live = events.filter(e => e.status === 'live').length;
+            const upcoming = events.filter(e => e.status === 'upcoming').length;
+            return { live, upcoming, total: events.length };
+        }
+
+        function getCategoryCount(cat) {
+            if (cat === 'all') return events.length;
+            if (cat === 'live') return events.filter(e => e.status === 'live').length;
+            if (cat === 'upcoming') return events.filter(e => e.status === 'upcoming').length;
+            return events.filter(e => e.category === cat).length;
+        }
+
+        function getFilteredEvents() {
+            let filtered = [...events];
+
+            // Filter by category/status
+            if (currentFilter === 'live') {
+                filtered = filtered.filter(e => e.status === 'live');
+            } else if (currentFilter === 'upcoming') {
+                filtered = filtered.filter(e => e.status === 'upcoming');
+            } else if (currentFilter !== 'all') {
+                filtered = filtered.filter(e => e.category === currentFilter);
+            }
+
+            // Search
+            if (searchQuery.trim()) {
+                const q = searchQuery.toLowerCase().trim();
+                filtered = filtered.filter(e =>
+                    e.title.toLowerCase().includes(q) ||
+                    e.description.toLowerCase().includes(q) ||
+                    e.location.toLowerCase().includes(q) ||
+                    e.organizer.toLowerCase().includes(q)
+                );
+            }
+
+            return filtered;
+        }
+
+        // ─── RENDER ────────────────────────────────────────────────────────
+        function render() {
+            const filtered = getFilteredEvents();
+            const counts = getStatusCounts();
+
+            // Update stats
+            totalEl.textContent = counts.total;
+            liveCountEl.textContent = counts.live;
+            upcomingCountEl.textContent = counts.upcoming;
+
+            // Update chip counts
+            filterChips.forEach(chip => {
+                const filter = chip.dataset.filter;
+                const count = getCategoryCount(filter);
+                const span = chip.querySelector('.count');
+                if (span) span.textContent = count;
+                chip.classList.toggle('active', filter === currentFilter);
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-events">
+                        <div class="icon-wrap"><i class="fas fa-calendar-xmark"></i></div>
+                        <h3>No events found</h3>
+                        <p>Try adjusting your filters or search terms. New events are added regularly.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach((event, index) => {
+                const statusBadge = event.status === 'live' ? 'live' : event.status === 'upcoming' ? 'upcoming' :
+                'ended';
+                const statusLabel = event.status.charAt(0).toUpperCase() + event.status.slice(1);
+                const isGoing = event.isGoing || false;
+                const goingText = isGoing ? 'Going' : 'RSVP';
+                const goingClass = isGoing ? 'going' : '';
+
+                // Avatars
+                let avatarHtml = '';
+                const dummyAvatars = [
+                    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&auto=format&fit=crop',
+                ];
+                const showAvatars = Math.min(event.attendees, 3);
+                for (let i = 0; i < showAvatars; i++) {
+                    const src = dummyAvatars[i % dummyAvatars.length];
+                    avatarHtml += `<div class="mini-avatar"><img src="${src}" alt="Attendee" /></div>`;
+                }
+                if (event.attendees > 3) {
+                    avatarHtml +=
+                        `<div class="mini-avatar more">+${event.attendees - 3}</div>`;
+                }
+
+                html += `
+                    <div class="event-card" data-id="${event.id}">
+                        <div class="card-image">
+                            <img src="${event.image}" alt="${event.title}" loading="lazy" />
+                            <span class="event-badge ${statusBadge}">${statusLabel}</span>
+                            <button class="event-bookmark ${event.isSaved ? 'saved' : ''}" data-id="${event.id}" title="Bookmark">
+                                <i class="fas ${event.isSaved ? 'fa-bookmark' : 'fa-bookmark'}" style="${event.isSaved ? 'color:#818CF8;' : ''}"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="event-meta-top">
+                                <span class="meta-item"><i class="far fa-calendar"></i> ${event.date}</span>
+                                <span class="meta-item"><i class="far fa-location-dot"></i> ${event.location}</span>
+                                <span class="meta-item"><span class="dot"></span> ${event.organizer}</span>
+                            </div>
+                            <h3>${event.title}</h3>
+                            <p class="event-desc">${event.description}</p>
+                            <div class="event-footer">
+                                <div class="attendees">
+                                    <div class="avatars">${avatarHtml}</div>
+                                    <span>${event.attendees} going</span>
+                                </div>
+                                <div class="event-action">
+                                    <button class="btn-rsvp ${goingClass}" data-id="${event.id}">
+                                        <span class="btn-text">${goingText}</span>
+                                        <span class="btn-text-going"><i class="fas fa-times"></i> Cancel</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = html;
+
+            // ─── Attach event listeners ──────────────────────────────────────
+            // RSVP buttons
+            document.querySelectorAll('.btn-rsvp').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const id = parseInt(this.dataset.id);
+                    const event = events.find(e => e.id === id);
+                    if (!event) return;
+
+                    if (event.isGoing) {
+                        // Cancel RSVP
+                        event.isGoing = false;
+                        showToast(`Removed from "${event.title}"`, 'Canceled');
+                    } else {
+                        event.isGoing = true;
+                        event.attendees += 1;
+                        showToast(`You're going to "${event.title}"!`, 'Going');
+                    }
+                    render();
+                });
+            });
+
+            // Bookmark buttons
+            document.querySelectorAll('.event-bookmark').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const id = parseInt(this.dataset.id);
+                    const event = events.find(e => e.id === id);
+                    if (!event) return;
+                    event.isSaved = !event.isSaved;
+                    render();
+                    showToast(
+                        event.isSaved ? `Saved "${event.title}"` : `Removed "${event.title}"`,
+                        event.isSaved ? 'Saved' : 'Removed'
+                    );
+                });
+            });
+
+            // Card click — view details (demo)
+            document.querySelectorAll('.event-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    const event = events.find(e => e.id === id);
+                    if (event) {
+                        showToast(`📋 ${event.title} — check your console for details`, 'Details');
+                        console.log('Event details:', event);
+                    }
+                });
+            });
+        }
+
+        // ─── TOAST ────────────────────────────────────────────────────────
+        function showToast(message, action) {
+            toastMsg.textContent = message;
+            toast.classList.add('show');
+
+            // Store undo action
+            pendingUndo = action;
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                hideToast();
+            }, 3500);
+        }
+
+        function hideToast() {
+            toast.classList.remove('show');
+            pendingUndo = null;
+        }
+
+        toastUndo.addEventListener('click', function() {
+            hideToast();
+            // Simple undo: just close, no complex state rollback for demo
+            // In a real app, you'd revert the last action
+        });
+
+        // ─── FILTERS & SEARCH ──────────────────────────────────────────────
+        filterChips.forEach(chip => {
+            chip.addEventListener('click', function() {
+                currentFilter = this.dataset.filter;
+                render();
+            });
+        });
+
+        searchInput.addEventListener('input', function() {
+            searchQuery = this.value;
+            render();
+        });
+
+        // ─── INIT ────────────────────────────────────────────────────────────
+        render();
+
+        // Console helper
+        console.log('🚀 Events page loaded! Use "events" to see all data.');
+
+    })();
+</script>
+
+{% endblock %}

@@ -42,9 +42,24 @@ class Profile(models.Model):
 
 
 class Post(models.Model):
+    CATEGORY_CHOICES = [
+        ("campus_life", "Campus Life"),
+        ("achievement", "Achievement"),
+        ("event", "Event"),
+        ("announcement", "Announcement"),
+        ("question", "Question"),
+        ("lost_found", "Lost & Found"),
+        ("help", "Help / Discussion"),
+        ("general", "General"),
+    ]
+
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE,related_name="posts")
     caption = models.TextField(blank=True)
-
+    category = models.CharField(
+        max_length=30,
+        choices=CATEGORY_CHOICES,
+        default="general"
+    )
     image = models.ImageField(upload_to="posts/images/",blank=True,null=True)
     video = models.FileField(upload_to="posts/videos/",blank=True,null=True)
 
@@ -54,7 +69,7 @@ class Post(models.Model):
     likes = models.ManyToManyField(Profile,related_name="liked_posts",blank=True)
 
     def __str__(self):
-        return f"{self.profile.username.username} - {self.created_at}"
+        return f"{self.profile.username.username} - {self.caption[:20]}"
 
     
 
@@ -86,3 +101,72 @@ class Follow(models.Model):
 
     def __str__(self):
         return f"{self.follower} follows {self.following}"
+
+
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(
+        'Post',
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
+
+    author = models.ForeignKey(
+        'Profile',
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
+
+    parent = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='replies'
+    )
+
+    content = models.TextField(max_length=1000)
+
+    likes = models.ManyToManyField(
+        'Profile',
+        blank=True,
+        related_name='liked_comments'
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"{self.author} commented on Post {self.post.id}"
+
+
+class Story(models.Model):
+    profile = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name="stories"
+    )
+    image = models.ImageField(upload_to="stories/images/", blank=True, null=True)
+    video = models.FileField(upload_to="stories/videos/", blank=True, null=True)
+    caption = models.CharField(max_length=255, blank=True)
+    viewers = models.ManyToManyField(
+        Profile,
+        blank=True,
+        related_name="viewed_stories"
+    )
+    likes = models.ManyToManyField(
+        Profile,
+        blank=True,
+        related_name="liked_stories"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at"]
+
+    def __str__(self):
+        return f"Story by {self.profile} at {self.created_at}"

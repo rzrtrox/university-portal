@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Judgement – Post Details (Transparent)</title>
+
+    <!-- Font Awesome & Tailwind (CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* ============================================================
+           ALL STYLES – same as before, but overlay is transparent
+           ============================================================ */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #08090d;
+            color: #e2e8f0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ---- glass panel (reused) ---- */
+        .glass-panel {
+            background: rgba(18, 20, 29, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-input {
+            background: rgba(26, 29, 43, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease-in-out;
+        }
+        .glass-input:focus-within {
+            border-color: #a855f7;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.25);
+        }
+        .glow-purple {
+            box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.3);
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #272a3e;
+            border-radius: 9999px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #a855f7;
+        }
+
+        .comment-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .comment-card:hover {
+            background: rgba(28, 32, 48, 0.8);
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .reaction-pill {
+            transition: all 0.15s ease;
+        }
+        .reaction-pill:hover {
+            transform: translateY(-1px) scale(1.05);
+        }
+
+        @keyframes pulse-subtle {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.4;
+            }
+        }
+        .live-dot {
+            animation: pulse-subtle 2s infinite;
+        }
+
+        .comment-trigger-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(168, 85, 247, 0.10);
+            border: 1px solid rgba(168, 85, 247, 0.30);
+            color: #d8b4fe;
+            padding: 0.375rem 0.875rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            box-shadow: 0 0 20px -5px rgba(168, 85, 247, 0.15);
+            text-decoration: none;
+        }
+        .comment-trigger-btn:hover {
+            background: rgba(168, 85, 247, 0.20);
+            border-color: rgba(168, 85, 247, 0.50);
+            transform: scale(1.02);
+            color: #d8b4fe;
+        }
+
+        /* ---- MODAL OVERLAY – now fully transparent ---- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: transparent; /* <--- transparent backdrop */
+            backdrop-filter: blur(20px);  /* keep blur for glass effect */
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* ---- MODAL BOX – more transparent glass ---- */
+        .modal-box {
+            background: rgba(18, 20, 29, 0.75); /* more transparent than before */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            width: 100%;
+            max-width: 1120px;
+            height: 90vh;
+            max-height: 800px;
+            border-radius: 2rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 60px -10px rgba(168, 85, 247, 0.20);
+            transform: scale(1);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            color: #9ca3af;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .modal-close-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .modal-body {
+            display: flex;
+            flex: 1;
+            flex-direction: row;
+            height: 100%;
+            overflow: hidden;
+        }
+        @media (max-width: 768px) {
+            .modal-body {
+                flex-direction: column;
+            }
+            .modal-box {
+                height: 95vh;
+                max-height: none;
+                border-radius: 1.5rem;
+            }
+            .modal-close-btn {
+                top: 0.75rem;
+                right: 0.75rem;
+                width: 2rem;
+                height: 2rem;
+                font-size: 1rem;
+            }
+        }
+
+     .modal-media {
+        flex: 0 0 60%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
+        overflow: hidden;
+
+        padding: 20px;
+    }
+
+    .modal-media img {
+        width: 100%;
+        height: auto;
+        max-width: 100%;
+        max-height: 100%;
+
+        object-fit: contain;
+        display: block;
+
+        border-radius: 10px;
+    }
+        @media (max-width: 768px) {
+            .modal-media {
+             display: none; /* hide media on small screens */
+            }
+        }
+
+        .modal-comments {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(15, 17, 26, 0.7); /* more transparent */
+            min-width: 0;
+        }
+
+        /* ---- rest of styles unchanged (keep compact) ---- */
+        .modal-comments-header {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.015);
+        }
+        .modal-comments-header .author-mini {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .modal-comments-header .author-mini img {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 9999px;
+            object-fit: cover;
+            border: 1px solid rgba(168, 85, 247, 0.30);
+        }
+        .modal-comments-header .author-mini .name {
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #fff;
+        }
+        .modal-comments-header .author-mini .handle {
+            font-size: 0.65rem;
+            color: #9ca3af;
+        }
+        .modal-like-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #d1d5db;
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .modal-like-btn:hover {
+            background: rgba(239, 68, 68, 0.10);
+            border-color: rgba(239, 68, 68, 0.25);
+        }
+        .modal-like-btn.liked {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.30);
+            color: #f87171;
+        }
+        .modal-like-btn.liked i {
+            color: #ef4444;
+        }
+
+        .sort-bar {
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            background: rgba(19, 21, 32, 0.7);
+            font-size: 0.7rem;
+        }
+        .sort-bar .left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #9ca3af;
+        }
+        .sort-bar .left .count {
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        .custom-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(26, 29, 43, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #d1d5db;
+            font-size: 0.65rem;
+            font-weight: 500;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .dropdown-trigger:hover {
+            border-color: rgba(168, 85, 247, 0.40);
+            background: #23273a;
+        }
+        .dropdown-trigger .arrow {
+            font-size: 0.5rem;
+            color: #6b7280;
+            transition: transform 0.2s ease;
+        }
+        .dropdown-trigger.open .arrow {
+            transform: rotate(180deg);
+        }
+        .dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.35rem);
+            min-width: 150px;
+            background: rgba(22, 24, 40, 0.96);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            border-radius: 0.75rem;
+            padding: 0.25rem 0;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.60);
+            opacity: 0;
+            transform: scale(0.92) translateY(-4px);
+            transition: opacity 0.15s ease, transform 0.15s ease;
+            pointer-events: none;
+            z-index: 60;
+        }
+        .dropdown-menu.open {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+        .dropdown-menu .opt {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0.4rem 0.9rem;
+            background: transparent;
+            border: none;
+            color: #d1d5db;
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            text-align: left;
+        }
+        .dropdown-menu .opt:hover {
+            background: rgba(168, 85, 247, 0.12);
+            color: #d8b4fe;
+        }
+        .dropdown-menu .opt .check {
+            color: #a855f7;
+            font-size: 0.6rem;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+        .dropdown-menu .opt.active .check {
+            opacity: 1;
+        }
+
+        .comments-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.75rem 1rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .comments-scroll .empty-state {
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.8rem;
+            padding: 2rem 0;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 0.6rem;
+        }
+        .comment-item .avatar {
+            width: 1.8rem;
+            height: 1.8rem;
+            border-radius: 9999px;
+            object-fit: cover;
+            flex-shrink: 0;
+            margin-top: 0.15rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .comment-item .body {
+            flex: 1;
+            min-width: 0;
+        }
+        .comment-item .body .bubble {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            border-top-left-radius: 0.25rem;
+            padding: 0.45rem 0.7rem;
+            transition: all 0.2s ease;
+        }
+        .comment-item .body .bubble:hover {
+            background: rgba(28, 32, 48, 0.70);
+            border-color: rgba(168, 85, 247, 0.15);
+        }
+        .comment-item .body .bubble .top {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.1rem;
+        }
+        .comment-item .body .bubble .top .name {
+            font-weight: 700;
+            font-size: 0.7rem;
+            color: #fff;
+        }
+        .comment-item .body .bubble .top .handle {
+            font-size: 0.6rem;
+            color: #6b7280;
+        }
+        .comment-item .body .bubble .top .badge {
+            font-size: 0.55rem;
+            font-weight: 600;
+            padding: 0.05rem 0.45rem;
+            border-radius: 0.25rem;
+            border: 1px solid transparent;
+        }
+        .badge-creator {
+            background: rgba(168, 85, 247, 0.15);
+            color: #d8b4fe;
+            border-color: rgba(168, 85, 247, 0.25);
+        }
+        .badge-topfan {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fcd34d;
+            border-color: rgba(245, 158, 11, 0.25);
+        }
+        .badge-mod {
+            background: rgba(16, 185, 129, 0.15);
+            color: #6ee7b7;
+            border-color: rgba(16, 185, 129, 0.25);
+        }
+        .comment-item .body .bubble .text {
+            font-size: 0.75rem;
+            color: #e5e7eb;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+        .comment-item .body .bubble .text .reply-to {
+            color: #a855f7;
+            font-weight: 600;
+        }
+        .comment-item .body .bubble .time {
+            font-size: 0.55rem;
+            color: #6b7280;
+            margin-top: 0.15rem;
+            display: block;
+        }
+
+        .reactions-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-top: 0.25rem;
+        }
+        .reactions-row .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+            font-size: 0.6rem;
+            padding: 0.05rem 0.45rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.02);
+            color: #9ca3af;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-weight: 500;
+        }
+        .reactions-row .pill:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .reactions-row .pill.active {
+            background: rgba(168, 85, 247, 0.15);
+            border-color: rgba(168, 85, 247, 0.30);
+            color: #d8b4fe;
+        }
+        .reactions-row .pill .emoji {
+            font-size: 0.7rem;
+        }
+        .reactions-row .pill .num {
+            font-weight: 600;
+        }
+        .reactions-row .picker-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: #6b7280;
+            font-size: 0.6rem;
+            padding: 0.05rem 0.3rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .reactions-row .picker-btn:hover {
+            color: #d8b4fe;
+            border-color: rgba(168, 85, 247, 0.20);
+            background: rgba(168, 85, 247, 0.05);
+        }
+
+        .reply-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 0.1rem;
+            padding-left: 0.2rem;
+        }
+        .reply-actions button {
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-size: 0.6rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+        .reply-actions button:hover {
+            color: #d8b4fe;
+        }
+        .toggle-replies-btn {
+            color: #a855f7 !important;
+            font-weight: 600 !important;
+        }
+        .toggle-replies-btn:hover {
+            color: #c084fc !important;
+        }
+
+        .replies-nest {
+            margin-left: 2.2rem;
+            padding-left: 0.6rem;
+            border-left: 2px solid rgba(168, 85, 247, 0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+        }
+        .replies-nest .comment-item .avatar {
+            width: 1.4rem;
+            height: 1.4rem;
+        }
+        .replies-nest .comment-item .body .bubble {
+            background: rgba(255, 255, 255, 0.015);
+            border-radius: 0.75rem;
+            border-top-left-radius: 0.2rem;
+            padding: 0.3rem 0.55rem;
+        }
+
+        .quick-emoji-row {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0 0.2rem 0.3rem 0.2rem;
+            flex-shrink: 0;
+        }
+        .quick-emoji-row span {
+            font-size: 0.6rem;
+            color: #6b7280;
+            font-weight: 500;
+            margin-right: 0.2rem;
+        }
+        .quick-emoji-row button {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 0.375rem;
+            padding: 0.1rem 0.45rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .quick-emoji-row button:hover {
+            background: rgba(168, 85, 247, 0.15);
+            transform: scale(1.10);
+            border-color: rgba(168, 85, 247, 0.20);
+        }
+
+        .comment-input-bar {
+            padding: 0.5rem 0.75rem 0.6rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(11, 12, 19, 0.7);
+            flex-shrink: 0;
+        }
+        .comment-input-bar .reply-banner {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(168, 85, 247, 0.08);
+            border: 1px solid rgba(168, 85, 247, 0.20);
+            border-radius: 0.5rem;
+            padding: 0.2rem 0.6rem;
+            margin-bottom: 0.4rem;
+            font-size: 0.65rem;
+            color: #d1d5db;
+        }
+        .comment-input-bar .reply-banner.show {
+            display: flex;
+        }
+        .comment-input-bar .reply-banner .cancel {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .comment-input-bar .reply-banner .cancel:hover {
+            color: #fff;
+        }
+
+        .comment-input-bar .input-wrap {
+            display: flex;
+            align-items: flex-end;
+            gap: 0.5rem;
+            background: rgba(26, 29, 43, 0.60);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 0.75rem;
+            padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .comment-input-bar .input-wrap:focus-within {
+            border-color: #a855f7;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.12);
+        }
+        .comment-input-bar .input-wrap .avatar-sm {
+            width: 1.6rem;
+            height: 1.6rem;
+            border-radius: 9999px;
+            object-fit: cover;
+            flex-shrink: 0;
+            margin-bottom: 0.1rem;
+            border: 1px solid rgba(168, 85, 247, 0.20);
+        }
+        .comment-input-bar .input-wrap textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #e5e7eb;
+            font-size: 0.75rem;
+            resize: none;
+            padding: 0.2rem 0;
+            min-height: 1.6rem;
+            max-height: 5rem;
+            font-family: inherit;
+            line-height: 1.4;
+        }
+        .comment-input-bar .input-wrap textarea::placeholder {
+            color: #6b7280;
+        }
+        .comment-input-bar .input-wrap .send-btn {
+            background: #7c3aed;
+            border: none;
+            color: #fff;
+            border-radius: 0.5rem;
+            padding: 0.3rem 0.7rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.2rem;
+            font-weight: 600;
+            box-shadow: 0 0 20px -4px rgba(124, 58, 237, 0.30);
+        }
+        .comment-input-bar .input-wrap .send-btn:hover {
+            background: #6d28d9;
+            transform: scale(1.02);
+        }
+
+        .quick-react-popup {
+            position: fixed;
+            z-index: 9999;
+            background: rgba(23, 25, 37, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            border-radius: 9999px;
+            padding: 0.25rem 0.5rem;
+            display: none;
+            align-items: center;
+            gap: 0.1rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.70);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .quick-react-popup.show {
+            display: flex;
+        }
+        .quick-react-popup button {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            padding: 0.1rem 0.2rem;
+            cursor: pointer;
+            border-radius: 9999px;
+            transition: all 0.15s ease;
+        }
+        .quick-react-popup button:hover {
+            transform: scale(1.25);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .modal-box.has-no-media {
+            max-width: 680px;
+            height: 85vh;
+        }
+        .modal-box.has-no-media .modal-media {
+            display: none !important;
+        }
+        .modal-box.has-no-media .modal-comments {
+            width: 100%;
+            flex: 1 1 100%;
+        }
+
+        .modal-post-caption-box {
+            padding: 0.85rem 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 0.85rem;
+            line-height: 1.55;
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.02);
+            word-break: break-word;
+            flex-shrink: 0;
+        }
+
+        .delete-comment-btn {
+            background: transparent;
+            border: none;
+            color: #6b7280;
+            font-size: 0.65rem;
+            cursor: pointer;
+            padding: 0.15rem 0.35rem;
+            border-radius: 0.25rem;
+            transition: all 0.15s ease;
+            margin-left: 0.35rem;
+        }
+        .delete-comment-btn:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .post-category-badge {
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            background: rgba(168, 85, 247, 0.15);
+            color: #d8b4fe;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            margin-left: 0.4rem;
+        }
+
+        @media (max-width: 768px) {
+            .modal-media {
+                flex: 0 0 auto !important;
+                max-height: 250px !important;
+                padding: 10px !important;
+                border-right: none !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+                display: flex !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-box {
+                border-radius: 1rem;
+                height: 98vh;
+            }
+            .modal-comments-header {
+                padding: 0.4rem 0.6rem;
+            }
+            .modal-comments-header .author-mini .name {
+                font-size: 0.7rem;
+            }
+            .sort-bar {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.6rem;
+            }
+            .comments-scroll {
+                padding: 0.4rem 0.6rem;
+            }
+            .comment-item .body .bubble {
+                padding: 0.3rem 0.5rem;
+            }
+            .comment-input-bar {
+                padding: 0.3rem 0.5rem 0.4rem;
+            }
+            .comment-input-bar .input-wrap {
+                padding: 0.15rem 0.35rem;
+            }
+            .comment-input-bar .input-wrap .send-btn {
+                padding: 0.2rem 0.5rem;
+                font-size: 0.65rem;
+            }
+            .quick-emoji-row button {
+                font-size: 0.7rem;
+                padding: 0.05rem 0.3rem;
+            }
+            .replies-nest {
+                margin-left: 1.2rem;
+                padding-left: 0.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+  <!-- CSRF token for JS fetch -->
+  <meta name="csrf-token" content="{{ csrf_token }}">
+
+  <div class="modal-overlay" id="postModal">
+    <button class="modal-close-btn" id="closeModalBtn">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <div class="modal-box {% if not post.image and not post.video %}has-no-media{% endif %}">
+      <div class="modal-body">
+
+        {% if post.video or post.image %}
+        <!-- LEFT: Post Media -->
+        <div class="modal-media">
+          {% if post.video %}
+            <video controls src="{{ post.video.url }}" style="max-height:100%; max-width:100%; border-radius:10px;"></video>
+          {% elif post.image %}
+            <img src="{{ post.image.url }}" alt="{{ post.caption|default:'post' }}" />
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- RIGHT: Comments -->
+        <div class="modal-comments">
+
+          <!-- Header -->
+          <div class="modal-comments-header">
+            <div class="author-mini">
+              <a href="{% url 'profile' post.profile.username %}" style="display:flex; align-items:center; gap:0.6rem; text-decoration:none;">
+                <img src="{{ post.profile.profile_pic.url|default:'https://via.placeholder.com/100' }}"
+                     alt="{{ post.profile.username.username }}" />
+                <div>
+                  <div class="name">{{ post.profile.f_name|default:post.profile.username.username }} {{ post.profile.l_name }}</div>
+                  <div class="handle">@{{ post.profile.username.username }} <span class="post-category-badge">{{ post.get_category_display|default:post.category }}</span></div>
+                </div>
+              </a>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button class="modal-like-btn {% if post_liked %}liked{% endif %}"
+                      id="modalLikeBtn"
+                      data-url="{% url 'toggle_post_like' post.id %}">
+                <i class="{% if post_liked %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+                <span id="modalLikeCount">{{ post_like_count }}</span>
+              </button>
+
+              <div class="custom-dropdown" id="postOptionsDropdown">
+                <button class="modal-like-btn" id="postOptionsTrigger" type="button" title="Post Options">
+                  <i class="fa-solid fa-ellipsis-vertical"></i>
+                </button>
+                <div class="dropdown-menu" id="postOptionsMenu">
+                  <button class="opt" id="shareDetailBtn" type="button">
+                    <span><i class="fa-solid fa-share-nodes"></i> Share Post</span>
+                  </button>
+                  {% if can_delete_post %}
+                  <button class="opt" id="deleteDetailPostBtn" type="button" style="color: #f87171;">
+                    <span><i class="fa-solid fa-trash-can"></i> Delete Post</span>
+                  </button>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Post Caption Box -->
+          {% if post.caption %}
+          <div class="modal-post-caption-box">
+            <div style="font-size:0.65rem; color:#9ca3af; margin-bottom:0.25rem;">
+              <i class="far fa-clock"></i> {{ post.created_at|timesince }} ago
+            </div>
+            <div>{{ post.caption|linebreaksbr }}</div>
+          </div>
+          {% endif %}
+
+          <!-- Sort bar -->
+          <div class="sort-bar">
+            <div class="left">
+              <i class="fa-regular fa-comments" style="color:#a855f7;"></i>
+              <span class="count" id="modalCommentTotal">{{ total_comment_count }}</span>
+              <span style="color:#6b7280;">Responses</span>
+            </div>
+            <div class="custom-dropdown" id="sortDropdown">
+              <button class="dropdown-trigger" id="dropdownTrigger">
+                <span id="dropdownLabel">🔥 Top Comments</span>
+                <i class="fas fa-chevron-down arrow"></i>
+              </button>
+              <div class="dropdown-menu" id="dropdownMenu">
+                <button class="opt active" data-sort="top">
+                  <span>🔥 Top Comments</span>
+                  <span class="check"><i class="fa-solid fa-check"></i></span>
+                </button>
+                <button class="opt" data-sort="newest">
+                  <span>✨ Newest First</span>
+                  <span class="check"><i class="fa-solid fa-check"></i></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comments (filled by JS) -->
+          <div class="comments-scroll custom-scroll" id="commentsContainer"></div>
+
+          <!-- Quick emoji -->
+          <div class="quick-emoji-row">
+            <span>Quick Send:</span>
+            <button class="quick-emoji" data-emoji="❤️">❤️</button>
+            <button class="quick-emoji" data-emoji="🔥">🔥</button>
+            <button class="quick-emoji" data-emoji="👏">👏</button>
+            <button class="quick-emoji" data-emoji="💯">💯</button>
+            <button class="quick-emoji" data-emoji="😮">😮</button>
+          </div>
+
+          <!-- Input -->
+          <div class="comment-input-bar">
+            <div class="reply-banner" id="replyBanner">
+              <span>Replying to <strong id="replyTargetName">@user</strong></span>
+              <button class="cancel" id="cancelReplyBtn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="input-wrap">
+              <img class="avatar-sm"
+                   src="{{ profile.profile_pic.url|default:'https://via.placeholder.com/100' }}"
+                   alt="You" />
+              <textarea id="commentInput" rows="1" placeholder="Add a public comment…"></textarea>
+              <button class="send-btn" id="sendCommentBtn">
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+
+        </div><!-- /modal-comments -->
+      </div><!-- /modal-body -->
+    </div><!-- /modal-box -->
+  </div><!-- /modal-overlay -->
+
+  <!-- SERVER DATA + URLS -->
+  {{ comments_data|json_script:"comments-data" }}
+  <script>
+    window.POST_CFG = {
+      addCommentUrl: "{% url 'add_comment' post.id %}",
+      addReplyUrlTemplate: "{% url 'add_reply' 0 %}",
+      togglePostLikeUrl: "{% url 'toggle_post_like' post.id %}",
+      toggleCommentLikeUrlTemplate: "{% url 'toggle_comment_like' 0 %}",
+      deleteCommentUrlTemplate: "{% url 'delete_comment' 0 %}",
+      deletePostUrl: "{% url 'delete_post' post.id %}",
+      isAuthenticated: "{% if profile %}true{% else %}false{% endif %}",
+    };
+  </script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const rawDataEl = document.getElementById('comments-data');
+    const data = rawDataEl ? JSON.parse(rawDataEl.textContent).map(c => ({ ...c, showReplies: false })) : [];
+    const CFG = window.POST_CFG;
+    const csrftoken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+    const commentsContainer = document.getElementById('commentsContainer');
+    const commentInput     = document.getElementById('commentInput');
+    const sendBtn          = document.getElementById('sendCommentBtn');
+    const replyBanner      = document.getElementById('replyBanner');
+    const replyTargetName  = document.getElementById('replyTargetName');
+    const cancelReplyBtn   = document.getElementById('cancelReplyBtn');
+    const likeBtn          = document.getElementById('modalLikeBtn');
+    const likeCount        = document.getElementById('modalLikeCount');
+    const commentTotal     = document.getElementById('modalCommentTotal');
+    const dropdownTrigger  = document.getElementById('dropdownTrigger');
+    const dropdownMenu     = document.getElementById('dropdownMenu');
+    const dropdownLabel    = document.getElementById('dropdownLabel');
+    const closeBtn         = document.getElementById('closeModalBtn');
+    const modal            = document.getElementById('postModal');
+
+    const postOptionsTrigger = document.getElementById('postOptionsTrigger');
+    const postOptionsMenu   = document.getElementById('postOptionsMenu');
+    const shareDetailBtn    = document.getElementById('shareDetailBtn');
+    const deleteDetailPostBtn = document.getElementById('deleteDetailPostBtn');
+
+    let currentSort = 'top';
+    let replyingTo  = null;
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function getTotalComments() {
+      let t = data.length;
+      data.forEach(c => { t += (c.replies || []).length; });
+      return t;
+    }
+
+    function urlWithId(template, id) {
+      return template.replace(/\/0\//, '/' + id + '/');
+    }
+
+    async function postForm(url, formData) {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrftoken, 'X-Requested-With': 'XMLHttpRequest' },
+        body: formData,
+        credentials: 'same-origin'
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    }
+
+    function renderComments() {
+      let sorted = [...data];
+      if (currentSort === 'newest') {
+        sorted.sort((a, b) => b.timestamp - a.timestamp);
+      } else {
+        sorted.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+      }
+
+      if (sorted.length === 0) {
+        commentsContainer.innerHTML = `<div class="empty-state">No comments yet. Be the first! ✨</div>`;
+        if (commentTotal) commentTotal.textContent = '0';
+        return;
+      }
+
+      let html = '';
+      sorted.forEach(c => {
+        html += renderCommentItem(c, false);
+        if (c.replies && c.replies.length && c.showReplies) {
+          html += `<div class="replies-nest">`;
+          c.replies.forEach(r => { html += renderCommentItem(r, true, c.id); });
+          html += `</div>`;
+        }
+      });
+      commentsContainer.innerHTML = html;
+      if (commentTotal) commentTotal.textContent = getTotalComments();
+    }
+
+    function renderCommentItem(item, isReply, parentId) {
+      const id = item.id;
+      const avatar = item.avatar || 'https://via.placeholder.com/100';
+      const liked = item.userLiked;
+
+      const reactionsHtml = `
+        <button class="pill ${liked ? 'active' : ''}"
+                data-action="react"
+                data-id="${id}"
+                data-isreply="${isReply}"
+                data-parent="${parentId || ''}">
+          <span class="emoji">❤️</span>
+          <span class="num">${item.likes || 0}</span>
+        </button>
+      `;
+
+      const replyToAttr = isReply ? `data-parent="${parentId}"` : `data-comment="${id}"`;
+      const toggleHtml = (isReply || !item.replies || !item.replies.length) ? '' :
+        `<button class="toggle-replies-btn" data-action="toggle" data-id="${id}">
+           ${item.showReplies ? 'Hide replies' : `Show ${item.replies.length} ${item.replies.length === 1 ? 'reply' : 'replies'}`}
+           <i class="fas fa-${item.showReplies ? 'angle-up' : 'angle-down'}"></i>
+         </button>`;
+
+      const deleteHtml = item.can_delete ? `
+        <button class="delete-comment-btn" data-action="delete" data-id="${id}" data-isreply="${isReply}" data-parent="${parentId || ''}" title="Delete comment">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      ` : '';
+
+      return `
+        <div class="comment-item" data-id="${id}">
+          <img class="avatar" src="${avatar}" alt="${escapeHtml(item.user)}" />
+          <div class="body">
+            <div class="bubble">
+              <div class="top">
+                <span class="name">${escapeHtml(item.user)}</span>
+                <span class="handle">
+                  ${isReply && item.replyTo ? '@' + escapeHtml(item.replyTo) : escapeHtml(item.handle)}
+                </span>
+                <span style="margin-left:auto;font-size:0.55rem;color:#6b7280;">${escapeHtml(item.time)}</span>
+              </div>
+              <div class="text">${escapeHtml(item.text)}</div>
+            </div>
+            <div class="reactions-row">${reactionsHtml}</div>
+            <div class="reply-actions">
+              <button data-action="reply" ${replyToAttr} data-user="${escapeHtml(item.user)}">
+                <i class="fa-solid fa-reply"></i> Reply
+              </button>
+              ${deleteHtml}
+              ${toggleHtml}
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // Click delegation for comments
+    commentsContainer.addEventListener('click', async function (e) {
+      const target = e.target.closest('[data-action]');
+      if (!target) return;
+      const action = target.dataset.action;
+
+      if (action === 'reply') {
+        if (!CFG.isAuthenticated) { alert('Please log in to reply.'); return; }
+        const commentId = target.dataset.comment || target.dataset.parent;
+        const userName  = target.dataset.user;
+        replyingTo = { commentId, userName };
+        replyTargetName.textContent = '@' + userName;
+        replyBanner.classList.add('show');
+        commentInput.focus();
+        return;
+      }
+
+      if (action === 'toggle') {
+        const id = target.dataset.id;
+        const c  = data.find(x => x.id == id);
+        if (c) { c.showReplies = !c.showReplies; renderComments(); }
+        return;
+      }
+
+      if (action === 'delete') {
+        if (!confirm('Are you sure you want to delete this comment?')) return;
+        const id = target.dataset.id;
+        const isReply = target.dataset.isreply === 'true';
+        const parentId = target.dataset.parent;
+
+        try {
+          const res = await postForm(urlWithId(CFG.deleteCommentUrlTemplate, id), new FormData());
+          if (res.success) {
+            if (isReply) {
+              const p = data.find(x => x.id == parentId);
+              if (p && p.replies) {
+                p.replies = p.replies.filter(r => r.id != id);
+              }
+            } else {
+              const idx = data.findIndex(x => x.id == id);
+              if (idx !== -1) data.splice(idx, 1);
+            }
+            renderComments();
+          }
+        } catch (err) {
+          console.error(err);
+          alert('Could not delete comment.');
+        }
+        return;
+      }
+
+      if (action === 'react') {
+        if (!CFG.isAuthenticated) { alert('Please log in to like.'); return; }
+        const id = target.dataset.id;
+        try {
+          const res = await postForm(urlWithId(CFG.toggleCommentLikeUrlTemplate, id), new FormData());
+          const isReply  = target.dataset.isreply === 'true';
+          const parentId = target.dataset.parent;
+          let item;
+          if (isReply) {
+            const p = data.find(x => x.id == parentId);
+            item = p && p.replies.find(r => r.id == id);
+          } else {
+            item = data.find(x => x.id == id);
+          }
+          if (item) { item.likes = res.count; item.userLiked = res.liked; renderComments(); }
+        } catch (err) { console.error(err); }
+      }
+    });
+
+    // Submit comment / reply
+    async function submitComment() {
+      const text = commentInput.value.trim();
+      if (!text) return;
+      if (!CFG.isAuthenticated) { alert('Please log in to comment.'); return; }
+
+      try {
+        const fd = new FormData();
+        fd.append('content', text);
+
+        if (replyingTo) {
+          const res = await postForm(urlWithId(CFG.addReplyUrlTemplate, replyingTo.commentId), fd);
+          const rootId = res.root_parent_id || replyingTo.commentId;
+          const parent = data.find(c => c.id == rootId);
+          if (parent) {
+            parent.replies = parent.replies || [];
+            parent.replies.push({ ...res.comment, showReplies: true });
+            parent.showReplies = true;
+          }
+          replyingTo = null;
+          replyBanner.classList.remove('show');
+        } else {
+          const res = await postForm(CFG.addCommentUrl, fd);
+          data.push({ ...res.comment, showReplies: false });
+        }
+
+        commentInput.value = '';
+        commentInput.style.height = 'auto';
+        renderComments();
+        commentsContainer.scrollTop = commentsContainer.scrollHeight;
+      } catch (err) { console.error(err); }
+    }
+
+    sendBtn.addEventListener('click', submitComment);
+    commentInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitComment(); }
+    });
+    commentInput.addEventListener('input', function () {
+      this.style.height = 'auto';
+      this.style.height = this.scrollHeight + 'px';
+    });
+
+    document.querySelectorAll('.quick-emoji').forEach(btn => {
+      btn.addEventListener('click', function () {
+        commentInput.value += this.dataset.emoji;
+        commentInput.focus();
+        commentInput.dispatchEvent(new Event('input'));
+      });
+    });
+
+    cancelReplyBtn.addEventListener('click', function () {
+      replyingTo = null;
+      replyBanner.classList.remove('show');
+    });
+
+    // Post like
+    likeBtn.addEventListener('click', async function () {
+      if (!CFG.isAuthenticated) { alert('Please log in to like.'); return; }
+      try {
+        const res = await postForm(CFG.togglePostLikeUrl, new FormData());
+        likeCount.textContent = res.count;
+        if (res.liked) {
+          this.classList.add('liked');
+          this.querySelector('i').className = 'fa-solid fa-heart';
+        } else {
+          this.classList.remove('liked');
+          this.querySelector('i').className = 'fa-regular fa-heart';
+        }
+      } catch (err) { console.error(err); }
+    });
+
+    // Sort dropdown
+    dropdownTrigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      dropdownMenu.classList.toggle('open');
+      this.classList.toggle('open');
+    });
+
+    document.querySelectorAll('#dropdownMenu .opt').forEach(opt => {
+      opt.addEventListener('click', function () {
+        currentSort = this.dataset.sort;
+        dropdownLabel.textContent = currentSort === 'top' ? '🔥 Top Comments' : '✨ Newest First';
+        document.querySelectorAll('#dropdownMenu .opt').forEach(o => o.classList.remove('active'));
+        this.classList.add('active');
+        dropdownMenu.classList.remove('open');
+        dropdownTrigger.classList.remove('open');
+        renderComments();
+      });
+    });
+
+    // Post 3-dots options
+    postOptionsTrigger?.addEventListener('click', function(e) {
+      e.stopPropagation();
+      postOptionsMenu?.classList.toggle('open');
+    });
+
+    shareDetailBtn?.addEventListener('click', function() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        const span = this.querySelector('span');
+        if (span) {
+          const prev = span.innerHTML;
+          span.innerHTML = '<i class="fa-solid fa-check"></i> Link Copied!';
+          setTimeout(() => span.innerHTML = prev, 2000);
+        }
+      }).catch(() => {
+        prompt('Copy link:', window.location.href);
+      });
+      postOptionsMenu?.classList.remove('open');
+    });
+
+    deleteDetailPostBtn?.addEventListener('click', async function() {
+      if (!confirm('Are you sure you want to delete this post? This cannot be undone.')) return;
+      try {
+        const res = await postForm(CFG.deletePostUrl, new FormData());
+        if (res.success) {
+          window.location.href = '{% url "home" %}';
+        } else {
+          alert('Could not delete post.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('An error occurred.');
+      }
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('#sortDropdown')) {
+        dropdownMenu.classList.remove('open');
+        dropdownTrigger.classList.remove('open');
+      }
+      if (!e.target.closest('#postOptionsDropdown')) {
+        postOptionsMenu?.classList.remove('open');
+      }
+    });
+
+    // Close modal
+    function closeModal() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = '{% url "home" %}';
+      }
+    }
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function (e) { if (e.target === this) closeModal(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+    // Initial render
+    renderComments();
+  });
+  </script>
+</body>
+</html>

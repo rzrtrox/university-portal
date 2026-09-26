@@ -1,595 +1,204 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block content %}
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/home/style.css' %}">
-  <style>
-    /* CSS Columns masonry layout for compact card footprint */
+{% extends 'base.html' %} {% load static %} {% block content %}
+<link rel="stylesheet" href="{% static 'css/home/style.css' %}" />
+<style>
+  /* CSS Columns masonry layout for compact card footprint */
+  .pinterest-masonry {
+    column-count: 2;
+    column-gap: 0.5rem;
+  }
+  @media (min-width: 480px) {
     .pinterest-masonry {
-      column-count: 2;
-      column-gap: 0.5rem;
+      column-count: 3;
     }
-    @media (min-width: 480px) { .pinterest-masonry { column-count: 3; } }
-    @media (min-width: 640px) { .pinterest-masonry { column-count: 4; } }
-    @media (min-width: 768px) { .pinterest-masonry { column-count: 5; } }
-    @media (min-width: 1024px) { .pinterest-masonry { column-count: 6; } }
-    @media (min-width: 1280px) { .pinterest-masonry { column-count: 7; } }
+  }
+  @media (min-width: 640px) {
+    .pinterest-masonry {
+      column-count: 4;
+    }
+  }
+  @media (min-width: 768px) {
+    .pinterest-masonry {
+      column-count: 5;
+    }
+  }
+  @media (min-width: 1024px) {
+    .pinterest-masonry {
+      column-count: 4;
+    }
+  }
+  @media (min-width: 1280px) {
+    .pinterest-masonry {
+      column-count: 5;
+    }
+  }
 
-    /* Prevent breaking inside cards */
-    .masonry-item {
-      break-inside: avoid;
-      margin-bottom: 0.5rem;
-    }
+  /* Prevent breaking inside cards */
+  .masonry-item {
+    break-inside: avoid;
+    margin-bottom: 0.5rem;
+  }
+  /* Avatar rounding isolation */
+  .avatar-wrapper {
+    isolation: isolate;
+    border-radius: 9999px !important;
+    overflow: hidden !important;
+    transform: translateZ(0);
+  }
 
-    /* Avatar rounding isolation */
-    .avatar-wrapper {
-      isolation: isolate;
-      border-radius: 9999px !important;
-      overflow: hidden !important;
-      transform: translateZ(0);
-    }
-    
-    ::-webkit-scrollbar {
-      width: 5px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #090d16;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #1e293b;
-      border-radius: 3px;
-    }
-  </style>
-
-
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #090d16;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 3px;
+  }
+</style>
 
 <div class="app-layout">
- {% include 'components/sidebar.html' %}
+    <!-- LEFT SIDEBAR -->
+    {% include 'components/sidebar.html' %}
 
-  <main id="card-container" class="max-w-7xl mx-auto pinterest-masonry">
+    <!-- MAIN CONTENT -->
+    {% include 'components/discover/main.html' %}
 
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=300&auto=format&fit=crop" class="w-full h-32 object-cover rounded-lg transition duration-500" alt="Art">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'Shikha Gupta')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">Shikha Gupta</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@shikhagupta</p>
-        </div>
-      </div>
-    </div>
+    <!-- RIGHT SIDEBAR -->
+    {% include 'components/right_sidebar.html' %}
 
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1520045892732-304bc3ac5d8e?w=300&auto=format&fit=crop" class="w-full h-48 object-cover rounded-lg transition duration-500" alt="Skateboarder">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'Walter Brown')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">Walter Brown</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@walterbrown</p>
-        </div>
-      </div>
-    </div>
 
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=300&auto=format&fit=crop" class="w-full h-28 object-cover rounded-lg transition duration-500" alt="Elephant Art">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'Aman Arora')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">Aman Arora</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@amanarora</p>
-        </div>
-      </div>
-    </div>
+</div>
+<script>
+  let toastTimeout;
+  let activeFollowBtn = null;
+  let activeName = "";
 
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=300&auto=format&fit=crop" class="w-full h-40 object-cover rounded-lg transition duration-500" alt="Watermelon Kid">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'Harshita Tyler')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">Harshita Tyler</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@harshitatyler</p>
-        </div>
-      </div>
-    </div>
+  // Prefix Search / Filter Functionality
+  function filterCards() {
+    const input = document.getElementById("search-input");
+    const query = input.value.toLowerCase().trim();
+    const clearBtn = document.getElementById("clear-btn");
+    const cards = document.getElementsByClassName("masonry-item");
+    const noResults = document.getElementById("no-results");
+    let visibleCount = 0;
 
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300&auto=format&fit=crop" class="w-full h-36 object-cover rounded-lg transition duration-500" alt="Coffee Cup">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'Skyler White')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">Skyler White</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@skylerwhite</p>
-        </div>
-      </div>
-    </div>
+    // Toggle clear button (X) visibility
+    if (query.length > 0) {
+      clearBtn.classList.remove("hidden");
+    } else {
+      clearBtn.classList.add("hidden");
+    }
 
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1554080353-a576cf803bda?w=300&auto=format&fit=crop" class="w-full h-52 object-cover rounded-lg transition duration-500" alt="Portrait">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'Dhipu Mathew')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">Dhipu Mathew</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@dhipumathew</p>
-        </div>
-      </div>
-    </div>
+    // Loop through profile cards and filter using startsWith
+    for (let i = 0; i < cards.length; i++) {
+      const nameEl = cards[i].querySelector(".card-name");
+      const usernameEl = cards[i].querySelector(".card-username");
 
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&auto=format&fit=crop" class="w-full h-32 object-cover rounded-lg transition duration-500" alt="Fruit Bottle">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'Arvind Narang')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">Arvind Narang</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@arvindnarang</p>
-        </div>
-      </div>
-    </div>
+      const nameText = nameEl
+        ? (nameEl.textContent || nameEl.innerText).trim().toLowerCase()
+        : "";
+      const usernameText = usernameEl
+        ? (usernameEl.textContent || usernameEl.innerText).trim().toLowerCase()
+        : "";
 
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&auto=format&fit=crop" class="w-full h-44 object-cover rounded-lg transition duration-500" alt="3D Render">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'Christopher')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">Christopher</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@christopher</p>
-        </div>
-      </div>
-    </div>
+      // Remove the `@` symbol for username matching if user types without `@`
+      const cleanUsername = usernameText.startsWith("@")
+        ? usernameText.slice(1)
+        : usernameText;
 
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1626285861696-9f0bf5a49c6d?w=300&auto=format&fit=crop" class="w-full h-36 object-cover rounded-lg transition duration-500" alt="Tennis">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'Ted Matt')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">Ted Matt</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@tedmatt</p>
-        </div>
-      </div>
-    </div>
+      // Split full name into words to match first name or last name starting with query
+      const nameWords = nameText.split(" ");
+      const matchesName = nameWords.some((word) => word.startsWith(query));
 
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1567095761054-7a02e69e5c43?w=300&auto=format&fit=crop" class="w-full h-48 object-cover rounded-lg transition duration-500" alt="Colorful Art">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'John Thomas')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">John Thomas</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@johnthomas</p>
-        </div>
-      </div>
-    </div>
+      // Match username with or without '@' prefix
+      const matchesUsername =
+        usernameText.startsWith(query) || cleanUsername.startsWith(query);
 
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&auto=format&fit=crop" class="w-full h-32 object-cover rounded-lg transition duration-500" alt="Neon">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'Elena Rostova')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">Elena Rostova</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@elenarostova</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=300&auto=format&fit=crop" class="w-full h-40 object-cover rounded-lg transition duration-500" alt="Gaming">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'Marcus Vance')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">Marcus Vance</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@marcusvance</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300&auto=format&fit=crop" class="w-full h-44 object-cover rounded-lg transition duration-500" alt="Ocean Sunset">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'Chloe Bennett')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">Chloe Bennett</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@chloebennett</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1511556532299-8f662fc26c06?w=300&auto=format&fit=crop" class="w-full h-28 object-cover rounded-lg transition duration-500" alt="Sneakers">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'Lucas Scott')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">Lucas Scott</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@lucasscott</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=300&auto=format&fit=crop" class="w-full h-52 object-cover rounded-lg transition duration-500" alt="Yosemite Landscape">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'Sofia Chen')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">Sofia Chen</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@sofiachen</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=300&auto=format&fit=crop" class="w-full h-36 object-cover rounded-lg transition duration-500" alt="Code Laptop">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'David Miller')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">David Miller</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@davidmiller</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=300&auto=format&fit=crop" class="w-full h-40 object-cover rounded-lg transition duration-500" alt="Camera Lens">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'Aria Montgomery')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">Aria Montgomery</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@ariamontgomery</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="masonry-item group bg-gray-900 rounded-xl p-1 border border-gray-800/80 hover:border-gray-700 transition duration-300">
-      <div class="relative overflow-hidden rounded-lg bg-gray-950">
-        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=300&auto=format&fit=crop" class="w-full h-32 object-cover rounded-lg transition duration-500" alt="Healthy Food Bowl">
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 rounded-lg flex items-end justify-center pb-2 gap-1">
-          <button onclick="toggleFollow(this, 'Liam Hemsworth')" class="follow-btn bg-indigo-600 hover:bg-indigo-500 text-white text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-user-plus text-[8px]"></i> <span>Follow</span>
-          </button>
-          <button class="bg-gray-800 hover:bg-gray-700 text-gray-200 text-[9px] px-2 py-0.5 rounded shadow transition flex items-center gap-1">
-            <i class="fa-solid fa-comment text-[8px]"></i> Chat
-          </button>
-        </div>
-      </div>
-      <div class="pt-1.5 px-0.5 pb-0.5 flex items-center gap-2.5">
-        <div class="avatar-wrapper flex-shrink-0 w-9 h-9">
-          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop" class="w-9 h-9 rounded-full object-cover border border-gray-700" alt="Avatar">
-        </div>
-        <div class="overflow-hidden min-w-0">
-          <h3 class="card-name text-xs font-semibold text-gray-100 truncate leading-tight">Liam Hemsworth</h3>
-          <p class="card-username text-[10px] text-gray-400 truncate leading-snug">@liamhemsworth</p>
-        </div>
-      </div>
-    </div>
-
-  </main>
-
-  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-3 bg-gray-900 border border-indigo-500/40 text-gray-100 px-4 py-3 rounded-xl shadow-2xl">
-    <div class="flex items-center gap-2 text-xs">
-      <i class="fa-solid fa-circle-check text-indigo-400 text-sm"></i>
-      <span id="toast-message">Follow request sent!</span>
-    </div>
-    <button id="undo-btn" onclick="undoFollow()" class="text-xs font-medium text-indigo-400 hover:text-indigo-300 underline underline-offset-2 ml-2 transition">
-      Undo
-    </button>
-  </div>
-    <!-- {% include 'components/right_sidebar.html' %} -->
-
-</div> 
-  <script>
-    let toastTimeout;
-    let activeFollowBtn = null;
-    let activeName = "";
-
-    // Prefix Search / Filter Functionality
-    function filterCards() {
-      const input = document.getElementById('search-input');
-      const query = input.value.toLowerCase().trim();
-      const clearBtn = document.getElementById('clear-btn');
-      const cards = document.getElementsByClassName('masonry-item');
-      const noResults = document.getElementById('no-results');
-      let visibleCount = 0;
-
-      // Toggle clear button (X) visibility
-      if (query.length > 0) {
-        clearBtn.classList.remove('hidden');
+      if (query === "" || matchesName || matchesUsername) {
+        cards[i].style.display = "";
+        visibleCount++;
       } else {
-        clearBtn.classList.add('hidden');
-      }
-
-      // Loop through profile cards and filter using startsWith
-      for (let i = 0; i < cards.length; i++) {
-        const nameEl = cards[i].querySelector('.card-name');
-        const usernameEl = cards[i].querySelector('.card-username');
-        
-        const nameText = nameEl ? (nameEl.textContent || nameEl.innerText).trim().toLowerCase() : '';
-        const usernameText = usernameEl ? (usernameEl.textContent || usernameEl.innerText).trim().toLowerCase() : '';
-        
-        // Remove the `@` symbol for username matching if user types without `@`
-        const cleanUsername = usernameText.startsWith('@') ? usernameText.slice(1) : usernameText;
-
-        // Split full name into words to match first name or last name starting with query
-        const nameWords = nameText.split(' ');
-        const matchesName = nameWords.some(word => word.startsWith(query));
-
-        // Match username with or without '@' prefix
-        const matchesUsername = usernameText.startsWith(query) || cleanUsername.startsWith(query);
-
-        if (query === '' || matchesName || matchesUsername) {
-          cards[i].style.display = "";
-          visibleCount++;
-        } else {
-          cards[i].style.display = "none";
-        }
-      }
-
-      // Toggle "No Results" state
-      if (visibleCount === 0) {
-        noResults.classList.remove('hidden');
-      } else {
-        noResults.classList.add('hidden');
+        cards[i].style.display = "none";
       }
     }
 
-    function clearSearch() {
-      const input = document.getElementById('search-input');
-      input.value = '';
-      filterCards();
-      input.focus();
+    // Toggle "No Results" state
+    if (visibleCount === 0) {
+      noResults.classList.remove("hidden");
+    } else {
+      noResults.classList.add("hidden");
     }
+  }
 
-    // Follow / Unfollow logic
-    function toggleFollow(btn, name) {
-      const icon = btn.querySelector('i');
-      const text = btn.querySelector('span');
+  function clearSearch() {
+    const input = document.getElementById("search-input");
+    input.value = "";
+    filterCards();
+    input.focus();
+  }
 
-      if (btn.classList.contains('is-following')) {
-        // Unfollow
-        btn.classList.remove('is-following', 'bg-emerald-600', 'hover:bg-emerald-500');
-        btn.classList.add('bg-indigo-600', 'hover:bg-indigo-500');
-        icon.className = 'fa-solid fa-user-plus text-[8px]';
-        text.textContent = 'Follow';
-        hideToast();
-      } else {
-        // Follow / Send Request
-        btn.classList.add('is-following', 'bg-emerald-600', 'hover:bg-emerald-500');
-        btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-500');
-        icon.className = 'fa-solid fa-user-check text-[8px]';
-        text.textContent = 'Following';
+  // Follow / Unfollow logic
+  function toggleFollow(btn, name) {
+    const icon = btn.querySelector("i");
+    const text = btn.querySelector("span");
 
-        activeFollowBtn = btn;
-        activeName = name;
-        showToast(`Follow request sent to ${name}`);
-      }
-    }
-
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toast-message');
-      
-      toastMsg.textContent = message;
-      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
-
-      clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => {
-        hideToast();
-      }, 4000);
-    }
-
-    function hideToast() {
-      const toast = document.getElementById('toast');
-      toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
-    }
-
-    function undoFollow() {
-      if (activeFollowBtn) {
-        toggleFollow(activeFollowBtn, activeName);
-      }
+    if (btn.classList.contains("is-following")) {
+      // Unfollow
+      btn.classList.remove(
+        "is-following",
+        "bg-emerald-600",
+        "hover:bg-emerald-500",
+      );
+      btn.classList.add("bg-indigo-600", "hover:bg-indigo-500");
+      icon.className = "fa-solid fa-user-plus text-[8px]";
+      text.textContent = "Follow";
       hideToast();
-    }
-  </script>
+    } else {
+      // Follow / Send Request
+      btn.classList.add(
+        "is-following",
+        "bg-emerald-600",
+        "hover:bg-emerald-500",
+      );
+      btn.classList.remove("bg-indigo-600", "hover:bg-indigo-500");
+      icon.className = "fa-solid fa-user-check text-[8px]";
+      text.textContent = "Following";
 
+      activeFollowBtn = btn;
+      activeName = name;
+      showToast(`Follow request sent to ${name}`);
+    }
+  }
+
+  function showToast(message) {
+    const toast = document.getElementById("toast");
+    const toastMsg = document.getElementById("toast-message");
+
+    toastMsg.textContent = message;
+    toast.classList.remove(
+      "translate-y-20",
+      "opacity-0",
+      "pointer-events-none",
+    );
+
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+      hideToast();
+    }, 4000);
+  }
+
+  function hideToast() {
+    const toast = document.getElementById("toast");
+    toast.classList.add("translate-y-20", "opacity-0", "pointer-events-none");
+  }
+
+  function undoFollow() {
+    if (activeFollowBtn) {
+      toggleFollow(activeFollowBtn, activeName);
+    }
+    hideToast();
+  }
+</script>
 
 {% endblock %}

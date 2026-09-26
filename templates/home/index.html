@@ -2,10 +2,6 @@
 {% load static %}
 
 {% block head %}
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/home/style.css' %}">
 
@@ -19,16 +15,210 @@
     {% include 'components/right_sidebar.html' %}
 </div>
 
-<div class="floating-input-container">
+<div class="floating-input-container" id="openCreatePostBar" style="cursor: pointer;">
     <img src="{{ profile.profile_pic.url }}" class="floating-input-avatar" alt="Avatar" />
-    <input type="text" class="floating-input" placeholder="Share something with your campus..." />
+    <input type="text" class="floating-input" placeholder="Share something with your campus..." readonly style="cursor: pointer;" />
     <div class="floating-action-btns">
-        <button class="floating-action-btn photo" aria-label="Photo"><i class="fas fa-image"></i></button>
-        <button class="floating-action-btn video" aria-label="Video"><i class="fas fa-video"></i></button>
-        <button class="floating-action-btn event" aria-label="Event"><i class="fas fa-calendar-plus"></i></button>
-        <button class="floating-action-btn achievement" aria-label="Achievement"><i class="fas fa-medal"></i></button>
+        <button type="button" class="floating-action-btn photo" id="quickPhotoBtn" aria-label="Photo"><i class="fas fa-image"></i></button>
+        <button type="button" class="floating-action-btn video" id="quickVideoBtn" aria-label="Video"><i class="fas fa-video"></i></button>
+        <button type="button" class="floating-action-btn event" id="quickEventBtn" aria-label="Event"><i class="fas fa-calendar-plus"></i></button>
+        <button type="button" class="floating-action-btn achievement" id="quickAchievementBtn" aria-label="Achievement"><i class="fas fa-medal"></i></button>
     </div>
-    <button class="floating-send-btn">Post</button>
+    <button type="button" class="floating-send-btn" id="quickPostBtn">Post</button>
+</div>
+
+<!-- CREATE POST MODAL -->
+<div class="create-post-overlay" id="createPostModal">
+    <div class="create-post-card">
+        <div class="create-post-header">
+            <h3><i class="fas fa-feather-pointed" style="color:#a855f7;"></i> Create Campus Post</h3>
+            <button type="button" class="create-post-close" id="closeCreatePostModal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <form id="createPostForm" action="{% url 'create_post' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="create-post-body">
+                <div class="create-post-author-row">
+                    <img src="{{ profile.profile_pic.url }}" class="create-post-avatar" alt="{{ profile.f_name }}" />
+                    <div>
+                        <div class="create-post-author-name">{{ profile.f_name }} {{ profile.l_name }}</div>
+                        <div style="font-size:0.7rem; color:var(--text-muted); margin-bottom: 2px;">@{{ username }}</div>
+                    </div>
+                    <select name="category" class="create-post-category-select" id="postCategorySelect" style="margin-left: auto;">
+                        {% for code, label in categories %}
+                        <option value="{{ code }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <textarea name="caption" id="postCaptionInput" class="create-post-textarea" placeholder="What's happening on campus? Share an achievement, ask a question, or start a discussion..."></textarea>
+
+                <div class="create-post-preview-container" id="postMediaPreviewContainer">
+                    <img id="postImagePreview" src="#" alt="Preview" style="display:none;" />
+                    <video id="postVideoPreview" controls style="display:none;"></video>
+                    <button type="button" class="create-post-remove-media" id="removeMediaBtn" title="Remove media">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <input type="file" name="image" id="fileImageInput" accept="image/*" style="display:none;" />
+                <input type="file" name="video" id="fileVideoInput" accept="video/*" style="display:none;" />
+            </div>
+
+            <div class="create-post-footer">
+                <div class="create-post-actions">
+                    <button type="button" class="create-post-attach-btn" id="attachImageBtn">
+                        <i class="fas fa-image" style="color:var(--accent-blue);"></i> Photo
+                    </button>
+                    <button type="button" class="create-post-attach-btn" id="attachVideoBtn">
+                        <i class="fas fa-video" style="color:var(--accent-red);"></i> Video
+                    </button>
+                </div>
+                <button type="submit" class="create-post-submit-btn" id="submitPostBtn">
+                    <span>Publish</span> <i class="fas fa-paper-plane" style="font-size:0.75rem; margin-left:4px;"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ADD STORY MODAL -->
+<div class="add-story-overlay" id="addStoryModal">
+    <div class="add-story-card">
+        <div class="create-post-header">
+            <h3><i class="fas fa-circle-notch" style="color:var(--accent-purple);"></i> Add to Your Story</h3>
+            <button type="button" class="create-post-close" id="closeAddStoryModal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <form id="addStoryForm" action="{% url 'create_story' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="create-post-body" style="padding: 1.2rem;">
+                <div class="create-post-author-row">
+                    <img src="{{ profile.profile_pic.url }}" class="create-post-avatar" alt="{{ profile.f_name }}" />
+                    <div>
+                        <div class="create-post-author-name">{{ profile.f_name }} {{ profile.l_name }}</div>
+                        <div style="font-size:0.7rem; color:var(--text-muted);" id="storyModalSubtitle">Upload single or multiple stories (24h)</div>
+                    </div>
+                </div>
+
+                <!-- Multi-slide thumbnail tray -->
+                <div class="add-story-tray" id="storyMultiTray" style="display:none;"></div>
+
+                <div class="add-story-preview" id="storyMediaDropzone" title="Click to choose photos or videos">
+                    <img id="storyImagePreview" src="#" alt="Story Preview" style="display:none;" />
+                    <video id="storyVideoPreview" controls playsinline style="display:none;"></video>
+                    <div class="add-story-placeholder" id="storyPlaceholder">
+                        <i class="fas fa-cloud-arrow-up"></i>
+                        <span style="font-weight:600; font-size:0.9rem; color:#fff;">Upload Photos or Videos</span>
+                        <span style="font-size:0.75rem; color:var(--text-muted);">Select multiple slides just like Instagram</span>
+                    </div>
+                </div>
+
+                <input type="file" id="storyFileInput" multiple accept="image/*,video/*" style="display:none;" />
+
+                <input type="text" name="caption" id="storyCaptionInput" class="floating-input" style="width:100%; border-radius:10px; margin-top:0.5rem; background:rgba(255,255,255,0.06); padding:0.6rem 0.85rem;" placeholder="Add a caption to this slide... (optional)" maxlength="255" />
+            </div>
+
+            <div class="create-post-footer" style="padding: 0.9rem 1.2rem;">
+                <button type="button" class="create-post-attach-btn" id="chooseStoryMediaBtn">
+                    <i class="fas fa-photo-film" style="color:var(--accent-purple);"></i> Add Media
+                </button>
+                <button type="submit" class="create-post-submit-btn" id="submitStoryBtn">
+                    <span id="submitStoryBtnText">Share Story</span> <i class="fas fa-paper-plane" style="font-size:0.75rem; margin-left:4px;"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- FULLSCREEN STORY VIEWER MODAL -->
+<div class="story-viewer-overlay" id="storyViewerModal">
+    <!-- Outside Chevrons for Desktop -->
+    <button class="story-nav-btn story-nav-prev" id="storyNavPrevBtn" title="Previous Story"><i class="fas fa-chevron-left"></i></button>
+    <button class="story-nav-btn story-nav-next" id="storyNavNextBtn" title="Next Story"><i class="fas fa-chevron-right"></i></button>
+
+    <div class="story-viewer-wrapper" id="storyViewerWrapper">
+        <!-- Progress Bars -->
+        <div class="story-progress-container" id="storyProgressContainer"></div>
+
+        <!-- Header -->
+        <div class="story-viewer-header">
+            <div class="story-viewer-user">
+                <img id="storyViewerAvatar" src="" class="story-viewer-avatar" alt="User" />
+                <div class="story-viewer-meta">
+                    <span class="story-viewer-name" id="storyViewerName">Username</span>
+                    <span class="story-viewer-time" id="storyViewerTime">Just now</span>
+                </div>
+            </div>
+
+            <div class="story-viewer-actions">
+                <!-- Mute toggle for video -->
+                <button class="story-action-btn story-mute-btn" id="storyMuteBtn" style="display:none;" title="Mute/Unmute audio">
+                    <i class="fas fa-volume-high" id="storyMuteIcon"></i>
+                </button>
+
+                <!-- Like button for viewer -->
+                <button class="story-action-btn story-like-btn" id="storyLikeBtn" style="display:none;" title="Like Story">
+                    <i class="far fa-heart" id="storyLikeIcon"></i>
+                </button>
+
+                <!-- Views count pill for author -->
+                <span class="story-viewers-badge" id="storyViewersBadge" style="display:none; cursor:pointer;" title="Click to see who viewed & liked">
+                    <i class="fas fa-eye"></i> <span id="storyViewerCount">0</span>
+                </span>
+
+                <!-- Delete for author / staff -->
+                <button class="story-action-btn story-delete-btn" id="storyDeleteBtn" style="display:none;" title="Delete this story">
+                    <i class="fas fa-trash"></i>
+                </button>
+
+                <button class="story-action-btn" id="closeStoryViewerBtn" title="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Media Viewport -->
+        <div class="story-media-viewport" id="storyMediaViewport">
+            <img id="storyViewerImg" src="" alt="Story" style="display:none;" />
+            <video id="storyViewerVideo" playsinline style="display:none;"></video>
+
+            <!-- Tap Zones -->
+            <div class="story-tap-zone story-tap-left" id="storyTapLeft"></div>
+            <div class="story-tap-zone story-tap-right" id="storyTapRight"></div>
+        </div>
+
+        <!-- Caption Bar -->
+        <div class="story-caption-bar" id="storyCaptionBar" style="display:none;"></div>
+
+        <!-- Viewers & Likers Bottom Sheet (Author) -->
+        <div class="story-viewers-sheet" id="storyViewersSheet">
+            <div class="story-viewers-handle-bar"></div>
+            <div class="story-viewers-sheet-header">
+                <h4><i class="fas fa-chart-simple" style="color:var(--accent-purple);"></i> Story Activity</h4>
+                <button type="button" class="story-viewers-sheet-close" id="closeViewersSheetBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="story-viewers-stats-tabs">
+                <span class="active"><i class="fas fa-eye"></i> <strong id="sheetViewsCount">0</strong> Views</span>
+                <span><i class="fas fa-heart" style="color:#ec4899;"></i> <strong id="sheetLikesCount">0</strong> Likes</span>
+            </div>
+            <div class="story-viewers-list" id="storyViewersList">
+                <!-- Populated dynamically via AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="portal-toast" id="portalToast">
+    <i class="fas fa-check-circle" style="color:#a855f7;"></i>
+    <span id="toastMessage">Done</span>
 </div>
 
 <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
@@ -40,7 +230,7 @@
         <span class="tab-icon"><i class="fas fa-map-pin"></i></span>
         <span>Campus</span>
     </a>
-    <a href="#" class="mobile-nav-tab post-btn">
+    <a href="javascript:void(0)" class="mobile-nav-tab post-btn" id="mobileCreatePostBtn">
         <span class="tab-icon"><i class="fas fa-plus"></i></span>
     </a>
     <a href="/discover" class="mobile-nav-tab">
@@ -52,4 +242,1053 @@
         <span>Profile</span>
     </a>
 </nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || 
+                      document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+    function showToast(msg) {
+        const toast = document.getElementById('portalToast');
+        const text = document.getElementById('toastMessage');
+        if (!toast || !text) return;
+        text.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // 1. Post Options Dropdown Menu (3-dots)
+    document.addEventListener('click', function(e) {
+        const moreBtn = e.target.closest('.post-more-btn');
+        if (moreBtn) {
+            e.stopPropagation();
+            const wrap = moreBtn.closest('.post-more-dropdown-wrap');
+            const menu = wrap.querySelector('.post-dropdown-menu');
+            // Close other open menus
+            document.querySelectorAll('.post-dropdown-menu.show').forEach(m => {
+                if (m !== menu) m.classList.remove('show');
+            });
+            menu.classList.toggle('show');
+            return;
+        }
+
+        // Close when clicking outside
+        if (!e.target.closest('.post-dropdown-menu')) {
+            document.querySelectorAll('.post-dropdown-menu.show').forEach(m => m.classList.remove('show'));
+        }
+    });
+
+    // 2. Share post link to clipboard
+    document.addEventListener('click', function(e) {
+        const shareBtn = e.target.closest('.feed-share-btn');
+        if (!shareBtn) return;
+        e.preventDefault();
+        const url = shareBtn.dataset.url;
+        const fullUrl = window.location.origin + url;
+        navigator.clipboard.writeText(fullUrl).then(() => {
+            showToast('Post link copied to clipboard!');
+        }).catch(() => {
+            prompt('Copy post URL:', fullUrl);
+        });
+        // Close menu if inside dropdown
+        const menu = shareBtn.closest('.post-dropdown-menu');
+        if (menu) menu.classList.remove('show');
+    });
+
+    // 3. Delete Post on Feed
+    document.addEventListener('click', async function(e) {
+        const deleteBtn = e.target.closest('.feed-delete-post-btn');
+        if (!deleteBtn) return;
+        e.preventDefault();
+        const postId = deleteBtn.dataset.postId;
+        const url = deleteBtn.dataset.url;
+        if (!confirm('Are you sure you want to permanently delete this post?')) return;
+
+        try {
+            const fd = new FormData();
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: fd
+            });
+            if (res.ok) {
+                const card = document.getElementById(`post-card-${postId}`);
+                if (card) {
+                    card.style.transition = 'all 0.3s ease';
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.95)';
+                    setTimeout(() => card.remove(), 300);
+                }
+                showToast('Post deleted successfully.');
+            } else {
+                alert('Could not delete post.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('An error occurred while deleting the post.');
+        }
+    });
+
+    // 4. Feed Like Button Toggle (AJAX)
+    document.addEventListener('click', async function(e) {
+        const likeBtn = e.target.closest('.feed-like-btn');
+        if (!likeBtn) return;
+        e.preventDefault();
+        const url = likeBtn.dataset.url;
+        try {
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            if (!res.ok) {
+                if (res.status === 403) alert('Please log in to like posts.');
+                return;
+            }
+            const data = await res.json();
+            const countEl = likeBtn.querySelector('.feed-like-count');
+            const icon = likeBtn.querySelector('i');
+            if (countEl) countEl.textContent = data.count;
+            if (data.liked) {
+                likeBtn.classList.add('liked');
+                if (icon) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                }
+            } else {
+                likeBtn.classList.remove('liked');
+                if (icon) {
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    });
+
+    // 5. Create Post Modal Logic
+    const modal = document.getElementById('createPostModal');
+    const openBar = document.getElementById('openCreatePostBar');
+    const closeBtn = document.getElementById('closeCreatePostModal');
+    const mobileBtn = document.getElementById('mobileCreatePostBtn');
+    const quickPhotoBtn = document.getElementById('quickPhotoBtn');
+    const quickVideoBtn = document.getElementById('quickVideoBtn');
+    const quickEventBtn = document.getElementById('quickEventBtn');
+    const quickAchieveBtn = document.getElementById('quickAchievementBtn');
+    const fileImgInput = document.getElementById('fileImageInput');
+    const fileVidInput = document.getElementById('fileVideoInput');
+    const previewContainer = document.getElementById('postMediaPreviewContainer');
+    const imgPreview = document.getElementById('postImagePreview');
+    const vidPreview = document.getElementById('postVideoPreview');
+    const removeMediaBtn = document.getElementById('removeMediaBtn');
+    const categorySelect = document.getElementById('postCategorySelect');
+    const postForm = document.getElementById('createPostForm');
+    const captionInput = document.getElementById('postCaptionInput');
+    const submitBtn = document.getElementById('submitPostBtn');
+
+    function openModal(presetCategory, triggerFileInput) {
+        if (!modal) return;
+        if (presetCategory && categorySelect) {
+            categorySelect.value = presetCategory;
+        }
+        modal.classList.add('show');
+        if (triggerFileInput) {
+            setTimeout(() => triggerFileInput.click(), 100);
+        } else {
+            setTimeout(() => captionInput?.focus(), 100);
+        }
+    }
+
+    function closeModal() {
+        if (!modal) return;
+        modal.classList.remove('show');
+    }
+
+    openBar?.addEventListener('click', (e) => {
+        if (e.target.closest('.floating-action-btn')) return; // handled specifically
+        openModal();
+    });
+    mobileBtn?.addEventListener('click', () => openModal());
+    closeBtn?.addEventListener('click', closeModal);
+    modal?.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal?.classList.contains('show')) closeModal();
+    });
+
+    quickPhotoBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openModal(null, fileImgInput);
+    });
+    quickVideoBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openModal(null, fileVidInput);
+    });
+    quickEventBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openModal('event');
+    });
+    quickAchieveBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openModal('achievement');
+    });
+
+    document.getElementById('attachImageBtn')?.addEventListener('click', () => fileImgInput?.click());
+    document.getElementById('attachVideoBtn')?.addEventListener('click', () => fileVidInput?.click());
+
+    // File Preview
+    fileImgInput?.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            fileVidInput.value = '';
+            vidPreview.style.display = 'none';
+            imgPreview.src = URL.createObjectURL(file);
+            imgPreview.style.display = 'block';
+            previewContainer.classList.add('show');
+        }
+    });
+
+    fileVidInput?.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            fileImgInput.value = '';
+            imgPreview.style.display = 'none';
+            vidPreview.src = URL.createObjectURL(file);
+            vidPreview.style.display = 'block';
+            previewContainer.classList.add('show');
+        }
+    });
+
+    removeMediaBtn?.addEventListener('click', function() {
+        if (fileImgInput) fileImgInput.value = '';
+        if (fileVidInput) fileVidInput.value = '';
+        imgPreview.src = '#';
+        imgPreview.style.display = 'none';
+        vidPreview.src = '';
+        vidPreview.style.display = 'none';
+        previewContainer.classList.remove('show');
+    });
+
+    // Form submit disable
+    postForm?.addEventListener('submit', function() {
+        const text = captionInput?.value.trim() || '';
+        const hasImg = fileImgInput?.files?.length > 0;
+        const hasVid = fileVidInput?.files?.length > 0;
+        if (!text && !hasImg && !hasVid) {
+            alert('Please write something or attach a photo/video.');
+            return false;
+        }
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Posting...';
+        }
+    });
+
+    // ============================================================
+    // STORIES SYSTEM: VIEWER, MULTI-UPLOAD, LIKES & VIEWERS SHEET
+    // ============================================================
+    let storiesGroups = [];
+    try {
+        const rawStories = document.getElementById('storiesDataScript')?.textContent;
+        if (rawStories) {
+            storiesGroups = JSON.parse(rawStories);
+        }
+    } catch (err) {
+        console.error('Error parsing stories data:', err);
+        storiesGroups = [];
+    }
+
+    // --- Stories Rail Scroll Navigation ---
+    const storiesRail = document.getElementById('storiesRail');
+    const scrollPrevBtn = document.getElementById('storiesScrollPrevBtn');
+    const scrollNextBtn = document.getElementById('storiesScrollNextBtn');
+
+    function updateRailScrollButtons() {
+        if (!storiesRail || !scrollPrevBtn || !scrollNextBtn) return;
+        const sl = storiesRail.scrollLeft;
+        const maxScroll = storiesRail.scrollWidth - storiesRail.clientWidth;
+        if (sl > 10) {
+            scrollPrevBtn.classList.add('visible');
+        } else {
+            scrollPrevBtn.classList.remove('visible');
+        }
+        if (sl < maxScroll - 10) {
+            scrollNextBtn.classList.add('visible');
+        } else {
+            scrollNextBtn.classList.remove('visible');
+        }
+    }
+
+    storiesRail?.addEventListener('scroll', updateRailScrollButtons);
+    window.addEventListener('resize', updateRailScrollButtons);
+    setTimeout(updateRailScrollButtons, 250);
+
+    scrollPrevBtn?.addEventListener('click', () => {
+        storiesRail?.scrollBy({ left: -260, behavior: 'smooth' });
+        setTimeout(updateRailScrollButtons, 350);
+    });
+    scrollNextBtn?.addEventListener('click', () => {
+        storiesRail?.scrollBy({ left: 260, behavior: 'smooth' });
+        setTimeout(updateRailScrollButtons, 350);
+    });
+
+    // --- Story Viewer State & Elements ---
+    let activeViewerGroups = [];
+    let currentGroupIndex = 0;
+    let currentStoryIndex = 0;
+    let progressTimer = null;
+    let progressElapsed = 0;
+    let slideDuration = 5000;
+    let isPaused = false;
+    let isMuted = false;
+
+    const viewerModal = document.getElementById('storyViewerModal');
+    const progressContainer = document.getElementById('storyProgressContainer');
+    const viewerAvatar = document.getElementById('storyViewerAvatar');
+    const viewerName = document.getElementById('storyViewerName');
+    const viewerTime = document.getElementById('storyViewerTime');
+    const viewersBadge = document.getElementById('storyViewersBadge');
+    const viewersCountSpan = document.getElementById('storyViewerCount');
+    const storyDeleteBtn = document.getElementById('storyDeleteBtn');
+    const storyMuteBtn = document.getElementById('storyMuteBtn');
+    const storyMuteIcon = document.getElementById('storyMuteIcon');
+    const storyLikeBtn = document.getElementById('storyLikeBtn');
+    const storyLikeIcon = document.getElementById('storyLikeIcon');
+    const storyImg = document.getElementById('storyViewerImg');
+    const storyVid = document.getElementById('storyViewerVideo');
+    const captionBar = document.getElementById('storyCaptionBar');
+    const mediaViewport = document.getElementById('storyMediaViewport');
+
+    // Viewers Bottom Sheet Elements
+    const viewersSheet = document.getElementById('storyViewersSheet');
+    const closeViewersSheetBtn = document.getElementById('closeViewersSheetBtn');
+    const sheetViewsCount = document.getElementById('sheetViewsCount');
+    const sheetLikesCount = document.getElementById('sheetLikesCount');
+    const storyViewersList = document.getElementById('storyViewersList');
+
+    function openStoryViewerWithGroups(groups, startGroupIdx = 0, startStoryIdx = 0) {
+        if (!groups || groups.length === 0) return;
+        activeViewerGroups = groups;
+        currentGroupIndex = startGroupIdx;
+        currentStoryIndex = startStoryIdx;
+        if (viewerModal) {
+            viewerModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        playCurrentSlide();
+    }
+
+    function openStoryViewer(groupIdx = 0, storyIdx = 0) {
+        openStoryViewerWithGroups(storiesGroups, groupIdx, storyIdx);
+    }
+
+    function closeStoryViewer() {
+        if (progressTimer) clearInterval(progressTimer);
+        progressTimer = null;
+        if (storyVid) {
+            storyVid.pause();
+            storyVid.src = '';
+        }
+        if (viewersSheet) viewersSheet.classList.remove('show');
+        if (viewerModal) viewerModal.classList.remove('show');
+        document.body.style.overflow = '';
+        isPaused = false;
+    }
+
+    function playCurrentSlide() {
+        if (progressTimer) clearInterval(progressTimer);
+        progressTimer = null;
+        progressElapsed = 0;
+        isPaused = false;
+
+        if (viewersSheet) viewersSheet.classList.remove('show');
+
+        if (currentGroupIndex < 0 || currentGroupIndex >= activeViewerGroups.length) {
+            closeStoryViewer();
+            return;
+        }
+
+        const group = activeViewerGroups[currentGroupIndex];
+        if (!group.stories || group.stories.length === 0 || currentStoryIndex >= group.stories.length) {
+            closeStoryViewer();
+            return;
+        }
+
+        const story = group.stories[currentStoryIndex];
+
+        // 1. Build Segmented Progress Bars
+        if (progressContainer) {
+            progressContainer.innerHTML = '';
+            group.stories.forEach((_, idx) => {
+                const bar = document.createElement('div');
+                bar.className = 'story-progress-bar';
+                if (idx < currentStoryIndex) {
+                    bar.classList.add('completed');
+                } else if (idx === currentStoryIndex) {
+                    bar.classList.add('active');
+                }
+                const fill = document.createElement('div');
+                fill.className = 'story-progress-fill';
+                bar.appendChild(fill);
+                progressContainer.appendChild(bar);
+            });
+        }
+
+        // 2. Header Info
+        if (viewerAvatar) viewerAvatar.src = story.avatar || '/static/images/default-avatar.png';
+        if (viewerName) viewerName.textContent = story.name;
+        if (viewerTime) viewerTime.textContent = story.time;
+
+        // Author Actions vs Viewer Actions
+        if (story.can_delete) {
+            if (storyDeleteBtn) storyDeleteBtn.style.display = 'flex';
+            if (viewersBadge) {
+                viewersBadge.style.display = 'flex';
+                if (viewersCountSpan) viewersCountSpan.textContent = story.viewers_count || 0;
+            }
+            if (storyLikeBtn) storyLikeBtn.style.display = 'none';
+        } else {
+            if (storyDeleteBtn) storyDeleteBtn.style.display = 'none';
+            if (viewersBadge) viewersBadge.style.display = 'none';
+            if (storyLikeBtn) {
+                storyLikeBtn.style.display = 'flex';
+                if (story.liked_by_me) {
+                    storyLikeBtn.classList.add('liked');
+                    if (storyLikeIcon) storyLikeIcon.className = 'fas fa-heart';
+                } else {
+                    storyLikeBtn.classList.remove('liked');
+                    if (storyLikeIcon) storyLikeIcon.className = 'far fa-heart';
+                }
+            }
+        }
+
+        // 3. Caption
+        if (captionBar) {
+            if (story.caption && story.caption.trim()) {
+                captionBar.textContent = story.caption;
+                captionBar.style.display = 'block';
+            } else {
+                captionBar.style.display = 'none';
+            }
+        }
+
+        // 4. Render Media & Determine Duration
+        slideDuration = 5000;
+        if (story.media_type === 'video') {
+            if (storyMuteBtn) {
+                storyMuteBtn.style.display = 'flex';
+                if (storyMuteIcon) storyMuteIcon.className = isMuted ? 'fas fa-volume-xmark' : 'fas fa-volume-high';
+            }
+            if (storyImg) storyImg.style.display = 'none';
+            if (storyVid) {
+                storyVid.style.display = 'block';
+                storyVid.src = story.media_url;
+                storyVid.muted = isMuted;
+                storyVid.currentTime = 0;
+                storyVid.play().catch(e => console.log('Autoplay deferred/muted', e));
+
+                storyVid.onloadedmetadata = function() {
+                    if (storyVid.duration && !isNaN(storyVid.duration) && isFinite(storyVid.duration)) {
+                        slideDuration = Math.max(2500, storyVid.duration * 1000);
+                    }
+                };
+                storyVid.onended = function() {
+                    nextStorySlide();
+                };
+            }
+        } else {
+            if (storyMuteBtn) storyMuteBtn.style.display = 'none';
+            if (storyVid) {
+                storyVid.pause();
+                storyVid.style.display = 'none';
+                storyVid.src = '';
+            }
+            if (storyImg) {
+                storyImg.style.display = 'block';
+                storyImg.src = story.media_url;
+            }
+        }
+
+        // 5. Track Story View (asynchronously)
+        if (!story.can_delete && !story.viewed_by_me && !String(story.id).startsWith('mock-')) {
+            fetch(`/story/${story.id}/view/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    story.viewed_by_me = true;
+                    const allViewed = group.stories.every(s => s.viewed_by_me);
+                    if (allViewed) {
+                        group.has_unseen = false;
+                        const ring = document.querySelector(`.user-story-item[data-profile-id="${group.profile_id}"] .story-ring`);
+                        if (ring) {
+                            ring.classList.remove('has-story');
+                            ring.classList.add('seen-story');
+                        }
+                    }
+                }
+            }).catch(e => console.log('View tracking error:', e));
+        }
+
+        // 6. Progress Timer Loop
+        const activeFill = progressContainer?.querySelectorAll('.story-progress-fill')[currentStoryIndex];
+        const step = 30;
+        progressTimer = setInterval(() => {
+            if (isPaused) return;
+            progressElapsed += step;
+            const pct = Math.min(100, (progressElapsed / slideDuration) * 100);
+            if (activeFill) activeFill.style.width = pct + '%';
+            if (progressElapsed >= slideDuration) {
+                clearInterval(progressTimer);
+                nextStorySlide();
+            }
+        }, step);
+    }
+
+    function nextStorySlide() {
+        if (progressTimer) clearInterval(progressTimer);
+        if (storyVid) storyVid.pause();
+
+        const group = activeViewerGroups[currentGroupIndex];
+        if (!group) {
+            closeStoryViewer();
+            return;
+        }
+
+        if (currentStoryIndex + 1 < group.stories.length) {
+            currentStoryIndex++;
+            playCurrentSlide();
+        } else if (currentGroupIndex + 1 < activeViewerGroups.length) {
+            currentGroupIndex++;
+            currentStoryIndex = 0;
+            playCurrentSlide();
+        } else {
+            closeStoryViewer();
+        }
+    }
+
+    function prevStorySlide() {
+        if (progressTimer) clearInterval(progressTimer);
+        if (storyVid) storyVid.pause();
+
+        if (progressElapsed > 1200) {
+            playCurrentSlide();
+            return;
+        }
+
+        if (currentStoryIndex > 0) {
+            currentStoryIndex--;
+            playCurrentSlide();
+        } else if (currentGroupIndex > 0) {
+            currentGroupIndex--;
+            currentStoryIndex = activeViewerGroups[currentGroupIndex].stories.length - 1;
+            playCurrentSlide();
+        } else {
+            playCurrentSlide();
+        }
+    }
+
+    // --- Story Viewer Navigation & Actions ---
+    document.getElementById('storyTapLeft')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        prevStorySlide();
+    });
+    document.getElementById('storyTapRight')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        nextStorySlide();
+    });
+    document.getElementById('storyNavPrevBtn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        prevStorySlide();
+    });
+    document.getElementById('storyNavNextBtn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        nextStorySlide();
+    });
+    document.getElementById('closeStoryViewerBtn')?.addEventListener('click', closeStoryViewer);
+
+    // Mute/Unmute Toggle
+    storyMuteBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        isMuted = !isMuted;
+        if (storyVid) storyVid.muted = isMuted;
+        if (storyMuteIcon) storyMuteIcon.className = isMuted ? 'fas fa-volume-xmark' : 'fas fa-volume-high';
+    });
+
+    // Story Like Button Toggle
+    storyLikeBtn?.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const group = activeViewerGroups[currentGroupIndex];
+        const story = group?.stories[currentStoryIndex];
+        if (!story) return;
+
+        try {
+            const res = await fetch(`/story/${story.id}/like/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            const data = await res.json();
+            if (data.success) {
+                story.liked_by_me = data.liked;
+                story.likes_count = data.likes_count;
+                if (data.liked) {
+                    storyLikeBtn.classList.add('liked');
+                    if (storyLikeIcon) storyLikeIcon.className = 'fas fa-heart';
+                    showToast('Liked story ❤️');
+                } else {
+                    storyLikeBtn.classList.remove('liked');
+                    if (storyLikeIcon) storyLikeIcon.className = 'far fa-heart';
+                }
+            }
+        } catch (err) {
+            console.error('Like error:', err);
+        }
+    });
+
+    // Author Viewers & Likers Sheet
+    viewersBadge?.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const group = activeViewerGroups[currentGroupIndex];
+        const story = group?.stories[currentStoryIndex];
+        if (!story || !story.can_delete) return;
+
+        // Pause playback
+        pauseViewer();
+
+        if (viewersSheet) {
+            viewersSheet.classList.add('show');
+            if (storyViewersList) {
+                storyViewersList.innerHTML = '<div style="text-align:center; padding:1.5rem; color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> Loading viewers...</div>';
+            }
+
+            try {
+                const res = await fetch(`/story/${story.id}/viewers/`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (sheetViewsCount) sheetViewsCount.textContent = data.views_count;
+                    if (sheetLikesCount) sheetLikesCount.textContent = data.likes_count;
+
+                    if (!data.viewers || data.viewers.length === 0) {
+                        storyViewersList.innerHTML = `
+                            <div class="story-viewers-empty">
+                                <i class="fas fa-eye-slash"></i>
+                                <div>No views yet</div>
+                                <div style="font-size:0.75rem; margin-top:4px;">When classmates view your story, they'll show up here.</div>
+                            </div>
+                        `;
+                    } else {
+                        storyViewersList.innerHTML = data.viewers.map(v => `
+                            <div class="story-viewer-item">
+                                <div class="story-viewer-left">
+                                    <img src="${v.avatar || '/static/images/default-avatar.png'}" class="story-viewer-item-avatar" alt="${v.name}" />
+                                    <div class="story-viewer-item-info">
+                                        <span class="story-viewer-item-name">${v.name}</span>
+                                        <span class="story-viewer-item-username">@${v.username}</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    ${v.liked ? '<i class="fas fa-heart story-viewer-liked-badge" title="Liked this story"></i>' : ''}
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                if (storyViewersList) {
+                    storyViewersList.innerHTML = '<div style="text-align:center; padding:1.5rem; color:#ef4444;">Failed to load story activity.</div>';
+                }
+            }
+        }
+    });
+
+    closeViewersSheetBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (viewersSheet) viewersSheet.classList.remove('show');
+        resumeViewer();
+    });
+
+    // Hold to pause
+    const pauseViewer = () => {
+        isPaused = true;
+        if (storyVid && storyVid.style.display !== 'none') storyVid.pause();
+    };
+    const resumeViewer = () => {
+        isPaused = false;
+        if (storyVid && storyVid.style.display !== 'none') storyVid.play().catch(() => {});
+    };
+
+    if (mediaViewport) {
+        mediaViewport.addEventListener('mousedown', pauseViewer);
+        mediaViewport.addEventListener('mouseup', resumeViewer);
+        mediaViewport.addEventListener('mouseleave', resumeViewer);
+        mediaViewport.addEventListener('touchstart', pauseViewer, { passive: true });
+        mediaViewport.addEventListener('touchend', resumeViewer, { passive: true });
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+        if (!viewerModal?.classList.contains('show')) return;
+        if (e.key === 'Escape') {
+            if (viewersSheet?.classList.contains('show')) {
+                viewersSheet.classList.remove('show');
+                resumeViewer();
+            } else {
+                closeStoryViewer();
+            }
+        } else if (e.key === 'ArrowRight') nextStorySlide();
+        else if (e.key === 'ArrowLeft') prevStorySlide();
+        else if (e.key === ' ') {
+            e.preventDefault();
+            isPaused = !isPaused;
+            if (storyVid && storyVid.style.display !== 'none') {
+                if (isPaused) storyVid.pause();
+                else storyVid.play().catch(() => {});
+            }
+        }
+    });
+
+    // Delete Story
+    storyDeleteBtn?.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const group = activeViewerGroups[currentGroupIndex];
+        const story = group?.stories[currentStoryIndex];
+        if (!story) return;
+
+        if (!confirm('Are you sure you want to delete this story?')) return;
+
+        try {
+            const res = await fetch(`/story/${story.id}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast('Story deleted');
+                group.stories.splice(currentStoryIndex, 1);
+                if (group.stories.length === 0) {
+                    activeViewerGroups.splice(currentGroupIndex, 1);
+                    if (activeViewerGroups.length === 0) {
+                        closeStoryViewer();
+                        window.location.reload();
+                        return;
+                    }
+                    if (currentGroupIndex >= activeViewerGroups.length) {
+                        currentGroupIndex = activeViewerGroups.length - 1;
+                    }
+                    currentStoryIndex = 0;
+                } else {
+                    if (currentStoryIndex >= group.stories.length) {
+                        currentStoryIndex = group.stories.length - 1;
+                    }
+                }
+                playCurrentSlide();
+            } else {
+                alert(data.error || 'Failed to delete story');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Failed to delete story');
+        }
+    });
+
+    // --- Story Rail Click Triggers ---
+    document.getElementById('myStoryItem')?.addEventListener('click', function(e) {
+        if (e.target.closest('#addStoryPlusBtn')) return;
+        const myIdx = storiesGroups.findIndex(g => g.is_me);
+        if (myIdx !== -1) {
+            openStoryViewer(myIdx, 0);
+        } else {
+            openAddStoryModal();
+        }
+    });
+
+    document.querySelectorAll('.user-story-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const pId = parseInt(this.dataset.profileId, 10);
+            const idx = storiesGroups.findIndex(g => g.profile_id === pId);
+            if (idx !== -1) {
+                openStoryViewer(idx, 0);
+            }
+        });
+    });
+
+    // ============================================================
+    // BATCH MULTI-STORY UPLOAD CONTROLLER
+    // ============================================================
+    const addStoryModal = document.getElementById('addStoryModal');
+    const closeAddStoryBtn = document.getElementById('closeAddStoryModal');
+    const storyDropzone = document.getElementById('storyMediaDropzone');
+    const chooseStoryMediaBtn = document.getElementById('chooseStoryMediaBtn');
+    const storyFileInput = document.getElementById('storyFileInput');
+    const storyImgPreview = document.getElementById('storyImagePreview');
+    const storyVidPreview = document.getElementById('storyVideoPreview');
+    const storyPlaceholder = document.getElementById('storyPlaceholder');
+    const storyMultiTray = document.getElementById('storyMultiTray');
+    const storyCaptionInput = document.getElementById('storyCaptionInput');
+    const addStoryForm = document.getElementById('addStoryForm');
+    const submitStoryBtn = document.getElementById('submitStoryBtn');
+    const submitStoryBtnText = document.getElementById('submitStoryBtnText');
+    const storyModalSubtitle = document.getElementById('storyModalSubtitle');
+
+    let selectedStorySlides = []; // Array of { file, caption, previewUrl, type }
+    let activeSlideIndex = 0;
+
+    function openAddStoryModal() {
+        if (addStoryModal) {
+            addStoryModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeAddStoryModal() {
+        if (addStoryModal) {
+            addStoryModal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+    }
+
+    function resetStoryUploadState() {
+        selectedStorySlides.forEach(s => URL.revokeObjectURL(s.previewUrl));
+        selectedStorySlides = [];
+        activeSlideIndex = 0;
+        if (storyMultiTray) {
+            storyMultiTray.innerHTML = '';
+            storyMultiTray.style.display = 'none';
+        }
+        if (storyDropzone) storyDropzone.classList.remove('has-media');
+        if (storyPlaceholder) storyPlaceholder.style.display = 'flex';
+        if (storyImgPreview) {
+            storyImgPreview.src = '#';
+            storyImgPreview.style.display = 'none';
+        }
+        if (storyVidPreview) {
+            storyVidPreview.pause();
+            storyVidPreview.src = '';
+            storyVidPreview.style.display = 'none';
+        }
+        if (storyCaptionInput) storyCaptionInput.value = '';
+        if (submitStoryBtnText) submitStoryBtnText.textContent = 'Share Story';
+        if (storyModalSubtitle) storyModalSubtitle.textContent = 'Upload single or multiple stories (24h)';
+        if (storyFileInput) storyFileInput.value = '';
+    }
+
+    function renderStoryTray() {
+        if (!storyMultiTray) return;
+        if (selectedStorySlides.length === 0) {
+            resetStoryUploadState();
+            return;
+        }
+
+        storyMultiTray.style.display = 'flex';
+        storyDropzone?.classList.add('has-media');
+        if (storyPlaceholder) storyPlaceholder.style.display = 'none';
+
+        if (submitStoryBtnText) {
+            submitStoryBtnText.textContent = selectedStorySlides.length > 1 
+                ? `Share ${selectedStorySlides.length} Stories` 
+                : 'Share Story';
+        }
+        if (storyModalSubtitle) {
+            storyModalSubtitle.textContent = `${selectedStorySlides.length} ${selectedStorySlides.length === 1 ? 'slide' : 'slides'} selected`;
+        }
+
+        storyMultiTray.innerHTML = '';
+        selectedStorySlides.forEach((slide, idx) => {
+            const thumb = document.createElement('div');
+            thumb.className = `add-story-thumb-card ${idx === activeSlideIndex ? 'active' : ''}`;
+            thumb.title = `Slide ${idx + 1}`;
+
+            if (slide.type === 'video') {
+                thumb.innerHTML = `
+                    <video src="${slide.previewUrl}" muted playsinline></video>
+                    <span class="add-story-thumb-type">VID</span>
+                    <button type="button" class="add-story-thumb-remove" data-idx="${idx}" title="Remove slide">&times;</button>
+                `;
+            } else {
+                thumb.innerHTML = `
+                    <img src="${slide.previewUrl}" alt="Slide ${idx + 1}" />
+                    <span class="add-story-thumb-type">IMG</span>
+                    <button type="button" class="add-story-thumb-remove" data-idx="${idx}" title="Remove slide">&times;</button>
+                `;
+            }
+
+            thumb.addEventListener('click', (e) => {
+                if (e.target.closest('.add-story-thumb-remove')) return;
+                setActiveSlide(idx);
+            });
+
+            const removeBtn = thumb.querySelector('.add-story-thumb-remove');
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                URL.revokeObjectURL(selectedStorySlides[idx].previewUrl);
+                selectedStorySlides.splice(idx, 1);
+                if (activeSlideIndex >= selectedStorySlides.length) {
+                    activeSlideIndex = Math.max(0, selectedStorySlides.length - 1);
+                }
+                renderStoryTray();
+                if (selectedStorySlides.length > 0) {
+                    setActiveSlide(activeSlideIndex);
+                }
+            });
+
+            storyMultiTray.appendChild(thumb);
+        });
+
+        // Add more slides button
+        const addMore = document.createElement('button');
+        addMore.type = 'button';
+        addMore.className = 'add-story-add-more-btn';
+        addMore.title = 'Add more photos or videos';
+        addMore.innerHTML = '<i class="fas fa-plus"></i><span>Add</span>';
+        addMore.addEventListener('click', () => storyFileInput?.click());
+        storyMultiTray.appendChild(addMore);
+    }
+
+    function setActiveSlide(idx) {
+        if (!selectedStorySlides[idx]) return;
+        activeSlideIndex = idx;
+
+        // Save current caption to active slide
+        const currentSlide = selectedStorySlides[activeSlideIndex];
+        if (storyCaptionInput) storyCaptionInput.value = currentSlide.caption || '';
+
+        // Update preview in dropzone
+        if (currentSlide.type === 'video') {
+            if (storyImgPreview) storyImgPreview.style.display = 'none';
+            if (storyVidPreview) {
+                storyVidPreview.src = currentSlide.previewUrl;
+                storyVidPreview.style.display = 'block';
+            }
+        } else {
+            if (storyVidPreview) {
+                storyVidPreview.pause();
+                storyVidPreview.style.display = 'none';
+            }
+            if (storyImgPreview) {
+                storyImgPreview.src = currentSlide.previewUrl;
+                storyImgPreview.style.display = 'block';
+            }
+        }
+
+        // Highlight active thumb
+        document.querySelectorAll('.add-story-thumb-card').forEach((el, i) => {
+            el.classList.toggle('active', i === activeSlideIndex);
+        });
+    }
+
+    storyCaptionInput?.addEventListener('input', function() {
+        if (selectedStorySlides[activeSlideIndex]) {
+            selectedStorySlides[activeSlideIndex].caption = this.value;
+        }
+    });
+
+    document.getElementById('createStoryTrigger')?.addEventListener('click', openAddStoryModal);
+    document.getElementById('addStoryPlusBtn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openAddStoryModal();
+    });
+    closeAddStoryBtn?.addEventListener('click', closeAddStoryModal);
+    addStoryModal?.addEventListener('click', (e) => {
+        if (e.target === addStoryModal) closeAddStoryModal();
+    });
+
+    storyDropzone?.addEventListener('click', () => {
+        if (selectedStorySlides.length === 0) storyFileInput?.click();
+    });
+    chooseStoryMediaBtn?.addEventListener('click', () => storyFileInput?.click());
+
+    storyFileInput?.addEventListener('change', function() {
+        const files = Array.from(this.files || []);
+        if (files.length === 0) return;
+
+        files.forEach(f => {
+            const isVid = f.type.startsWith('video/') || (f.name && f.name.match(/\.(mp4|webm|mov|mkv|avi)$/i));
+            selectedStorySlides.push({
+                file: f,
+                caption: '',
+                previewUrl: URL.createObjectURL(f),
+                type: isVid ? 'video' : 'image'
+            });
+        });
+
+        // Switch to the first newly added slide
+        activeSlideIndex = selectedStorySlides.length - files.length;
+        renderStoryTray();
+        setActiveSlide(activeSlideIndex);
+
+        // Reset file input so user can choose same file again if desired
+        this.value = '';
+    });
+
+    // Form submission (Batch upload)
+    addStoryForm?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        if (selectedStorySlides.length === 0) {
+            alert('Please select at least one photo or video for your story.');
+            return;
+        }
+
+        submitStoryBtn.disabled = true;
+        submitStoryBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading stories...';
+
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', csrfToken);
+        formData.append('ajax', '1');
+
+        selectedStorySlides.forEach(slide => {
+            formData.append('media', slide.file);
+            formData.append('captions', slide.caption || '');
+        });
+
+        try {
+            const res = await fetch("{% url 'create_story' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            });
+            const data = await res.json();
+            if (data.success) {
+                closeAddStoryModal();
+                showToast(`Successfully shared ${data.count || selectedStorySlides.length} stories!`);
+                resetStoryUploadState();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 800);
+            } else {
+                alert(data.error || 'Failed to post stories');
+                submitStoryBtn.disabled = false;
+                submitStoryBtn.innerHTML = '<span id="submitStoryBtnText">Share Story</span> <i class="fas fa-paper-plane" style="font-size:0.75rem; margin-left:4px;"></i>';
+            }
+        } catch (err) {
+            console.error(err);
+            alert('An error occurred while uploading your stories.');
+            submitStoryBtn.disabled = false;
+            submitStoryBtn.innerHTML = '<span id="submitStoryBtnText">Share Story</span> <i class="fas fa-paper-plane" style="font-size:0.75rem; margin-left:4px;"></i>';
+        }
+    });
+});
+</script>
+<script id="storiesDataScript" type="application/json">{{ stories_data_json|safe }}</script>
 {% endblock %}

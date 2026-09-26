@@ -4,72 +4,135 @@
             <h2><span class="section-icon"><i class="fas fa-newspaper"></i></span> Campus Feed</h2>
             <span style="font-size:var(--text-xs);color:var(--text-muted);font-weight:var(--weight-medium);">What's happening around your university</span>
         </div>
+
+        <!-- CATEGORY FILTER PILLS -->
+        <div class="feed-category-pills-bar">
+            <a href="{% url 'home' %}" class="cat-pill {% if active_category == 'all' or not active_category %}active{% endif %}">
+                <i class="fas fa-layer-group"></i> All
+            </a>
+            {% for code, label in categories %}
+            <a href="?category={{ code }}" class="cat-pill {% if active_category == code %}active{% endif %}">
+                {{ label }}
+            </a>
+            {% endfor %}
+        </div>
+
         <div class="feed-section">
-            <div class="stories-rail">
-                <div class="story-item">
-                    <div class="story-ring">
-                        <img src="{{ profile.profile_pic.url }}" class="story-img" alt="Your Story" />
-                        <div class="story-plus">+</div>
+            <div class="stories-rail-wrapper" id="storiesRailWrapper">
+                <button type="button" class="stories-scroll-btn prev" id="storiesScrollPrevBtn" aria-label="Previous Stories" title="Previous Stories">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="stories-rail" id="storiesRail">
+                    {% if has_my_stories %}
+                    <div class="story-item my-story-item" id="myStoryItem" data-profile-id="{{ profile.id }}" data-username="{{ username }}" title="View your stories">
+                        <div class="story-ring has-story">
+                            <img src="{{ profile.profile_pic.url }}" class="story-img" alt="Your Story" />
+                            <div class="story-plus" id="addStoryPlusBtn" title="Add another story">+</div>
+                        </div>
+                        <span class="story-name">Your Story</span>
                     </div>
-                    <span class="story-name">Your Story</span>
-                </div>
-                <div class="story-item">
-                    <div class="story-ring has-story">
-                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" class="story-img" alt="Riya" />
+                    {% else %}
+                    <div class="story-item" id="createStoryTrigger" title="Add to your story">
+                        <div class="story-ring">
+                            <img src="{{ profile.profile_pic.url }}" class="story-img" alt="Your Story" />
+                            <div class="story-plus">+</div>
+                        </div>
+                        <span class="story-name">Your Story</span>
                     </div>
-                    <span class="story-name">Riya · Campus</span>
+                    {% endif %}
+
+                    {% for group in stories_groups %}
+                        {% if not group.is_me %}
+                        <div class="story-item user-story-item" data-profile-id="{{ group.profile_id }}" data-username="{{ group.username }}">
+                            <div class="story-ring {% if group.has_unseen %}has-story{% else %}seen-story{% endif %}">
+                                <img src="{{ group.avatar|default:'/static/images/default-avatar.png' }}" class="story-img" alt="{{ group.name }}" />
+                            </div>
+                            <span class="story-name">{{ group.name }}</span>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
-                <div class="story-item">
-                    <div class="story-ring has-story-gold">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" class="story-img" alt="Aman" />
-                    </div>
-                    <span class="story-name">Aman · Hack</span>
-                </div>
-                <div class="story-item">
-                    <div class="story-ring has-story">
-                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80" class="story-img" alt="Neha" />
-                    </div>
-                    <span class="story-name">Neha · Coding</span>
-                </div>
-                <div class="story-item">
-                    <div class="story-ring has-story-gold">
-                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80" class="story-img" alt="Rahul" />
-                    </div>
-                    <span class="story-name">Rahul · Sports</span>
-                </div>
+                <button type="button" class="stories-scroll-btn next" id="storiesScrollNextBtn" aria-label="Next Stories" title="Next Stories">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
             </div>
 
-            <div class="post-card">
+            {% for p in post %}
+            <div class="post-card" id="post-card-{{ p.id }}">
                 <div class="post-header">
                     <div class="post-author">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" class="post-author-avatar" alt="Aman Raj" />
+                        <a href="{% url 'profile' p.profile.username %}">
+                            <img src="{{ p.profile.profile_pic.url }}" class="post-author-avatar" alt="{{ p.profile.f_name }} {{ p.profile.l_name }}" />
+                        </a>
                         <div class="post-author-info">
-                            <h5>Aman Raj <span style="width:5px;height:5px;display:inline-block;border-radius:50%;background:var(--accent-green);"></span></h5>
+                            <a href="{% url 'profile' p.profile.username %}">
+                               <h5>{{ p.profile.f_name }} {{ p.profile.l_name }} <span style="width:5px;height:5px;display:inline-block;border-radius:50%;background:var(--accent-green);"></span></h5> 
+                            </a>
                             <div class="post-meta">
-                                <span>B.Tech CSE • Sem 5</span>
+                                <span>{{ p.profile.program }} • Sem {{ p.profile.semester }}</span>
                                 <span>•</span>
-                                <span><i class="far fa-clock"></i> 2h ago</span>
+                                <span><i class="far fa-clock"></i> {{ p.created_at|timesince }} ago</span>
                             </div>
                         </div>
                     </div>
-                    <span class="post-category-chip">Campus Life</span>
-                    <div class="post-more"><i class="fas fa-ellipsis-h"></i></div>
+                    <span class="post-category-chip category-{{ p.category }}">{{ p.get_category_display|default:p.category }}</span>
+                    
+                    <div class="post-more-dropdown-wrap">
+                        <button class="post-more-btn" type="button" aria-label="Post options">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <div class="post-dropdown-menu">
+                            <button type="button" class="post-dropdown-item feed-share-btn" data-url="{% url 'detailed_post' p.id %}">
+                                <i class="fas fa-share-alt"></i> Share Link
+                            </button>
+                            {% if p.profile.id == profile.id or user.is_staff %}
+                            <button type="button" class="post-dropdown-item danger feed-delete-post-btn" data-post-id="{{ p.id }}" data-url="{% url 'delete_post' p.id %}">
+                                <i class="fas fa-trash-alt"></i> Delete Post
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
+
+                {% if p.caption %}
                 <div class="post-text">
-                    Sunset from the hostel terrace hits different! 🔥❤️
+                    {{ p.caption|linebreaksbr }}
                 </div>
-                <div class="post-media-container">
-                    <img src="https://images.unsplash.com/photo-1616036740257-9449ea1f6605?w=1000&auto=format&fit=crop&q=80" alt="Hostel Terrace Sunset" />
+                {% endif %}
+
+                {% if p.video %}
+                <div style="width: 100%; max-height: 80vh; overflow: hidden; border-radius: 12px; display: flex; justify-content: center; background: #000; margin-bottom: 0.65rem;">
+                    <video controls src="{{ p.video.url }}" style="width: 100%; max-height: 80vh; height: auto; object-fit: contain; display: block;"></video>
                 </div>
+                {% elif p.image %}
+                <div style="width: 100%; max-height: 80vh; overflow: hidden; border-radius: 12px; display: flex; justify-content: center; background: #000; margin-bottom: 0.65rem;">
+                    <img src="{{ p.image.url }}"
+                        alt="Post Image"
+                        style="width: 100%; max-height: 80vh; height: auto; object-fit: contain; display: block;" />
+                </div>
+                {% endif %}
+
                 <div class="post-footer">
                     <div class="post-stats">
-                        <span class="stat-item liked"><i class="fas fa-heart"></i> 124</span>
-                        <span class="stat-item"><i class="fas fa-comment"></i> 32</span>
+                        <button type="button" class="stat-item feed-like-btn {% if p.id in liked_post_ids %}liked{% endif %}"
+                                data-post-id="{{ p.id }}"
+                                data-url="{% url 'toggle_post_like' p.id %}">
+                            <i class="{% if p.id in liked_post_ids %}fas{% else %}far{% endif %} fa-heart"></i>
+                            <span class="feed-like-count">{{ p.like_count }}</span>
+                        </button>
+                   
+                        <a href="{% url 'detailed_post' p.id %}" class="comment-trigger-btn">
+                            <i class="fa-regular fa-comment"></i>
+                            <span class="comment-count">{{ p.comment_count }}</span> Comments
+                        </a>
                     </div>
-                    <span class="stat-item"><i class="fas fa-share-alt"></i> Share</span>
+                    <button type="button" class="stat-item feed-share-btn" data-url="{% url 'detailed_post' p.id %}">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
                 </div>
             </div>
-
+            {% empty %}
+            <!-- Mock posts fallback when 0 posts exist in database -->
             <div class="post-card">
                 <div class="post-header">
                     <div class="post-author">
@@ -83,7 +146,7 @@
                             </div>
                         </div>
                     </div>
-                    <span class="post-category-chip" style="background:var(--accent-gold-soft);color:var(--accent-gold);border-color:var(--border-gold);">Achievement</span>
+                    <span class="post-category-chip category-achievement">Achievement</span>
                     <div class="post-more"><i class="fas fa-ellipsis-h"></i></div>
                 </div>
                 <div class="post-text">
@@ -111,7 +174,7 @@
                             </div>
                         </div>
                     </div>
-                    <span class="post-category-chip" style="background:rgba(91,200,232,0.1);color:var(--accent-blue);border-color:rgba(91,200,232,0.2);">Discussion</span>
+                    <span class="post-category-chip category-help">Discussion</span>
                     <div class="post-more"><i class="fas fa-ellipsis-h"></i></div>
                 </div>
                 <div class="post-text">
@@ -125,6 +188,7 @@
                     <span class="stat-item"><i class="fas fa-share-alt"></i> Share</span>
                 </div>
             </div>
+            {% endfor %}
         </div>
 
         <div class="people-section">
@@ -268,4 +332,5 @@
             </div>
             <button class="btn-checkin-presence">Check In</button>
         </div>
+
     </main>
