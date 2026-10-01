@@ -118,98 +118,6 @@ shot here -->
 
 ---
 
-## 🏗️ Project Structure
-
-```text
-OnnCampus/
-│
-├── templates/
-│   ├── components/
-│   ├── home/
-│   ├── profiles/
-│   └── ...
-│
-├── static/
-│   ├── css/
-│   ├── js/
-│   └── ...
-│
-├── media/
-│
-├── manage.py
-└── requirements.txt
-```
-
----
-
-## ⚙️ Getting Started
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
-cd YOUR-REPOSITORY
-```
-
-### 2. Create a virtual environment
-
-```bash
-python -m venv venv
-```
-
-Activate it:
-
-**Windows**
-
-```bash
-venv\Scripts\activate
-```
-
-**macOS / Linux**
-
-```bash
-source venv/bin/activate
-```
-
-### 3. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Configure environment variables
-
-Create a `.env` file and add the required database and Supabase configuration.
-
-```env
-DATABASE_URL=your_database_url
-SUPABASE_SERVICE_KEY=your_supabase_service_key
-```
-
-> Never commit your `.env` file or private credentials to GitHub.
-
-### 5. Run migrations
-
-```bash
-python manage.py migrate
-```
-
-### 6. Start the development server
-
-```bash
-python manage.py runserver
-```
-
-Then open:
-
-```text
-http://127.0.0.1:8000/
-```
-
----
-
-## 📈 Project Status
-
 🚧 **OnnCampus is currently under active development.**
 
 The project is continuously evolving with new features, UI improvements, performance optimizations, and experiments around the student social experience.
@@ -228,12 +136,5 @@ all within one campus-focused social ecosystem.
 
 ## 👨‍💻 Built By
 
-**[Your Name]**
-
-BCA (Honours) — Machine Learning & Artificial Intelligence
-
-Interested in building products, experimenting with technology, and turning ideas into working applications.
-
----
-
+**RZRTROX GROUP**
 ⭐ If you find the project interesting, consider giving the repository a star!
